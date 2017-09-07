@@ -1,0 +1,351 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>添加植物油萃取用己烷检验结果</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/productCheckSPGYJW.js"></script>
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            /*background-color: silver;*/
+            overflow: auto;
+        }
+
+        input {
+            border: 0;
+            background: #ffffff;
+            width: 99%;
+        }
+
+        table {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+            table td {
+                border: 1px solid black;
+                padding-left: 3px;
+                height: 27px;
+                font-size: 12pt;
+            }
+    </style>
+</head>
+<body>
+    <div style="margin:0 auto;width:1000px">
+        <table style="text-align: center; border-width: 0px">
+            <tr>
+                <td style="width: 620px; height: 37px; text-align: center; border-width: 0px">
+                    <span style="font-size: 15pt">添加植物油萃取用己烷检验结果</span>
+                </td>
+                <td style="width: 80px; height: 37px; border-width: 0px">
+                    <button class="btn" id="btn_Save" style="margin-right: 15px; height: 25px">保存</button>
+                </td>
+            </tr>
+        </table>
+        <table style="text-align: center; border-width: 0px">
+            <tbody>
+                <tr>
+                    <td style="width:38%; height:25px;letter-spacing:0.1em;">
+                        贮存批号
+                    </td>
+                    <td style="width:20%; height:25px;">
+                        <input id="txtstorageBatch" class="smallInput" type="text" />
+                    </td>
+                    <td class="style1">
+                        检验时间
+                    </td>
+                    <td style="width:25%; height:25px;">
+                        <input id="txtexamineDate" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; letter-spacing:0.1em">
+                        质量检验员
+                    </td>
+                    <td style="width:20%; height:25px">
+                        <input id="txtinspector" class="smallInput" type="text" />
+                    </td>
+                    <td class="style1">
+                        备注
+                    </td>
+                    <td style="width:25%; height:25px">
+                        <input id="txtcomment" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px;letter-spacing:0.5em">
+                        项目
+                    </td>
+                    <td style="width:20%; height:25px;letter-spacing:0.5em">
+                        指标
+                    </td>
+                    <td style="letter-spacing:0.5em" class="style1">
+                        实际
+                    </td>
+                    <td style="width:25%; height:25px">
+                        试验方法
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">色度/号</span><span style="float:right">不小于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        +30
+                    </td>
+                    <td class="style1">
+                        <input id="txtsedh" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB/T 3555
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">正己烷含量,%(质量分数)</span><span style="float:right">不小于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        60
+                    </td>
+                    <td class="style1">
+                        <input id="txtzhengjwhl" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        SH/T 0714
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">初馏点,℃</span><span style="float:right">不低于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        60
+                    </td>
+                    <td class="style1">
+                        <input id="txtchuld" class="smallInput" type="text" />
+                    </td>
+                    <td rowspan="2">
+                        GB/T 6536
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">干点,℃</span><span style="float:right">不高于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        70
+                    </td>
+                    <td class="style1">
+                        <input id="txtgand" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">苯含量,%(质量分数)</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        0.01
+                    </td>
+                    <td class="style1">
+                        <input id="txtbenhl" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB/T 17474
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        密度(20℃),kg/m<sup>3</sup>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        660-680
+                    </td>
+                    <td class="style1">
+                        <input id="txtmidu" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB/T 1884、GB/T 1885
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">溴指数,mgBr/100g</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        50
+                    </td>
+                    <td class="style1">
+                        <input id="txtxiuzs" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB/T 11136
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">硫含量,%(质量分数)</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        0.0001
+                    </td>
+                    <td class="style1">
+                        <input id="txtliuhl" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        SH/T 0689
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">铅,mg/kg</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        0.01
+                    </td>
+                    <td class="style1">
+                        <input id="txtqian" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        见附录 A 或 SH/T 0242<sup>a</sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">砷,mg/kg</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        0.01
+                    </td>
+                    <td class="style1">
+                        <input id="txtshen" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        见附录 B 或 SH/T 0629<sup>b</sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">铜片腐蚀(50℃,3h)/级</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        1
+                    </td>
+                    <td class="style1">
+                        <input id="txttongpfs" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB/T 5096
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">不挥发物(蒸发残渣),mg/100mL</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:20%; height:25px">
+                        1.0
+                    </td>
+                    <td class="style1">
+                        <input id="txtbuhfw" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB/T 3209
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        气味
+                    </td>
+                    <td style="width:20%; height:25px">
+                        无残留异味
+                    </td>
+                    <td class="style1">
+                        <input id="txtqiwei" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB 17602-1998中附录 A
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        机械杂质及水分
+                    </td>
+                    <td style="width:20%; height:25px">
+                        无
+                    </td>
+                    <td class="style1">
+                        <input id="txtjixzzjsf" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        目视<sup>c</sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        水含量
+                    </td>
+                    <td style="width:20%; height:25px">
+                        报告
+                    </td>
+                    <td class="style1">
+                        <input id="txtshuihl" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB/T 6283
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px;text-align:left; padding-left:7px; padding-right:20px">
+                        贝壳松酯丁醇值
+                    </td>
+                    <td style="width:20%; height:25px">
+                        报告
+                    </td>
+                    <td class="style1">
+                        <input id="txtbeikszdcz" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB/T 11134
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px;text-align:left; padding-left:7px; padding-right:20px">
+                        多环芳烃
+                    </td>
+                    <td style="width:20%; height:25px">
+                        通过试验
+                    </td>
+                    <td class="style1">
+                        <input id="txtc3C4" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB 1886.52附录A中A.3
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:38%; height:25px;text-align:left; padding-left:7px; padding-right:20px">
+                        PH
+                    </td>
+                    <td style="width:20%; height:25px">
+                        通过试验
+                    </td>
+                    <td class="style1">
+                        <input id="txtmTBE" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        GB 1886.52附录A中A.4
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

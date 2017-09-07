@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B240BD96-60AD-476B-BF6F-E0B402B036C8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Libraries</RootNamespace>
+    <AssemblyName>Libraries</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Json\Gma.QrCodeNet.Encoding.Net45.dll" />
+    <Content Include="Json\Newtonsoft.Json.dll" />
+    <Content Include="log4net\log4net.dll" />
+    <Content Include="Rock\clrzmq.dll" />
+    <Content Include="Rock\clrzmq.pdb" />
+    <Content Include="Rock\ExpressionEval.dll" />
+    <Content Include="Rock\MySql.Data.dll" />
+    <Content Include="Rock\Rock.ActivityDesignerLibrary.dll" />
+    <Content Include="Rock\Rock.ActivityDesignerLibrary.pdb" />
+    <Content Include="Rock\Rock.Common.dll" />
+    <Content Include="Rock\Rock.Common.pdb" />
+    <Content Include="Rock\Rock.Dyn.Comm.dll" />
+    <Content Include="Rock\Rock.Dyn.Comm.pdb" />
+    <Content Include="Rock\Rock.Dyn.Core.dll" />
+    <Content Include="Rock\Rock.Dyn.Core.pdb" />
+    <Content Include="Rock\Rock.Dyn.Msg.dll" />
+    <Content Include="Rock\Rock.Dyn.Msg.pdb" />
+    <Content Include="Rock\Rock.Orm.Common.dll" />
+    <Content Include="Rock\Rock.Orm.Common.pdb" />
+    <Content Include="Rock\Rock.Orm.Data.dll" />
+    <Content Include="Rock\Rock.Orm.Data.pdb" />
+    <Content Include="Rock\Rock.SystemService.dll" />
+    <Content Include="Rock\Rock.SystemService.pdb" />
+    <Content Include="Rock\Rock.Template.dll" />
+    <Content Include="Rock\Rock.Template.pdb" />
+    <Content Include="Rock\System.Data.SQLite.dll" />
+    <Content Include="Rock\XTemplate.dll" />
+    <Content Include="Rock\XTemplate.pdb" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

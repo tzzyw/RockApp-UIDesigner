@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>IC卡初始化</title>
+    <script type="text/javascript">
+        function readCard() {            
+            clearData();
+            //参数说明：1.test 表明是测试服务是否可以调用。2.port 读卡器端口。3.sector IC卡扇区。4.whichblock 块
+            var executableFullPath = "C://Card//ICCard.exe read 3 1 0 0";
+            try {
+                var shellActiveXObject = new ActiveXObject("WScript.Shell");
+                if (!shellActiveXObject) {
+                    alert('WScript.Shell');
+                    return;
+                }
+                shellActiveXObject.Run(executableFullPath, 1, false);
+                shellActiveXObject = null;
+            }
+            catch (errorObject) {
+            }
+            setTimeout("getData()", 1000);            
+        }
+
+        // 获取数据
+        function getData() {
+            try {
+                var fso, file, data;
+                fso = new ActiveXObject("Scripting.FileSystemObject");
+                file = fso.OpenTextFile("C:\\card.cnp", 1);
+                data = file.ReadLine();
+                document.getElementById("txtreadData").value = data;
+                file.Close();
+            }
+            catch (e) {
+                alert(e);
+            }
+            clearData();
+        }
+        //清空数据
+        function clearData() {
+            try {
+                var fso, file;
+                fso = new ActiveXObject("Scripting.FileSystemObject");
+                file = fso.OpenTextFile("C:\\card.cnp", 2, true);
+                file.Write("empty");
+                file.Close();
+            }
+            catch (e) {
+                alert(e);
+            }
+        }
+        //写入数据
+        function writeCard() {
+            var writevalue = document.getElementById("writetext").value;
+
+            if (writevalue.length == 0) {
+                alert("请输入卡号!");
+                return;
+            }
+
+            if (isNaN(writevalue)) {
+                alert("卡号必须是数字!");
+                return;
+            }
+            if (confirm("请核对初始化的卡号是否和IC卡的编号一致!")) {
+                //参数说明：1.test 表明是测试服务是否可以调用。2.port 读卡器端口。3.sector IC卡扇区。4.whichblock 块
+             
+                var executableFullPath = "C://Card//ICCard.exe write 3 1 0 " + writevalue;
+                try {
+                    var shellActiveXObject = new ActiveXObject("WScript.Shell");
+                    if (!shellActiveXObject) {
+                        alert('WScript.Shell');
+                        return;
+                    }
+                    shellActiveXObject.Run(executableFullPath, 1, false);
+                    shellActiveXObject = null;
+                }
+                catch (errorObject) {
+                }
+                clearData();
+                alert("IC卡初始化完成!");
+            }           
+        }   
+    </script>
+</head>
+<body>
+    <input id="txtreadData" type="text" readonly="readonly" /> <input type="button" value=" 读 卡 " onclick="readCard()" /><br />
+    <input id="writetext" type="text" /> <input type="button" value="初始化" onclick="writeCard()" />
+</body>
+</html>

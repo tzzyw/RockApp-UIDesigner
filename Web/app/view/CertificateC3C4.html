@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>碳三碳四混合烃合格证</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/certificatePage.js"></script>
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            /*background-color: silver;*/
+            overflow: auto;
+        }
+
+        input {
+            border: 0;
+            background: #ffffff;
+            text-align:center;
+        }
+
+        .bordertable {
+            border: 1px solid black;
+            border-collapse: collapse;
+            margin: 3px;
+            text-align: center;
+        }
+
+            .bordertable td {
+                border: 1px solid black;
+                padding-left: 3px;
+                height: 22px;
+                font-size: 12pt;
+            }
+    </style>
+</head>
+<body>
+    <div style="margin: 0 auto; width: 650px">
+        <table style="width: 100%">
+            <tr>
+                <td style="width: 100%; height: 32px;text-align:right">YZLH-2-01-011R20<input id="product" value="碳三碳四混合烃" type="hidden" /></td>
+            </tr>
+            <tr>
+                <td style="width: 100%; height: 37px;text-align:center">
+                    南 京 扬 子 石 化 炼 化 有 限 责 任 公 司
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 640px; height: 37px; text-align: center">
+                    <span style="font-size: 23pt; text-decoration: underline"><strong>产 品 质 量 合 格 证</strong></span>
+                </td>
+            </tr>
+        </table>
+        <table style="width: 100%">
+            <tr>
+                <td style="width: 300px; height: 21px;">
+                    本产品执行标准：Q/320191 YZLH 06
+                </td>
+                <td style="width: 340px; height: 21px; text-align:right">
+                    检验日期:<input id="txtexamineDate" class="smallInput" type="text" /><!--<input id="lbl年" runat="server" Width="150px"></asp:Label>-->
+                </td>
+            </tr>
+        </table>
+        <table class="bordertable" style="height: 409px; background-image: url(../../Images/GZ.png); background-repeat: no-repeat; background-position: 390px 250px; ">
+            <tbody>
+                <tr>
+                    <td style="width: 41%; letter-spacing: 0.1em;">
+                        产品名称
+                    </td>
+                    <td style="width: 20%;">
+                        贮存批号
+                    </td>
+                    <td class="style1" style="letter-spacing: 0.1em;">
+                        出厂数量(吨)
+                    </td>
+                    <td style="width: 20%; letter-spacing: 0.1em;">
+                        车号
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 41%;">
+                        碳三碳四混合烃
+                    </td>
+                    <td style="width: 20%;">
+                        <input id="txtstorageBatch" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td class="style1">
+                        <input id="txt出厂数量" class="smallInput" type="text" />
+                    </td>
+                    <td style="width: 20%;">
+                        <input id="txt发往地点" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; letter-spacing: 0.5em">
+                        项目
+                    </td>
+                    <td style="width: 20%; letter-spacing: 0.5em;">
+                        指标
+                    </td>
+                    <td style="letter-spacing: 0.5em" class="style1">
+                        实际
+                    </td>
+                    <td style="width: 20%;">
+                        试验方法
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 2px">
+                        C<sub>3</sub>+C<sub>4</sub>总烃含量,%(质量分数)不小于
+                    </td>
+                    <td style="width: 20%;">
+                        95.0
+                    </td>
+                    <td class="style1">
+                        <input id="txtc3C4" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 20%;">
+                        SH/T 1492
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">
+                        <span style="float: left">总硫,mg/kg</span><span style="float: right">不大于</span>
+                    </td>
+                    <td style="width: 20%;">
+                        300
+                    </td>
+                    <td class="style1">
+                        <input id="txtzongl" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 20%;">SH/T 0689-2000</td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">
+                        游离水
+                    </td>
+                    <td style="width: 20%;">
+                        无
+                    </td>
+                    <td class="style1">
+                        <input id="txtyouls" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;">
+                        目视
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">&nbsp;</td>
+                    <td style="width: 20%;">&nbsp;</td>
+                    <td class="style1">&nbsp;</td>
+                    <td style="width: 25%;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">&nbsp;</td>
+                    <td style="width: 20%;">&nbsp;</td>
+                    <td class="style1">&nbsp;</td>
+                    <td style="width: 25%;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">&nbsp;</td>
+                    <td style="width: 20%;">&nbsp;</td>
+                    <td class="style1">&nbsp;</td>
+                    <td style="width: 25%;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">&nbsp;</td>
+                    <td style="width: 20%;">&nbsp;</td>
+                    <td class="style1">&nbsp;</td>
+                    <td style="width: 25%;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">&nbsp;</td>
+                    <td style="width: 20%;">&nbsp;</td>
+                    <td class="style1">&nbsp;</td>
+                    <td style="width: 25%;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">&nbsp;</td>
+                    <td style="width: 20%;">&nbsp;</td>
+                    <td class="style1">&nbsp;</td>
+                    <td style="width: 25%;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">&nbsp;</td>
+                    <td style="width: 20%;">&nbsp;</td>
+                    <td class="style1">&nbsp;</td>
+                    <td style="width: 25%;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">&nbsp;</td>
+                    <td style="width: 20%;">&nbsp;</td>
+                    <td class="style1">&nbsp;</td>
+                    <td style="width: 25%;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="width: 41%; text-align: left; padding-left: 7px; padding-right: 10px">&nbsp;</td>
+                    <td style="width: 20%;">&nbsp;</td>
+                    <td class="style1">&nbsp;</td>
+                    <td style="width: 25%;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td style="height: 50px; text-align: left; padding-left: 7px; padding-right: 20px;"
+                        colspan="4">
+                        质量判定：<input id="txtcomment" style="width:35%" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height: 60px; text-align: left; padding-left: 7px; padding-right: 20px">
+                        质量检验员:<input id="txtinspector" style="width:45%" type="text" readonly="readonly" />
+                    </td>
+                    <td style="height: 60px; text-align: center; padding-left: 7px; padding-right: 20px;"
+                        colspan="3">
+                        安全生产部盖章
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table style="width: 100%">
+            <tr>
+                <td style="text-align: center;">
+                    <asp:Image ID="Image1" runat="server" />
+                </td>
+                <td style="text-align: center;">
+                    &nbsp;&nbsp;打印时间: <input id="txtprintTime" type="text" readonly="readonly" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

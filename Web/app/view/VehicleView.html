@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>危险品运输车辆管理</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/vehicleView.js"></script>
+</head>
+<body>
+    <div id="mainbody" style="position: absolute; width: 100%; height: 100%;">
+    </div>
+    <div id="mainPage" style="width: 100%; height: 95%">
+        <table style="width: 98%">
+            <tr> <td class="label2">车牌号</td><td class="inputtd2"><input id="txtvehicleNum" class="smallInput" type="text" /></td><td class="label2">承运单位</td><td class="inputtd2"><input id="txtbocarrier" class="smallInput" type="text" /></td></tr>
+            <tr> <td class="label2">核定装载量(kg)</td><td class="inputtd2"><input id="txtapprovedLoad" class="smallInput" type="text" /></td><td class="label2">装载货物</td><td class="inputtd2"><input id="txtcargo" class="smallInput" type="text" /></td></tr>
+            <tr> <td class="label2">车头行驶证到期</td><td class="inputtd2"><input id="txtheadDrivingDate" class="smallInput" type="text" /></td><td class="label2">车头道路运输证到期</td><td class="inputtd2"><input id="txtheadTransportDate" class="smallInput" type="text" /></td></tr>
+            <tr> <td class="label2">车挂行驶证到期</td><td class="inputtd2"><input id="txttrailerDrivingDate" class="smallInput" type="text" /></td><td class="label2">车挂道路运输证到期</td><td class="inputtd2"><input id="txttrailerTransportDate" class="smallInput" type="text" /></td></tr>
+            <tr> <td class="label2">容器检验日期</td><td class="inputtd2"><input id="txtcontainerCheckDate" class="smallInput" type="text" /></td><td class="label2">扬子通行证有效期</td><td class="inputtd2"><input id="txtyangziTransportDate" class="smallInput" type="text" /></td></tr>
+            <tr> <td class="label2">公安局通行证有效期</td><td class="inputtd2"><input id="txtpoliceDate" class="smallInput" type="text" /></td><td class="label2">推荐单位名称</td><td class="inputtd2"><input id="txtrecommend" class="smallInput" type="text" /></td></tr>
+            <tr> <td class="label2">审核意见</td><td class="inputtd2"><input id="txtauditOpinion" class="smallInput" type="text" /></td><td class="label2">审核单位</td><td class="inputtd2"><input id="txtauditDepart" class="smallInput" type="text" /></td></tr>
+            <tr> <td class="label2">审核人</td><td class="inputtd2"><input id="txtauditor" class="smallInput" type="text" /></td><td class="label2">签发日期</td><td class="inputtd2"><input id="txtissueDate" class="smallInput" type="text" /></td></tr>
+            <tr> <td class="label2">备注</td><td class="inputtd2"><input id="txtcomment" class="smallInput" type="text" /></td><td class="label2"></td><td class="inputtd2"></td></tr>
+        </table>
+    </div>    
+    <div id="vehicleDiv" style="width: 100%; height: 100%; background-color: White;">
+        <div id="vehicleGrid" style="width: 100%; height: 100%">
+        </div>
+    </div>
+    <div id="documentDiv" style="width: 100%; height: 100%">      
+        <div id="documentGrid" style="width: 100%; height: 90%">
+        </div>
+    </div>
+    <div id="pictureDiv" style="width: 100%; height: 100%">   
+        <div id="pictureDataView" style="width: 100%; height: 90%">
+        </div>
+    </div>   
+</body>
+</html>

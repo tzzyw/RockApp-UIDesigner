@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>客户维护</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../../resource/common/jquery.charfirst.pinyin.js"></script>
+    <script src="../controller/customerManage.js"></script>
+</head>
+<body>
+    <div id="mainPage" style="width: 100%; height: 100%">
+        <div id="toolBar" style="height: 30px; width: 100%">
+        </div>
+        <div id="listGrid" style="width: 100%; height: 95%">
+        </div>
+    </div>
+    <div id="editForm" style="z-index: 2; width: 700px; height: 350px; top: 200px; left: 250px; position: absolute; overflow: auto; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px;">
+        <div id="formItem">
+            <div style="width: 100%; height: 26px">
+                <div id="formTitle" style="width: 90%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700"></div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px" id="img_Close" />
+                </div>
+            </div>
+            <hr style="margin-top: 5px" />
+            <div id="editItem" style="width: 98%; margin-top: 15px">
+                <table style="width: 98%">
+                    <tr>
+                        <td class="label2">客户编码</td>
+                        <td class="inputtd2"><input id="txtcustomerCode" class="smallInput" type="text" /></td>
+                        <td class="label2">客户名称</td>
+                        <td class="inputtd2"><input id="txtcustomerName" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">客户类别</td>
+                        <td class="inputtd2"><input id="txtcategory" class="smallInput" type="text" /></td>
+                        <td class="label2">地址</td>
+                        <td class="inputtd2"><input id="txtaddress" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">联系电话</td>
+                        <td class="inputtd2"><input id="txttelephone" class="smallInput" type="text" /></td>
+                        <td class="label2">传真</td>
+                        <td class="inputtd2"><input id="txtfax" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">企业性质</td>
+                        <td class="inputtd2"><input id="txtnature" class="smallInput" type="text" /></td>
+                        <td class="label2">开户银行</td>
+                        <td class="inputtd2"><input id="txtbank" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">邮编</td>
+                        <td class="inputtd2"><input id="txtpostCode" class="smallInput" type="text" /></td>
+                        <td class="label2">业务范围</td>
+                        <td class="inputtd2"><input id="txtscope" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">业务开展地区</td>
+                        <td class="inputtd2"><input id="txtbusinessArea" class="smallInput" type="text" /></td>
+                        <td class="label2">银行账号</td>
+                        <td class="inputtd2"><input id="txtbankAccount" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">营业执照批准单位</td>
+                        <td class="inputtd2"><input id="txtapprovalBusinessLicense" class="smallInput" type="text" /></td>
+                        <td class="label2">营业执照号码</td>
+                        <td class="inputtd2"><input id="txtlicenseNumber" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">企业法人</td>
+                        <td class="inputtd2"><input id="txtlegalPerson" class="smallInput" type="text" /></td>
+                        <td class="label2">企业法人电话</td>
+                        <td class="inputtd2"><input id="txtlegalPersonTelephone" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">负责人</td>
+                        <td class="inputtd2"><input id="txthead" class="smallInput" type="text" /></td>
+                        <td class="label2">负责人电话</td>
+                        <td class="inputtd2"><input id="txtheadTelephone" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">经办人</td>
+                        <td class="inputtd2"><input id="txtoperator" class="smallInput" type="text" /></td>
+                        <td class="label2">经办人电话</td>
+                        <td class="inputtd2"><input id="txtoperatorTelephone" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">货物运输方式</td>
+                        <td class="inputtd2"><input id="txttransport" class="smallInput" type="text" /></td>
+                        <td class="label2">货物运输目的地</td>
+                        <td class="inputtd2"><input id="txtdestination" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">现固定资产总值</td>
+                        <td class="inputtd2"><input id="txtassetValue" class="smallInput" type="text" /></td>
+                        <td class="label2">企业成立时间</td>
+                        <td class="inputtd2"><input id="txtestablishTime" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">重合同守信用单位</td>
+                        <td class="inputtd2" style="text-align:left"><input id="chkkeepPromises" style="margin-left:25px" type="checkbox" /></td>
+                        <td class="label2">是否合同用户</td>
+                        <td class="inputtd2" style="text-align:left"><input id="chkcontractUser" style="margin-left:25px" type="checkbox" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">用于销售</td>
+                        <td class="inputtd2" style="text-align:left"><input id="chkforSale" style="margin-left:25px" type="checkbox" /></td>
+                        <td class="label2">用于采购</td>
+                        <td class="inputtd2" style="text-align:left"><input id="chkforPurchase" style="margin-left:25px" type="checkbox" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">是否可用</td>
+                        <td class="inputtd2" style="text-align:left"><input id="chkavailable" style="margin-left:25px" type="checkbox" /></td>
+                        <td class="label2">快查码</td>
+                        <td class="inputtd2"><input id="txtsearchCode" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">备注</td>
+                        <td class="inputtd2"><input id="txtcomment" class="smallInput" type="text" /></td>
+                        <td class="label2"></td>
+                        <td class="inputtd2"></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">企业基本情况</td>
+                        <td class="inputtd2" colspan="3">
+                            <textarea id="txtbasicSituation" rows="5" style="width: 91%; height: 60px" maxlength="250"></textarea>
+                        </td>
+
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div style="height: 10px"></div>
+        <div style="text-align: right">
+            <button class="btn" id="btn_Save" style="margin-right: 15px; margin-top: 5px; height: 28px">保存</button>
+            <button class="btn" id="btn_Cancle" style="margin-right: 30px; margin-top: 5px; height: 28px">取消</button>
+        </div>
+    </div>
+</body>
+</html>

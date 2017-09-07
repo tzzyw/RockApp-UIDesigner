@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>控制回路设备管理</title>
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/mainmenu.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/skins/terrace/dhtmlx.css" rel="stylesheet" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/JavaScript.js"></script>
+</head>
+<body>
+    <div id="mainbody" style="position: absolute; width: 100%; height: 95%;">
+    </div>
+    <div id="operate" style="width: 100%;height:100%">
+        <div id="toolBar" style="height: 30px; width: 98%; float: left; padding-bottom: 2px">
+        </div>
+        <div id="dataGrid" style="width: 99%; height: 90%;">
+        </div>
+    </div>
+    <div id="equipmentForm" style="z-index: 8; width: 750px; height: 370px; top: 200px; left: 250px; position: absolute; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; visibility: hidden">
+        <div style="width: 100%; height: 26px">
+            <div style="width: 90%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700">选择设备</div>
+            <div style="width: 25px; float: right; padding: 5px">
+                <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px" id="img_Close" />
+            </div>
+        </div>
+        <div id="equipmentLayout" style="width: 100%; height: 300px"></div>
+        <div style="text-align: right">
+            <button class="btn" id="equipment_Save" style="margin-right: 15px; margin-top: 5px; height: 28px">确定</button>
+            <button class="btn" id="equipment_Cancle" style="margin-right: 30px; margin-top: 5px; height: 28px">取消</button>
+        </div>
+    </div>
+    <div id="equipmentSelect" style="width: 100%; height: 100%">
+        <div>
+            设备搜索
+            <input id="txtEquipmentSearch" class="smallInput" type="text" />
+        </div>
+        <div id="equipmentGrid" style="width: 100%; height: 100%"></div>
+    </div>
+    <div id="equipmentCategoryForm" style="z-index: 8; width: 300px; height: 280px; top: 200px; left: 250px; position: absolute; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; visibility: hidden">
+        <div id="equipmentCategoryTree" style="background-color: White; border: 1px solid #C1C1C1; width: 300px; height: 280px"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>上传文件</title>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/uploadify/jquery.uploadify.min.js"></script>
+    <script src="../controller/uploadFile.js?v=3"></script>
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <link href="../../resource/uploadify/uploadify.css" rel="stylesheet" />
+</head>
+<body>
+    <form id="form1">
+        <!--该页面上传的文件都上传到根目录下的Upload目录中 -->
+        <div style="float: left">
+            <input type="file" name="uploadifyBtn" id="uploadify" style="" />
+        </div>
+        <div style="float: left">
+            &nbsp;
+            <a class="uploadify" style="width: 60px; height: 23px;">
+                <input id="Button1" type="button" class="uploadify-button" value="上  传" style="width: 60px; height: 23px; cursor: pointer" onclick="javascript: $('#uploadify').uploadify('upload', '*')" />&nbsp;
+            </a>
+            <a class="uploadify" style="width: 60px; height: 23px;">
+                <input id="Button2" type="button" value="取  消" class="uploadify-button" style="width: 60px; height: 23px; cursor: pointer" onclick="javascript: $('#uploadify').uploadify('cancel', '*')" />
+            </a>
+        </div>
+        <br />
+        <div id="fileQueue">
+        </div>
+    </form>
+</body>
+</html>

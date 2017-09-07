@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head >
+    <title>采购计划维护</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/purchasePlanSubmission.js" type="text/javascript"></script>
+</head>
+<body>
+    <div id="mainbody" style="position: absolute; width: 100%; height: 100%;">
+        <div id="master" style="width: 100%; height: 100%; background-color: White;">
+            <div id="toolBar">
+            </div>
+            <div id="masterEditItem" style="width: 80%;">
+                <!--<table style="width: 100%">
+                    <tr>
+                        <td class="label" style="width: 6%">采购计划编码
+                        </td>
+                        <td class="inputtd" style="width: 14%">
+                            <input id="txtPurchasePlanCode" class="smallInput" type="text" maxlength="30" /><input id="txtPurchasePlanID" class="smallInput" type="hidden" />
+                        </td>
+                        <td class="label" style="width: 6%">计划名称
+                        </td>
+                        <td class="inputtd" style="width: 14%">
+                            <input id="txtPurchasePlanName" class="smallInput" type="text" maxlength="150" />
+                        </td>
+                        <td class="label" style="width: 6%">提报日期
+                        </td>
+                        <td class="inputtd" style="width: 14%">
+                            <input id="txtApplyDate" class="smallInput" type="text" maxlength="30" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" style="width: 6%">提报人
+                        </td>
+                        <td class="inputtd" style="width: 14%">
+                            <input id="txtHandler" class="smallInput" type="text" />
+                        </td>
+                        <td class="label" style="width: 6%">备注
+                        </td>
+                        <td class="inputtd" style="width: 14%">
+                            <input id="txtComment" class="smallInput" type="text" />
+                        </td>
+                        <td class="label" style="width: 6%"></td>
+                        <td class="inputtd" style="width: 14%"></td>
+                    </tr>
+                </table>-->
+            </div>
+            <div id="detailGrid" style="width: 100%; height: 90%">
+            </div>
+        </div>
+    </div>
+    <div id="detailForm" style="width: 450px; height: 225px; top: 300px; left: 200px; position: absolute; z-index: 30; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; display: none">
+        <div id="formItem">
+            <div style="width: 100%; height: 26px">
+                <div id="detailFormTitle" style="width: 90%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700"></div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px; cursor: pointer" id="imgDetailForm_Close" />
+                </div>
+            </div>
+            <hr style="margin-top: 5px" />
+            <div id="detailEditItem" style="width: 100%; margin-top: 15px">
+            </div>
+
+          <!--  <table style="width: 98%">
+                <tr style="display: none">
+                    <td class="label">流水号
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtPurchasePlanDetailID" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">物料
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtMaterial" class="smallInput" type="text" /><input id="txtMaterialID" type="hidden" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">物料等级
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtMaterialLevel" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">计划数量
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtQuantity" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">备注
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtDetailComment" class="smallInput" type="text" />
+                    </td>
+                </tr>
+            </table>-->
+
+        </div>
+        <div style="height: 3px"></div>
+        <div style="text-align: right">
+            <button class="btn" id="btnDetailForm_Save" style="margin-right: 15px; margin-top: 5px; height: 28px">确定</button>
+            <button class="btn" id="btnDetailForm_Cancle" style="margin-right: 30px; margin-top: 5px; height: 28px">取消</button>
+        </div>
+    </div>
+    <div id="mainReferForm" style="z-index: 35; width: 500px; height: 250px; top: 200px; left: 250px; position: absolute; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; visibility: hidden">
+        <div id="mainReferGrid" style="background-color: White; border: 1px solid #C1C1C1; width: 500px; height: 250px"></div>        
+    </div>
+</body>
+</html>

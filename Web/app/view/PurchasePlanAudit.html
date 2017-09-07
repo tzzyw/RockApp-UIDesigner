@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>采购计划审批</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/purchasePlanAudit.js"></script>
+</head>
+<body>
+    <div id="mainbody" style="position: absolute; width: 100%; height: 100%;">
+    </div>
+    <div id="purchasePlanDiv" style="width: 100%; height: 100%; background-color: White;">
+        <div id="toobar">
+        </div>
+        <div id="purchasePlanGrid" style="width: 100%; height: 88%">
+        </div>
+    </div>
+    <div id="purchasePlanDetailDiv" style="width: 100%; height: 100%; background-color: White;">
+        <div id="purchasePlanDetailGrid" style="width: 100%; height: 100%">
+        </div>
+    </div>
+    <div id="auditHistoryDiv" style="width: 100%; height: 100%; background-color: White;">
+        <div id="auditHistoryGrid" style="width: 100%; height: 100%">
+        </div>
+    </div>
+    <div id="auditForm" style="width: 450px; height: 170px; top: 300px; left: 200px; position: absolute; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; display: none">
+        <div>
+            <div style="width: 100%; height: 26px">
+                <div id="auditFormTitle" style="width: 90%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700"></div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px; cursor: pointer" id="audit_Close" />
+                </div>
+            </div>
+            <hr style="margin-top: 5px" />
+            <table style="width: 98%">
+
+                <tr>
+                     <td id="lblOpinion" class="label">    
+                    </td>
+                    <td class="inputtd">
+                        <textarea id="txtOpinion" rows="5" style="width: 350px" maxlength="250"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="height: 3px"></div>
+        <div style="text-align: right">
+            <button class="btn" id="audit_Save" style="margin-right: 15px; margin-top: 5px; height: 28px">确定</button>
+            <button class="btn" id="audit_Cancle" style="margin-right: 30px; margin-top: 5px; height: 28px">取消</button>
+        </div>
+    </div>
+    <div id="detailForm" style="width: 450px; height: 170px; top: 300px; left: 200px; position: absolute; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; display: none">
+        <div>
+            <div style="width: 100%; height: 26px">
+                <div style="width: 90%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700">计划明细调整</div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px; cursor: pointer" id="detail_Close" />
+                </div>
+            </div>
+            <hr style="margin-top: 5px" />
+            <table style="width: 98%">
+                <tr>
+                    <td class="label">计划数量
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtQuantity" class="smallInput" type="text" /><input id="txtDetailID" type="hidden" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">单价
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtPrice" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">金额
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtAmount" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="height: 3px"></div>
+        <div style="text-align: right"><input id="txtType" type="hidden" /> 
+            <button class="btn" id="detail_Save" style="margin-right: 15px; margin-top: 5px; height: 28px">确定</button>
+            <button class="btn" id="detail_Cancle" style="margin-right: 30px; margin-top: 5px; height: 28px">取消</button>
+        </div>
+    </div>
+
+</body>
+</html>

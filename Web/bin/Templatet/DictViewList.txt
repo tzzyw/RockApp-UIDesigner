@@ -1,0 +1,391 @@
+﻿<# Rock.Dyn.Core.DynObject dictForm=Data["dictForm"] as  Rock.Dyn.Core.DynObject;
+ string modelType = dictForm["ModelType"] as string;
+ string modelTypeName = dictForm["ModelTypeName"] as string;
+ string modelObjeName=modelType.Substring(0, 1).ToLower()+ modelType.Substring(1);
+ Rock.Dyn.Core.DynObject dataGrid=dictForm["DataGrid"] as  Rock.Dyn.Core.DynObject;
+ List<Rock.Dyn.Core.DynObject> gridColumns=dataGrid["GridColumns"] as List<Rock.Dyn.Core.DynObject>;
+ List<Rock.Dyn.Core.DynObject> queryItems=dictForm["QueryItems"] as List<Rock.Dyn.Core.DynObject>;
+ Rock.Dyn.Core.DynObject queryItemModel = null;
+ Rock.Dyn.Core.DynObject gridColumnModel = null;
+ bool hasDate = false;
+ bool hasQueryDate = false;
+ bool hasQueryPop = false;
+ List<string> dateControlLists = new List<string>();
+ List<string> beginDateLists = new List<string>();
+ List<string> endDateLists = new List<string>();
+ int columnTotalWidth = 0;
+ string queryType = "";
+ string displayName = "";
+ string queryItemName = "";
+ string inputType = "";
+ string gridColumnName = "";
+ string structName = "";
+ string queryForm = "";
+ string sql = "";
+ string referClause = "";
+ for (var i = 0; i < queryItems.Count; i++)
+ {
+    queryItemModel = queryItems[i] ;
+	queryItemName = queryItemModel["QueryItemName"] as string;
+	queryForm = queryItemModel["QueryForm"] as string;
+	if(queryForm == "Date")
+	{   
+		beginDateLists.Add("\"begin" + queryItemName + "\"");
+		endDateLists.Add("\"end" + queryItemName + "\"");			
+		hasQueryDate = true;
+		hasDate = true;		  
+	}
+	if(queryForm == "Tree")
+	{
+	    hasQueryPop = true;
+	}
+ }
+
+for (var i = 0; i < gridColumns.Count; i++) {
+	gridColumnModel = gridColumns[i];
+	columnTotalWidth += (int)(gridColumnModel["GridWidth"]);	
+}	
+
+ #>
+$(function () {
+    //初始化系统通用变量
+    var toolBar, listGrid, editState, editForm, dictDataList, sqlStr,serverDate,
+      <#= modelObjeName #> = null,
+	  editItem = $("#editItem"),
+      dictDataList = new rock.JsonList();
+    window.dhx_globalImgPath = "/resource/dhtmlx/codebase/imgs/";
+    //加载动态脚本
+    var jsTypes = "ISystemService,DataTable,DataRow,DataColumn,<#= modelType #>";
+    $.getScript('/LoadDomainJS.ashx?JsTypes=' + jsTypes, function () {
+ 	//处理初始化加载数据
+<#     
+    for (var i = 0; i < gridColumns.Count; i++)
+    {
+        gridColumnModel = gridColumns[i] ;
+		gridColumnName = gridColumnModel["GridColumnName"] as string;
+		structName = gridColumnModel["StructName"] as string;
+        if (i < gridColumns.Count - 1)
+        {
+            if (!string.IsNullOrEmpty(structName))
+            {
+                if (structName.Trim() == "")
+                {
+                    sql += "[" + modelType + "].[" + gridColumnName + "], ";
+                }
+                else
+                {
+                    sql += "[" + structName + "].[" + structName + "Name], ";
+                    referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
+                }
+            }
+            else
+            {
+				if(gridColumnModel["DataType"] as string == "Date")
+				{
+					sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
+				}
+				else
+				{
+					sql += "[" + modelType + "].[" + gridColumnName + "], ";
+				}
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(structName))
+            {
+                if (structName.Trim() == "")
+                {
+                    sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
+                }
+                else
+                {
+                    sql += "[" + structName + "].[" + structName + "Name] from [" + modelType + "]";
+                    referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
+                }
+            }
+            else
+            {
+				if(gridColumnModel["DataType"] as string == "Date")
+				{
+					sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + modelType + "]";
+				}
+				else
+				{
+					sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
+				}
+            }
+			if(referClause == "")
+			{
+			    sql += " where 1=1 ";
+			}
+			else
+			{
+			    sql += referClause ;
+			}            
+        }
+    }	
+#>
+		sqlStr = "select top 100 [<#= modelType #>].[<#= modelType #>ID], <#= sql #> ";
+		ISystemService.execQuery.sqlString = sqlStr;
+		rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+		if (ISystemService.execQuery.success) {
+			(function (e) {
+		        rock.tableToListGrid(e, listGrid, dictDataList);
+            }(ISystemService.execQuery.resultValue));		
+        }  
+
+	<#if(hasQueryDate)
+	{#>
+		//查询日期赋初值
+		rock.AjaxRequest(ISystemService.getServerDate, rock.exceptionFun);
+		if (ISystemService.getServerDate.success) {
+			(function (e) {
+				serverDate = e.value;
+				var date = new Date(serverDate.replace('-', '/'));
+				var beginDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-1';
+					<#for (int i = 0; i < beginDateLists.Count; i++)
+					{#>
+				toolBar.setValue(<#= beginDateLists[i] #>, beginDate);
+					<#}#>
+					<#for (int i = 0; i < endDateLists.Count; i++)
+					{#>
+				toolBar.setValue(<#= endDateLists[i] #>, serverDate);
+					<#}#>
+			}(ISystemService.getServerDate.resultValue));
+		}
+	<#}#>
+    });
+
+	//初始化工具条同时处理查询条件
+	toolBar = new dhtmlXToolbarObject("toolBar", 'dhx_skyblue');
+	toolBar.setIconsPath("/resource/dhtmlx/codebase/imgs");
+	<#for (var i = 0; i < queryItems.Count; i++)
+    {
+        queryItemModel = queryItems[i] ;
+		queryItemName = queryItemModel["QueryItemName"] as string;
+		displayName = queryItemModel["DisplayName"] as string;
+		queryForm = queryItemModel["QueryForm"] as string;
+		switch (queryForm)
+		{
+			case "Date": 
+		        dateControlLists.Add("toolBar.getInput(\"begin" + queryItemName + "\")");
+			    dateControlLists.Add("toolBar.getInput(\"end" + queryItemName + "\")");
+		        beginDateLists.Add("\"begin" + queryItemName + "\"");
+			    endDateLists.Add("\"end" + queryItemName + "\"");			
+			    hasQueryDate = true;
+		        hasDate = true;#>
+	toolBar.addText("<#= queryItemName#>Begin", null, "<#= displayName #>");
+    toolBar.addInput("begin<#= queryItemName#>", null, "", 75);
+    toolBar.addText("<#= displayName #>End", null, "-");
+    toolBar.addInput("end<#= queryItemName#>", null, "", 75);
+			<# break;
+			case "Fuzzy":#>
+	toolBar.addText("<#= queryItemName #>", null, "<#= displayName #>");
+	toolBar.addInput("txt<#= queryItemName #>Search", null, "", 100);
+			<# break;
+			case "Value": #>
+	toolBar.addText("<#= queryItemName #>", null, "<#= displayName #>");
+	toolBar.addInput("txt<#= queryItemName #>Search", null, "", 100);
+			<# break;
+			case "Combox": #>
+	toolBar.addButtonSelect("combo<#= queryItemName #>Search", null, "<#= displayName #>", [], null, null, true, true,15,"select")
+			<# break;
+			case "Tree": #>
+	toolBar.addText("<#= queryItemName #>", null, "<#= displayName #>");
+	toolBar.addInput("txt<#= queryItemName #>Search", null, "", 100);
+			<# break;
+			case "Quick": #>
+	toolBar.addText("<#= queryItemName #>", null, "<#= displayName #>");
+	toolBar.addInput("txt<#= queryItemName #>Search", null, "", 100);
+			<# break;
+        }#>	   
+    <#}#>
+    toolBar.addButton("query", null, "查询");
+	toolBar.attachEvent("onClick", function (id) {
+	    switch (id) {
+		<#if(queryItems.Count > 0){#>
+		    case "query":
+		  <#for (var i = 0; i < queryItems.Count; i++)
+            {
+                queryItemModel = queryItems[i] ;
+				queryItemName = queryItemModel["QueryItemName"] as string;
+				displayName = queryItemModel["DisplayName"] as string;
+				queryForm = queryItemModel["QueryForm"] as string;
+	            if(queryForm == "Date")
+	            {#>
+                if ($.trim(toolBar.getValue("begin<#= queryItemName #>")) == "") {
+                    alert("起始<#= displayName #>不能为空！");
+                    return;
+                }			    
+                if (!rock.chkdate(toolBar.getValue("begin<#= queryItemName #>"), "-")) {
+                    alert("起始<#= displayName #>格式不正确,正确格式为 2010-10-10！");
+                    return false;
+                }
+                if ($.trim(toolBar.getValue("end<#= queryItemName #>")) == "") {
+                    alert("截止<#= displayName #>不能为空！");
+                    return;
+                }
+                if (!rock.chkdate(toolBar.getValue("end<#= queryItemName #>"), "-")) {
+                    alert("截止<#= displayName #>格式不正确,正确格式为 2010-10-10！");
+                    return false;
+                }
+				<#}#>
+           <#}#>
+			    sqlStr = "select [<#= modelType #>].[<#= modelType #>ID], <#= sql #>";
+		  <#for (var i = 0; i < queryItems.Count; i++)
+            {
+                queryItemModel = queryItems[i] ;
+				queryItemName = queryItemModel["QueryItemName"] as string;
+				queryType = queryItemModel["QueryType"] as string;
+				structName = queryItemModel["StructName"] as string;
+				displayName = queryItemModel["DisplayName"] as string;
+				queryForm = queryItemModel["QueryForm"] as string;
+					switch (queryForm)
+					{
+						case "Date":#>
+				sqlStr += " and [<#= modelType #>].[<#= queryItemName #>] between '" + toolBar.getValue("begin<#= queryItemName #>") + " 0:0:0' AND '" + toolBar.getValue("end<#= queryItemName #>") + " 23:59:59' ";
+						<# break;
+						case "Fuzzy":
+							if(queryType == "Struct"){#>
+                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				    sqlStr += " and [<#= structName #>].[<#= structName #>Name] like '%" + toolBar.getValue("txt<#= queryItemName #>Search") + "%'";
+                }
+				            <#}else{#>
+                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				    sqlStr += " and [<#= modelType #>].[<#= queryItemName #>] like '%" + toolBar.getValue("txt<#= queryItemName #>Search") + "%'";
+                }
+							<#}#>
+						<# break;
+						case "Value": #>							
+                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				    sqlStr += " and [<#= modelType #>].[<#= queryItemName #>] = '" + toolBar.getValue("txt<#= queryItemName #>Search") + "'";
+                }							
+						<# break;
+						case "Tree":							
+							if(queryType == "Struct"){#>
+                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				    sqlStr += " and [<#= modelType #>].[<#= queryItemName #>ID] = " + $("#txt<#= queryItemName #>ID").val() ;
+                }
+				            <#}else{#>
+                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				    sqlStr += " and [<#= modelType #>].[<#= queryItemName #>] = '" + $("#txt<#= queryItemName #>Search").val() + "'";
+                }
+				            <#}#>							
+						<# break;
+						case "Combox":							
+							if(queryType == "Struct"){#>
+                if (toolBar.getItemText("combo<#= queryItemName #>Search") != "<#= displayName #>") {
+				    sqlStr += " and [<#= structName #>].[<#= structName #>Name] = '" + toolBar.getItemText("combo<#= queryItemName #>Search") + "'";
+                }
+				            <#}else{#>
+                if (toolBar.getItemText("combo<#= queryItemName #>Search") != "<#= displayName #>") {
+				    sqlStr += " and [<#= modelType #>].[<#= queryItemName #>] = '" + toolBar.getItemText("combo<#= queryItemName #>Search") + "'";
+                }
+							<#}#>
+						<# break;
+						case "Quick":#>							
+                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				    sqlStr += " and [<#= structName #>].[<#= structName #>Name] like '%" + toolBar.getValue("txt<#= queryItemName #>Search") + "%'";
+                }							
+						<# break;
+					}#>	
+           <#}#>
+                ISystemService.execQuery.sqlString = sqlStr;
+                rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+                if (ISystemService.execQuery.success) {
+                    (function (e) {
+                        rock.tableToListGrid(e, listGrid, dictDataList)
+                    }(ISystemService.execQuery.resultValue));
+                }
+                break;
+        <#}#>
+        }
+    });
+	<#for (var i = 0; i < queryItems.Count; i++)
+    {
+        queryItemModel = queryItems[i] ;
+		queryItemName = queryItemModel["QueryItemName"] as string;
+		displayName = queryItemModel["DisplayName"] as string;
+		queryForm = queryItemModel["QueryForm"] as string;
+		if(queryForm == "Tree"){#>
+    toolBar.getInput("txt<#= queryItemName #>Search").id = "txt<#= queryItemName #>Search";
+		<#}#>
+    <#}#>		
+
+    //初始化<#= modelTypeName #>列表
+    listGrid = new dhtmlXGridObject("listGrid");
+    listGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
+    listGrid.setSkin("dhx_skyblue");
+	<# var headerString = "序号,,"; 
+		var columnAlignString = "center,left,";
+		var columnWidthString = "40,0,";
+		var columnSortString = "na,na,";
+		var columnTypeString = "cntr,ro,";	
+		for (var i = 0; i < gridColumns.Count; i++) {
+			gridColumnModel = gridColumns[i];
+			if (i < gridColumns.Count - 1) {
+				headerString += gridColumnModel["GridHeader"] + ",";
+				columnAlignString += gridColumnModel["GridColAlign"] + ",";
+				columnWidthString += gridColumnModel["GridWidth"] + ",";
+				columnSortString += gridColumnModel["GridColSorting"] + ",";
+				columnTypeString += gridColumnModel["GridColType"] + ",";
+			}
+			else
+			{
+				headerString += gridColumnModel["GridHeader"];
+				columnAlignString += gridColumnModel["GridColAlign"];
+				if(columnTotalWidth > 1000)
+				{
+				    columnWidthString += gridColumnModel["GridWidth"];
+				}
+				else
+				{
+					columnWidthString += "*";
+				}
+				columnSortString += gridColumnModel["GridColSorting"];
+				columnTypeString += gridColumnModel["GridColType"];
+			}		
+		}	
+    #>
+
+	listGrid.setHeader("<#= headerString #>");
+	listGrid.setInitWidths("<#= columnWidthString #>");
+	listGrid.setColAlign("<#= columnAlignString #>");
+	listGrid.setColSorting("<#= columnSortString #>");
+	listGrid.setColTypes("<#= columnTypeString #>");
+    listGrid.enableDistributedParsing(true, 20);
+    listGrid.attachEvent("onRowDblClicked", function (rowID, cIndex) {	   
+		alert("尚未设定查看明细弹窗!");
+    });   
+    listGrid.init();  
+   
+    <# if(hasQueryPop)
+    { #>
+    $('#mainPage').mousedown(function (e) {
+		<#for (var i = 0; i < queryItems.Count; i++)
+		{
+		    queryItemModel = queryItems[i] ;
+			queryItemName = queryItemModel["QueryItemName"] as string;
+			queryForm = queryItemModel["QueryForm"] as string;
+			if(queryForm == "Tree"){#>
+        if (e.srcElement.id != "txt<#= queryItemName #>Search") {
+            hide<#= queryItemName #>Pop();
+        }
+		    <#}#>   
+		<#}#> 		      
+    }); 	
+    <#}#>	
+   
+    <#if(hasDate)
+    {#>	
+	//日期控件处理 
+	var dateboxArray = [];
+        <#for (int i = 0; i < dateControlLists.Count; i++)
+        {#>
+    dateboxArray.push(<#= dateControlLists[i] #>);            
+        <#}#>
+	myCalendar = new dhtmlXCalendarObject(dateboxArray);
+    myCalendar.loadUserLanguage('cn');
+    <#}#>
+})

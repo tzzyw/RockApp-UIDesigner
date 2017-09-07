@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>维护计量单</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/salWeightMaintain.js"></script>
+</head>
+<body>
+    <div id="mainPage" style="width: 100%; height: 100%">
+        <div id="toolBar" style="height: 30px; width: 100%">
+        </div>
+        <div id="listGrid" style="width: 100%; height: 95%">
+        </div>
+    </div>
+    <div id="editForm" style="z-index: 2; width: 650px; height: 300px; top: 200px; left: 250px; position: absolute; overflow: auto; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px;">
+        <div id="formItem">
+            <div style="width: 100%; height: 26px">
+                <div id="formTitle" style="width: 90%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700"></div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px" id="img_Close" />
+                </div>
+            </div>
+            <hr style="margin-top: 5px" />
+            <div id="editItem" style="width: 98%; margin-top: 15px">
+                <table style="width: 98%">
+                    <tr>
+                        <td class="label2">计量单编号</td>
+                        <td class="inputtd2"><input id="txtmeasureNum" class="smallInput" type="text" readonly="readonly" /></td>
+                        <td class="label2">提货单号</td>
+                        <td class="inputtd2"><input id="txtladeBillNo" class="smallInput" type="text" readonly="readonly" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">客户名称</td>
+                        <td class="inputtd2"><input id="txtcustomer" class="smallInput" type="text" readonly="readonly" /><input id="txtcustomerID" type="hidden" /></td>
+                        <td class="label2">产品名称</td>
+                        <td class="inputtd2">
+                            <input id="txtmaterial" class="smallInput" type="text" readonly="readonly" />
+                            <!--<input id="txtmeasureType" class="smallInput" type="text" />-->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label2">车号</td>
+                        <td class="inputtd2"><input id="txtvehicleNum" class="smallInput" type="text" readonly="readonly" /></td>
+                        <td class="label2">计划数量(吨)</td>
+                        <td class="inputtd2"><input id="txtplanQuantity" class="smallInput" type="text" readonly="readonly" /></td>
+                    </tr>
+                    <tr>
+                        <td id="pzsj" class="label2">皮重时间</td>
+                        <td class="inputtd2"><input id="txttareTime" class="smallInput" type="text" readonly="readonly" /></td>
+                        <td id="pz" class="label2">皮重(吨)</td>
+                        <td class="inputtd2"><input id="txttare" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td id="sby" class="label2">轻车司磅员</td>
+                        <td class="inputtd2"><input id="txtlightOperator" class="smallInput" type="text" readonly="readonly" /></td>
+                        <td class="label2">发货罐体</td>
+                        <td class="inputtd2"><input id="txtdeliveryTank" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr id="dbcz1">
+                        <td class="label2">重车司磅员</td>
+                        <td class="inputtd2"><input id="txtheavyOperator" class="smallInput" type="text" /></td>
+                        <td class="label2">毛重(吨)</td>
+                        <td class="inputtd2"><input id="txtgross" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr id="dbcz2">
+                        <td class="label2">毛重时间</td>
+                        <td class="inputtd2"><input id="txtgrossTime" class="smallInput" type="text" /></td>
+                        <td class="label2">净重(吨)</td>
+                        <td class="inputtd2"><input id="txtnetWeight" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2">封签号</td>
+                        <td class="inputtd2"><input id="txtsealNum" class="smallInput" type="text" /></td>
+                        <td class="label2">备注</td>
+                        <td class="inputtd2"><input id="txtcomment" class="smallInput" type="text" /></td>
+                    </tr>
+                    <tr>
+                        <td class="label2"></td>
+                        <td class="inputtd2"></td>
+                        <td class="label2"></td>
+                        <td class="inputtd2">
+                            <button class="btn" id="btn_Save" style="margin-right: 15px; margin-top: 5px; height: 23px;width:60px">取消计量</button>
+                            <button class="btn" id="btn_Cancle" style="margin-right: 30px; margin-top: 5px; height: 23px; width: 60px">关闭</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

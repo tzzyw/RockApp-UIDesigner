@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>添加MTBE检验结果</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/productCheckMTBE.js"></script>
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            /*background-color: silver;*/
+            overflow: auto;
+        }
+
+        input {
+            border: 0;
+            background: #ffffff;
+            width: 99%;
+        }
+
+        table {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+            table td {
+                border: 1px solid black;
+                padding-left: 3px;
+                height: 27px;
+                font-size: 12pt;
+            }
+    </style>
+</head>
+<body>
+    <div style="margin:0 auto;width:1000px">
+        <table style="text-align: center; border-width: 0px">
+            <tr>
+                <td style="width: 620px; height: 37px; text-align: center; border-width: 0px">
+                    <span style="font-size: 15pt">添加MTBE检验结果</span>
+                </td>
+                <td style="width: 80px; height: 37px; border-width: 0px">
+                    <button class="btn" id="btn_Save" style="margin-right: 15px; height: 25px">保存</button>
+                </td>
+            </tr>
+        </table>
+        <table style="text-align: center; border-width: 0px">
+            <tbody>
+                <tr>
+                    <td style="width:35%; height:25px;letter-spacing:0.1em;">
+                        贮存批号
+                    </td>
+                    <td style="height:25px;" colspan="2">
+                        <input id="txtstorageBatch" class="smallInput" type="text" />
+                    </td>
+                    <td class="style2">
+                        检验时间
+                    </td>
+                    <td style="width:25%; height:25px;">
+                        <input id="txtexamineDate" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:35%; height:25px; letter-spacing:0.1em">
+                        质量检验员
+                    </td>
+                    <td style="height:25px" colspan="2">
+                        <input id="txtinspector" class="smallInput" type="text" />
+                    </td>
+                    <td class="style2">
+                        备注
+                    </td>
+                    <td style="width:25%; height:25px">
+                        <input id="txtcomment" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:35%; letter-spacing:0.5em" rowspan="2">
+                        项目
+                    </td>
+                    <td style="height:25px;letter-spacing:0.5em" colspan="2">
+                        指标
+                    </td>
+                    <td class="style2" style="letter-spacing:0.5em" rowspan="2">
+                        实际
+                    </td>
+                    <td style="width:25%; " rowspan="2">
+                        试验方法
+                    </td>
+                </tr>  
+                <tr>
+                    <td style="width:10%; height:25px;letter-spacing:0.5em">
+                        A类
+                    </td>
+                    <td class="style1" style="letter-spacing:0.5em">
+                        B类
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:35%; height:25px;text-align:left; padding-left:7px; padding-right:20px">
+                        外观
+                    </td>
+                    <td style="height:25px" colspan="2">
+                        无色透明
+                    </td>
+                    <td class="style2">
+                        <input id="txtwaig" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; height:25px">
+                        目视
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:35%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">MTBE,%(质量分数)</span><span style="float:right">不小于</span>
+                    </td>
+                    <td style="width:10%; height:25px">
+                        98.7
+                    </td>
+                    <td class="style1">
+                        96.0
+                    </td>
+                    <td class="style2">
+                        <input id="txtmTBE" class="smallInput" type="text" />
+                    </td>
+                    <td style="width:25%; " rowspan="5">
+                        SH/T 1550-2012
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:35%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">聚合物,%(质量分数)</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:10%; height:25px">
+                        ---
+                    </td>
+                    <td class="style1">
+                        2.1
+                    </td>
+                    <td class="style2">
+                        <input id="txtjuhw" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:35%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">碳四,%(质量分数)</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:10%; height:25px">
+                        0.5
+                    </td>
+                    <td class="style1">
+                        ---
+                    </td>
+                    <td class="style2">
+                        <input id="txtc4" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:35%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">甲醇,%(质量分数)</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:10%; height:25px">
+                        0.5
+                    </td>
+                    <td class="style1">
+                        0.9
+                    </td>
+                    <td class="style2">
+                        <input id="txtjiac" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:35%; height:25px; text-align:left; padding-left:7px; padding-right:20px">
+                        <span style="float:left">叔丁醇,%(质量分数)</span><span style="float:right">不大于</span>
+                    </td>
+                    <td style="width:10%; height:25px">
+                        ---
+                    </td>
+                    <td class="style1">
+                        1.0
+                    </td>
+                    <td class="style2">
+                        <input id="txtshudc" class="smallInput" type="text" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,2455 @@
+﻿<# Rock.Dyn.Core.DynObject billForm=Data["billForm"] as  Rock.Dyn.Core.DynObject;
+ string masterType = billForm["MasterType"] as string;
+ string detailType = billForm["DetailType"] as string;
+ string detailMainReferType = billForm["DetailMainReferType"] as string;
+ string masterObjeName = masterType.Substring(0, 1).ToLower()+ masterType.Substring(1);
+ string detailObjeName = detailType.Substring(0, 1).ToLower()+ detailType.Substring(1);
+ string detailMainReferObjeName = detailMainReferType.Substring(0, 1).ToLower()+ detailMainReferType.Substring(1);
+ string detailMainReferName = billForm["DetailMainReferName"] as string;
+ string billName = billForm["BillName"] as string;
+ string bizService = billForm["BizService"] as string;
+ string referTypes = billForm["ReferTypes"] as string;
+ Rock.Dyn.Core.DynObject detailGrid = billForm["DetailGrid"] as  Rock.Dyn.Core.DynObject;
+ Rock.Dyn.Core.DynObject detailMainReferGrid = billForm["DetailMainReferGrid"] as  Rock.Dyn.Core.DynObject;
+ List<Rock.Dyn.Core.DynObject> masterFormItems = billForm["MasterFormItems"] as List<Rock.Dyn.Core.DynObject>; 
+ List<Rock.Dyn.Core.DynObject> detailFormItems = billForm["DetailFormItems"] as List<Rock.Dyn.Core.DynObject>; 
+ List<Rock.Dyn.Core.DynObject> detailMainReferFuzzyColumns = billForm["DetailMainReferFuzzyColumns"] as List<Rock.Dyn.Core.DynObject>;
+ List<Rock.Dyn.Core.DynObject> detailGridColumns = detailGrid["GridColumns"] as List<Rock.Dyn.Core.DynObject>;
+ List<Rock.Dyn.Core.DynObject> detailMainReferGridColumns = detailMainReferGrid["GridColumns"] as List<Rock.Dyn.Core.DynObject>;
+ List<Rock.Dyn.Core.DynObject> detailMainReferFormItems = billForm["DetailMainReferFormItems"] as List<Rock.Dyn.Core.DynObject>;
+ List<Rock.Dyn.Core.DynObject> detailGridMainReferColumns = billForm["DetailGridMainReferColumns"] as List<Rock.Dyn.Core.DynObject>;
+ Rock.Dyn.Core.DynObject formItemModel = null;
+ Rock.Dyn.Core.DynObject gridColumnModel = null;
+ List<string> popDivLists = new List<string>();
+ Dictionary<string, string> structPopDict = new Dictionary<string, string>();
+ Dictionary<string, string> referPopDict = new Dictionary<string, string>();
+ Dictionary<string, string> quickPopDict = new Dictionary<string, string>();
+ List<string> masterPopFormItemNameLists = new List<string>();
+ List<string> detailpopFormItemNameLists = new List<string>();
+ bool hasDate = false;
+ bool hasPop = false;
+ List<string> dateControlLists = new List<string>();
+ List<string> referPopLists = new List<string>();
+ string structPopStr = "";
+ string referPopStr = ""; 
+ string popVar = "";
+ string formItemName = "";
+ string displayName = "";
+ string queryItemName = "";
+ string inputType = "";
+ string gridColumnName = "";
+ string structName = "";
+ string referType = "";
+ string queryForm = "";
+ string queryType = "";
+ string sql = "";
+ string referClause = "";
+ string tableString = "";
+ int stateIndex = 0;
+ int rowlength = 0;
+ int columnIndex = 0;
+ int detailEditFormHeight = (detailMainReferFormItems.Count + detailFormItems.Count)*25+125; ;
+ int detailColumnIndex = detailMainReferGridColumns.Count + 5;
+ for (var i = 0; i < masterFormItems.Count; i++)
+ {
+    formItemModel = masterFormItems[i] ;
+	queryType = formItemModel["QueryType"] as string;
+	formItemName = formItemModel["FormItemName"] as string;
+	structName = formItemModel["StructName"] as string;
+	referType = formItemModel["ReferType"] as string;
+	inputType = formItemModel["InputType"] as string;
+	if(inputType == "TextBox")
+	{
+        switch (queryType)
+        {
+            case "Struct":
+				structPopDict.Add(formItemName, structName);
+				masterPopFormItemNameLists.Add(formItemName);
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+		        popVar +=  formItemName + "Pop, " + formItemName + "Tree, ";
+				hasPop = true;
+                break;
+            case "Refer":
+				referPopDict.Add(formItemName, referType);
+				masterPopFormItemNameLists.Add(formItemName);
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+		        popVar +=  formItemName + "Pop, " + formItemName + "Tree, ";
+				hasPop = true;
+                break;
+            case "Quick":
+				quickPopDict.Add(formItemName, structName);
+				masterPopFormItemNameLists.Add(formItemName);
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 268px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+		        popVar +=  formItemName + "Pop, " + formItemName + "QuickGrid, ";
+				hasPop = true;
+                break;
+            default:
+                break;
+        }
+    }
+	if(inputType == "Date")
+	{
+	    dateControlLists.Add("\"txt" + formItemName + "\"");
+	    hasDate = true;
+	}
+ }
+
+ for (var i = 0; i < detailFormItems.Count; i++)
+ {
+    formItemModel = detailFormItems[i] ;
+	queryType = formItemModel["QueryType"] as string;
+	formItemName = formItemModel["FormItemName"] as string;
+	structName = formItemModel["StructName"] as string;
+	referType = formItemModel["ReferType"] as string;
+	inputType = formItemModel["InputType"] as string;
+	if(inputType == "TextBox")
+	{
+        switch (queryType)
+        {
+            case "Struct":
+				structPopDict.Add(formItemName, structName);
+				detailpopFormItemNameLists.Add(formItemName);
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+		        popVar +=  formItemName + "Pop, ";
+				hasPop = true;
+                break;
+            case "Refer":
+				referPopDict.Add(formItemName, referType);
+				detailpopFormItemNameLists.Add(formItemName);
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+		        popVar +=  formItemName + "Pop, ";
+				hasPop = true;
+                break;
+            case "Quick":
+				quickPopDict.Add(formItemName, structName);
+				detailpopFormItemNameLists.Add(formItemName);
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 268px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+		        popVar +=  formItemName + "Pop, ";
+				hasPop = true;
+                break;
+            default:
+                break;
+        }
+    }
+	if(inputType == "Date")
+	{
+	    dateControlLists.Add("\"txt" + formItemName + "\"");
+	    hasDate = true;
+	}
+ }
+
+ #>
+$(function () {
+    //初始化系统通用变量
+    var toolBar, dhxLayout, editState, detailEditState, detailForm, detailGrid,mainReferForm, mainReferGrid, billState, uIState,<#= detailMainReferObjeName #>Grid, <#= detailMainReferObjeName #>Form, serverDate, sqlStr,<#if (!string.IsNullOrEmpty(popVar)){ #><#= popVar #><# }#>
+	<#= masterObjeName #> = null,
+	<#= detailObjeName #> = null,
+	detailObjList = [],
+	detailDataList = new rock.JsonList(),
+	mainReferGridDataList = new rock.JsonList(),
+	editImg = "/resource/dhtmlx/codebase/imgs/edit.gif",
+    deleteImg = "/resource/dhtmlx/codebase/imgs/delete.gif",
+	masterEditItem = $("#masterEditItem"),
+	detailForm = $("#detailForm"),
+	detailEditItem = $("#detailEditItem"),
+	<#= masterObjeName #>ID = decodeURI($.getUrlParam("<#= masterObjeName #>ID"));
+    //加载动态脚本
+    var jsTypes = "ISystemService,DataTable,DataRow,DataColumn,<#= masterType #>,<#= detailType #>,<#= detailMainReferType #><#if (!string.IsNullOrEmpty(referTypes)){ #>,<#= referTypes #><# }#><#if (!string.IsNullOrEmpty(bizService)){ #>,<#= bizService #><# }#>";
+    $.getScript('/LoadDomainJS.ashx?JsTypes=' + jsTypes, function () {
+        //获取服务器当前日期
+        rock.AjaxRequest(ISystemService.getServerDate, rock.exceptionFun);
+        if (ISystemService.getServerDate.success) {
+            (function (e) {
+                serverDate = e.value;
+            }(ISystemService.getServerDate.resultValue));
+        }
+	
+	//初始化主表实体参照
+	<#for (var i = 0; i < masterFormItems.Count; i++)
+    {
+        formItemModel = masterFormItems[i];
+		queryType = formItemModel["QueryType"] as string;
+		formItemName = formItemModel["FormItemName"] as string;
+		inputType = formItemModel["InputType"] as string;
+		structName = formItemModel["StructName"] as string;
+	    if(queryType == "Struct" && inputType == "Combox")
+	    {#>
+        $("#combo<#= formItemName #>").empty();
+        sqlStr = "SELECT [<#= structName #>ID],[<#= structName #>Name] FROM [<#= structName #>] order by <#= structName #>Name";
+        ISystemService.execQuery.sqlString = sqlStr;
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {				
+                if (e != null) {
+                    var rows = e.rows;
+                    var rowLength = rows.length;
+                    for (var i = 0; i < rowLength; i++) {
+                        var rowResult = rows[i].values;
+                        $("#combo<#= formItemName #>").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>")
+                    }
+                }
+            }(ISystemService.execQuery.resultValue));
+        }
+		<#}#>
+    <#}#>
+	//初始明细表实体参照
+	<#for (var i = 0; i < detailFormItems.Count; i++)
+    {
+        formItemModel = detailFormItems[i];
+		queryType = formItemModel["QueryType"] as string;
+		formItemName = formItemModel["FormItemName"] as string;
+		inputType = formItemModel["InputType"] as string;
+		structName = formItemModel["StructName"] as string;
+	    if(queryType == "Struct" && inputType == "Combox")
+	    {#>
+        $("#combo<#= formItemName #>").empty();
+        sqlStr = "SELECT [<#= structName #>ID],[<#= structName #>Name] FROM [<#= structName #>] order by <#= structName #>Name";
+        ISystemService.execQuery.sqlString = sqlStr;
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {				
+                if (e != null) {
+                    var rows = e.rows;
+                    var rowLength = rows.length;
+                    for (var i = 0; i < rowLength; i++) {
+                        var rowResult = rows[i].values;
+                        $("#combo<#= formItemName #>").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>")
+                    }
+                }
+            }(ISystemService.execQuery.resultValue));
+        }
+		<#}#>
+    <#}#>
+	//初始化主表通用参照
+	<#for (var i = 0; i < masterFormItems.Count; i++)
+    {
+        formItemModel = masterFormItems[i] ;
+		queryType = formItemModel["QueryType"] as string;
+		formItemName = formItemModel["FormItemName"] as string;
+		inputType = formItemModel["InputType"] as string;
+		referType = formItemModel["ReferType"] as string;
+	    if(queryType == "Refer" && inputType == "Combox")
+	    {#>
+        $("#combo<#= formItemName #>").empty();
+        sqlStr = "SELECT [ReferName] FROM [Refer] where [ReferType] = '<#= referType #>'";
+        ISystemService.execQuery.sqlString = sqlStr;
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {				
+                if (e != null) {
+                    var rows = e.rows;
+                    var rowLength = rows.length;
+                    for (var i = 0; i < rowLength; i++) {
+                        var rowResult = rows[i].values;
+                        $("#combo<#= formItemName #>").append("<option value='" + rowResult[0].value + "'>" + rowResult[0].value + "</option>")
+                    }
+                }
+            }(ISystemService.execQuery.resultValue));
+        }
+		<#}#>
+    <#}#>
+	//初始化明细表通用参照
+	<#for (var i = 0; i < detailFormItems.Count; i++)
+    {
+        formItemModel = detailFormItems[i] ;
+		queryType = formItemModel["QueryType"] as string;
+		formItemName = formItemModel["FormItemName"] as string;
+		inputType = formItemModel["InputType"] as string;
+		referType = formItemModel["ReferType"] as string;
+	    if(queryType == "Refer" && inputType == "Combox")
+	    {#>
+        $("#combo<#= formItemName #>").empty();
+        sqlStr = "SELECT [ReferName] FROM [Refer] where [ReferType] = '<#= referType #>'";
+        ISystemService.execQuery.sqlString = sqlStr;
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {				
+                if (e != null) {
+                    var rows = e.rows;
+                    var rowLength = rows.length;
+                    for (var i = 0; i < rowLength; i++) {
+                        var rowResult = rows[i].values;
+                        $("#combo<#= formItemName #>").append("<option value='" + rowResult[0].value + "'>" + rowResult[0].value + "</option>")
+                    }
+                }
+            }(ISystemService.execQuery.resultValue));
+        }
+		<#}#>
+    <#}#>
+
+	//填充实体弹窗参照树
+	<#foreach (KeyValuePair<string, string> item in structPopDict)
+    {
+        formItemName = item.Key;
+        structName = item.Value;#>
+        sqlStr = "select [<#= structName #>ID], [<#= structName #>Name] from [<#= structName #>] where ParentID is null";
+        ISystemService.execQuery.sqlString = sqlStr;
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {
+			    var rootID = 0;
+                if (e != null) {
+                    var rows = e.rows;
+                    var rowLength = rows.length;
+                    for (var i = 0; i < rowLength; i++) {
+                        var rowResult = rows[i].values;
+                        <#= formItemName #>Tree.insertNewChild(0, rowResult[0].value, rowResult[1].value);
+						rootID = rowResult[0].value;
+                    }
+                }
+                <#= formItemName #>Tree.selectItem(1, true, false);
+            }(ISystemService.execQuery.resultValue));
+        }
+	<#}#>    
+
+	//填充通用弹窗参照树
+    <#foreach (KeyValuePair<string, string> item in referPopDict)
+    {
+        formItemName = item.Key;
+        referType = item.Value;#>
+        sqlStr = "select [ReferID], [ReferName] from [Refer] where [ParentID] is null and [ReferType] = '<#= referType #>'";
+        ISystemService.execQuery.sqlString = sqlStr;
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {
+			    var rootID = 0;
+                if (e != null) {
+                    var rows = e.rows;
+                    var rowLength = rows.length;
+                    for (var i = 0; i < rowLength; i++) {
+                        var rowResult = rows[i].values;
+                        <#= formItemName #>Tree.insertNewChild(0, rowResult[0].value, rowResult[1].value);
+						rootID = rowResult[0].value;
+                    }
+                }
+                <#= formItemName #>Tree.selectItem(rootID, true, false);
+            }(ISystemService.execQuery.resultValue));
+        }
+	<#}#>   
+    <#foreach (KeyValuePair<string, string> item in quickPopDict)
+    {
+	    formItemName = item.Key;#>
+       <#= formItemName #>Complete("");
+	<#}#>
+
+		//填充明细主参照快查表格
+		mainReferComplete("");
+
+	    //获取单据对象
+        if (<#= masterObjeName #>ID != "null") {
+            uIState = "Browsing";
+            editState = "modify";
+            $("#txt<#= masterObjeName #>ID").val(<#= masterObjeName #>ID);
+            <#= bizService #>.get<#= masterType #>ByID.<#= masterObjeName #>ID = <#= masterObjeName #>ID;
+            rock.AjaxRequest(<#= bizService #>.get<#= masterType #>ByID, rock.exceptionFun);
+            if (<#= bizService #>.get<#= masterType #>ByID.success) {
+                (function (e) {
+                    <#= masterObjeName #> = e;
+                    if (e != null) {
+                        billState = <#= masterObjeName #>.state;
+                        fillPageItem();
+                    }
+                }(<#= bizService #>.get<#= masterType #>ByID.resultValue));
+            }
+        }
+        else {
+            addInit();
+        }
+        //页面按钮状态处理
+        refreshToolBarState();		
+    });
+
+    //初始化工具条
+    toolBar = new dhtmlXToolbarObject("toolBar");
+    toolBar.setIconsPath("/resource/dhtmlx/codebase/imgs");
+    toolBar.addButton("add", 0, "新增");
+    toolBar.addSeparator("001", 1);
+    toolBar.addButton("renounce", 2, "放弃");
+    toolBar.addSeparator("002", 3);
+    toolBar.addButton("modify", 4, "修改");
+    toolBar.addSeparator("003", 5);
+    toolBar.addButton("save", 6, "保存");
+    toolBar.addSeparator("004", 7);
+    toolBar.addButton("delete", 7, "删除");
+    toolBar.addSeparator("005", 8);
+    toolBar.addButton("submit", 9, "提交");
+    toolBar.addSeparator("006", 10);
+    toolBar.addButton("repeal", 11, "撤销");
+    toolBar.addSeparator("007", 12);
+    toolBar.addButton("addDetail", 13, "新增明细");
+    toolBar.attachEvent("onClick", function (id) {
+        switch (id) {
+            case "add":
+                addInit();
+                break;
+            case "renounce":
+                if (<#= masterObjeName #>) {
+                    //新增和修改的不同处理
+                    if (editState == "add") {
+                        uIState = "Init";
+                        clearPageItem();
+                    }
+                    else {
+                        uIState = "Browsing";
+                        billState = <#= masterObjeName #>.state;
+                    }
+                }
+                else {
+                    uIState = "Init";
+                    clearPageItem();
+                }
+                refreshToolBarState();
+                break;
+            case "modify":
+                uIState = "Editing";
+                editState = "modify";
+                <#= bizService #>.get<#= masterType #>ByID.<#= masterObjeName #>ID = $("#txt<#= masterObjeName #>ID").val();
+                rock.AjaxRequest(<#= bizService #>.get<#= masterType #>ByID, rock.exceptionFun);
+                if (<#= bizService #>.get<#= masterType #>ByID.success) {
+                    (function (e) {
+                        <#= masterObjeName #> = e;
+                    }(<#= bizService #>.get<#= masterType #>ByID.resultValue));
+                    fillPageItem();
+                    refreshToolBarState();
+                }
+                break;
+            case "save":
+               if (detailDataList.rows.length == 0) {
+                    alert("<#= billName #>必须要有明细!");
+                    return false;
+                }
+                if (<#= masterObjeName #> == null) {
+                        alert("修改的<#= billName #>不存在,请检查!");
+                        return false;
+                }
+				if (!<#= masterObjeName #>.ValidateValue()) {
+					return;
+				}   
+			<#for (var i = 0; i < masterFormItems.Count; i++)
+			{
+				formItemModel = masterFormItems[i] ;
+				queryType = formItemModel["QueryType"] as string;
+				formItemName = formItemModel["FormItemName"] as string;
+				referType = formItemModel["ReferType"] as string;
+				inputType = formItemModel["InputType"] as string;
+				switch (inputType)
+				{
+					case "TextBox": 
+						if((bool)formItemModel["IsRequired"])
+						{
+							if(queryType == "Struct" || queryType == "Quick"){#>
+				<#= masterObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
+							<#}
+							else
+							{#>
+				<#= masterObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val(); 
+							<#}#>
+						<#}
+						else
+						{
+						   if(queryType == "Struct" || queryType == "Quick"){#>
+				if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
+					<#= masterObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
+				}
+				else {
+					<#= masterObjeName #>.<#= formItemName #>ID = null;
+				}
+							<#}
+							else
+							{#>
+				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+					<#= masterObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+				}
+				else {
+					<#= masterObjeName #>.<#= formItemName #> = null;
+				}
+							<#}#>
+					<#} break;
+					case "Date": 
+						if((bool)formItemModel["IsRequired"]){#>
+				<#= masterObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+					<#}else{#>
+				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+					<#= masterObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+				}
+				else {
+					<#= masterObjeName #>.<#= formItemName #> = null;
+				}
+					<#} break;
+					case "Checkbox": #>
+			if (<#= masterObjeName #>.<#= formItemName #>) {
+				$("#chk<#= formItemName #>").attr("checked", true);
+			}
+			else {
+				$("#chk<#= formItemName #>").attr("checked", false);
+			}
+					<# break;
+					case "Combox": 
+					if(queryType == "Struct")
+					{#>	
+				<#= masterObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
+					<#}else
+						if(queryType == "Refer")
+						{
+							if((bool)formItemModel["IsRequired"])
+							{#>
+				<#= masterObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
+							<#}
+							else
+							{#>
+				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+					<#= masterObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+				}
+				else {
+					<#= masterObjeName #>.<#= formItemName #> = null;
+				}
+							<#}#>	
+					 <#}#>
+					<# break;
+				}
+			} #>
+               <#= masterObjeName #>.creater = decodeURIComponent($.cookie('userTrueName'));
+               <#= masterObjeName #>.<#= detailObjeName #>List = detailObjList;
+                //处理明细部分
+                if (editState == "add") {
+                    <#= bizService #>.add<#= masterType #>.<#= masterObjeName #> = <#= masterObjeName #>;
+                    rock.AjaxRequest(<#= bizService #>.add<#= masterType #>, rock.exceptionFun);
+                    if (<#= bizService #>.add<#= masterType #>.success) {
+                        (function (e) {
+                            alert("添加成功！");
+                        }(<#= bizService #>.add<#= masterType #>.resultValue));
+                    }
+                    else {
+                        return;
+                    }
+                }
+                else {
+                    <#= bizService #>.modify<#= masterType #>.<#= masterObjeName #> = <#= masterObjeName #>;
+                    rock.AjaxRequest(<#= bizService #>.modify<#= masterType #>, rock.exceptionFun);
+                    if (<#= bizService #>.modify<#= masterType #>.success) {
+                        (function (e) {
+                            alert("修改成功！");
+                        }(<#= bizService #>.modify<#= masterType #>.resultValue));
+                    }
+                    else {
+                        return;
+                    }
+                }
+                billState = "已创建";
+                uIState = "Browsing";
+                refreshToolBarState();
+                break;
+            case "delete":
+                <#= bizService #>.delete<#= masterType #>.<#= masterObjeName #>ID = <#= masterObjeName #>.<#= masterObjeName #>ID;
+                rock.AjaxRequest(<#= bizService #>.delete<#= masterType #>, rock.exceptionFun);
+                if (<#= bizService #>.delete<#= masterType #>.success) {
+                    (function (e) {
+                        uIState = "Init";
+                        clearPageItem();
+                        refreshToolBarState();
+                    }(<#= bizService #>.delete<#= masterType #>.resultValue));
+                }
+                break;
+            case "submit":
+                <#= bizService #>.submit<#= masterType #>.<#= masterObjeName #>ID = <#= masterObjeName #>.<#= masterObjeName #>ID;
+                rock.AjaxRequest(<#= bizService #>.submit<#= masterType #>, rock.exceptionFun);
+                if (<#= bizService #>.submit<#= masterType #>.success) {
+                    (function (e) {
+                        <#= masterObjeName #>.state = "已提交";
+
+                    }(<#= bizService #>.submit<#= masterType #>.resultValue));
+                }
+                billState = "已提交";
+                uIState = "Browsing";
+                refreshToolBarState();
+                break;
+            case "repeal":
+                <#= bizService #>.repeal<#= masterType #>.<#= masterObjeName #>ID = <#= masterObjeName #>.<#= masterObjeName #>ID;
+                rock.AjaxRequest(<#= bizService #>.repeal<#= masterType #>, rock.exceptionFun);
+                if (<#= bizService #>.repeal<#= masterType #>.success) {
+                    (function (e) {
+                        <#= masterObjeName #>.state = "已创建";
+
+                    }(<#= bizService #>.repeal<#= masterType #>.resultValue));
+                }
+                billState = "已创建";
+                uIState = "Browsing";
+                refreshToolBarState();
+                break;
+            case "addDetail":
+                $("#detailFormTitle").text("添加<#= billName #>明细");
+
+		<#for (var i = 0; i < detailMainReferFormItems.Count; i++)
+		{
+			    formItemModel = detailMainReferFormItems[i] ;
+				formItemName = formItemModel["FormItemName"] as string;
+				queryType = formItemModel["QueryType"] as string;
+				switch ( formItemModel["InputType"] as string)
+				{
+					case "TextBox": #>											
+			    $("#txt<#= formItemName #>").val("");
+					<# break;
+					case "Date": #>                       
+			    $("#txt<#= formItemName #>").val("");
+					<# break;
+					case "Checkbox": #>
+			    $("#chk<#= formItemName #>").attr("checked", false);
+					<# break;
+					case "Combox":#>
+			    $("#txt<#= formItemName #>").val("");
+					<# break;
+				}#>
+        <#}#>
+                detailEditState = "add";
+                showDetailForm();
+                break;
+        }
+    });
+
+		//处理主表编辑项
+		<#  tableString = "<table style=\"width: 100%\">";
+			if (masterFormItems.Count > 0)
+			{			
+				rowlength = (int)(Math.Ceiling((double)(masterFormItems.Count) / (double)3));
+				for (var i = 0; i < rowlength; i++)
+				{
+					if( i < rowlength -1)
+					{
+						formItemModel = masterFormItems[3 * i];
+						formItemName = formItemModel["FormItemName"] as string;
+						queryType = formItemModel["QueryType"] as string;
+						//构造html文本
+						tableString += "<tr>";
+						tableString += "<td class=\"label\" style=\"width: 6%\">";
+						tableString += (formItemModel["DisplayName"] as string);
+						tableString += "</td>";
+						switch (formItemModel["InputType"] as string)
+						{
+							case "TextBox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								if ((bool)formItemModel["IsReadOnly"])
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/>";
+									}
+								}
+								else
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+									}										
+								}
+								break;
+							case "Combox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
+								break;
+							case "CheckBox":
+								tableString += "<td class=\"chktd\">";
+								tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+								break;
+							case "Date":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\"/>";
+								break;
+						}
+						tableString += "</td>";
+						formItemModel = masterFormItems[3 * i + 1];
+						formItemName = formItemModel["FormItemName"] as string;		
+						queryType = formItemModel["QueryType"] as string;			
+						tableString += "<td class=\"label\" style=\"width: 6%\">";
+						tableString += (formItemModel["DisplayName"] as string);
+						tableString += "</td>";
+						switch (formItemModel["InputType"] as string)
+						{
+							case "TextBox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								if ((bool)formItemModel["IsReadOnly"])
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/>";
+									}
+								}
+								else
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+									}										
+								}
+								break;
+							case "Combox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
+								break;
+							case "CheckBox":
+								tableString += "<td class=\"chktd\" style=\"width: 14%\">";
+								tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+								break;
+							case "Date":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\"  type=\"text\"/>";
+								break;
+						}
+						tableString += "</td>";
+						formItemModel = masterFormItems[3 * i + 2];
+						formItemName = formItemModel["FormItemName"] as string;
+						queryType = formItemModel["QueryType"] as string;
+						tableString += "<td class=\"label\" style=\"width: 6%\">";
+						tableString += (formItemModel["DisplayName"] as string);
+						tableString += "</td>";
+						switch (formItemModel["InputType"] as string)
+						{
+							case "TextBox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+							if ((bool)formItemModel["IsReadOnly"])
+							{
+								if(queryType == "Struct" || queryType == "Quick")
+								{
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+								}
+								else
+								{
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/>";
+								}
+							}
+							else
+							{
+								if(queryType == "Struct" || queryType == "Quick")
+								{
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+								}
+								else
+								{
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+								}										
+							}
+								break;
+							case "Combox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
+								break;
+							case "Checkbox":
+								tableString += "<td class=\"chktd\" style=\"width: 14%\">";
+								tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+								break;
+							case "Date":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+								break;
+						}
+						tableString += "</td>";
+					}
+					else
+					{
+						if((masterFormItems.Count - 3*i) == 1)
+						{
+							formItemModel = masterFormItems[3 * i];
+							formItemName = formItemModel["FormItemName"] as string;
+							queryType = formItemModel["QueryType"] as string;
+							tableString += "<td class=\"label\" style=\"width: 6%\">";
+							tableString += (formItemModel["DisplayName"] as string);
+							tableString += "</td>";
+							switch (formItemModel["InputType"] as string)
+							{
+								case "TextBox":
+									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								if ((bool)formItemModel["IsReadOnly"])
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/>";
+									}
+								}
+								else
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+									}										
+								}
+									break;
+								case "Combox":
+									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+									tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
+									break;
+								case "Checkbox":
+									tableString += "<td class=\"chktd\" style=\"width: 14%\">";
+									tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+									break;
+								case "Date":
+									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+									break;
+							}
+							tableString += "</td>";
+							tableString += "<td class=\"label\" style=\"width: 6%\">";
+						    tableString += "</td>";
+							tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+							tableString += "</td>";
+							tableString += "<td class=\"label\" style=\"width: 6%\">";
+						    tableString += "</td>";
+							tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+							tableString += "</td>";
+						}
+
+						if((masterFormItems.Count - 3*i) == 2)
+						{
+							formItemModel = masterFormItems[3 * i];
+							formItemName = formItemModel["FormItemName"] as string;
+							queryType = formItemModel["QueryType"] as string;
+							tableString += "<td class=\"label\" style=\"width: 6%\">";
+							tableString += (formItemModel["DisplayName"] as string);
+							tableString += "</td>";
+							switch (formItemModel["InputType"] as string)
+							{
+								case "TextBox":
+									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								if ((bool)formItemModel["IsReadOnly"])
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/>";
+									}
+								}
+								else
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+									}										
+								}
+									break;
+								case "Combox":
+									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+									tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
+									break;
+								case "Checkbox":
+									tableString += "<td class=\"chktd\" style=\"width: 14%\">";
+									tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+									break;
+								case "Date":
+									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+									break;
+							}
+							tableString += "</td>";
+							formItemModel = masterFormItems[3 * i + 1];
+							formItemName = formItemModel["FormItemName"] as string;
+							queryType = formItemModel["QueryType"] as string;
+							tableString += "<td class=\"label\" style=\"width: 6%\">";
+							tableString += (formItemModel["DisplayName"] as string);
+							tableString += "</td>";
+							switch (formItemModel["InputType"] as string)
+							{
+								case "TextBox":
+									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								if ((bool)formItemModel["IsReadOnly"])
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/>";
+									}
+								}
+								else
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+									}										
+								}
+									break;
+								case "Combox":
+									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+									tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
+									break;
+								case "Checkbox":
+									tableString += "<td class=\"chktd\" style=\"width: 14%\">";
+									tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+									break;
+								case "Date":
+									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+									break;
+							}
+							tableString += "</td>";
+							tableString += "<td class=\"label\" style=\"width: 6%\">";
+						    tableString += "</td>";
+							tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+							tableString += "</td>";
+						}					
+					}					
+					tableString += "</tr>";
+				}
+				tableString += "</table>";#>
+		tableString = '<#= tableString #>';
+	masterEditItem.html(tableString);
+		<# } #>	
+
+		//处理明细表编辑项
+		<#  tableString = "<table style=\"width: 98%\">";
+			rowlength = detailMainReferFormItems.Count;
+			for (var i = 0; i < rowlength; i++)
+			{
+				formItemModel = detailMainReferFormItems[i];
+				formItemName = formItemModel["FormItemName"] as string;
+				queryType = formItemModel["QueryType"] as string;
+				//构造html文本
+				tableString += "<tr>";
+				tableString += "<td class=\"label\">";
+				tableString += (formItemModel["DisplayName"] as string);
+				tableString += "</td>";
+				switch (formItemModel["InputType"] as string)
+				{
+					case "TextBox":
+						tableString += "<td class=\"inputtd\">";
+						tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+						if(i == 0)
+						{
+							tableString += "<input id=\"txt" + masterObjeName + "ID\" type=\"hidden\" />";
+						}				
+						break;
+					case "Combox":
+						tableString += "<td class=\"inputtd\">";
+						tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";						
+						break;
+					case "CheckBox":
+						tableString += "<td class=\"chktd\">";
+						tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+						break;
+					case "Date":
+						tableString += "<td class=\"inputtd\">";
+						tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+						break;
+				}
+				if(formItemName == detailMainReferObjeName + "Name")
+				{
+					tableString += "<input id=\"txt" + detailMainReferObjeName + "ID\" type=\"hidden\" />";
+				}				
+				tableString += "</td>";
+				tableString += "</tr>";
+			}
+
+			rowlength = detailFormItems.Count;
+			for (var i = 0; i < rowlength; i++)
+			{
+				formItemModel = detailFormItems[i];
+				formItemName = formItemModel["FormItemName"] as string;
+				queryType = formItemModel["QueryType"] as string;
+				//构造html文本
+				tableString += "<tr>";
+				tableString += "<td class=\"label\">";
+				tableString += (formItemModel["DisplayName"] as string);
+				tableString += "</td>";
+				switch (formItemModel["InputType"] as string)
+				{
+					case "TextBox":
+						tableString += "<td class=\"inputtd\">";
+						if ((bool)formItemModel["IsReadOnly"])
+						{
+							if(queryType == "Struct" || queryType == "Quick")
+							{
+								tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+							}
+							else
+							{
+								tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/>";
+							}
+						}
+						else
+						{
+							if(queryType == "Struct" || queryType == "Quick")
+							{
+								tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+							}
+							else
+							{
+								tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+							}										
+						}
+						break;
+					case "Combox":
+						tableString += "<td class=\"inputtd\">";
+						tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
+						break;
+					case "CheckBox":
+						tableString += "<td class=\"chktd\">";
+						tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+						break;
+					case "Date":
+						tableString += "<td class=\"inputtd\">";
+						tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\"  type=\"text\" />";
+						break;
+				}
+
+				tableString += "</td>";
+				tableString += "</tr>";
+			}
+			tableString += "</table>";#>
+    detailForm.height(<#= detailEditFormHeight #>);
+	tableString = '<#= tableString #>';
+	detailEditItem.html(tableString);
+		
+
+    //初始化明细表格
+    detailGrid = new dhtmlXGridObject("detailGrid");
+    detailGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
+    detailGrid.setSkin("dhx_skyblue");
+	<# var headerString = "序号,,,修改,删除,"; 
+		var columnAlignString = "center,left,left,center,center,";
+		var columnWidthString = "40,0,0,40,40,";
+		var columnSortString = "na,na,na,na,na,";
+		var columnTypeString = "cntr,ro,ro,img,img,";	
+		//判断是否存在detailGridColumns
+		if(detailGridColumns.Count > 0)
+		{		
+			for (var i = 0; i < detailGridMainReferColumns.Count; i++) {
+				gridColumnModel = detailGridMainReferColumns[i];
+				headerString += gridColumnModel["GridHeader"] + ",";
+				columnAlignString += gridColumnModel["GridColAlign"] + ",";
+				columnWidthString += gridColumnModel["GridWidth"] + ",";
+				columnSortString += gridColumnModel["GridColSorting"] + ",";
+				columnTypeString += gridColumnModel["GridColType"] + ",";				
+			}	
+			for (var i = 0; i < detailGridColumns.Count; i++) {
+				gridColumnModel = detailGridColumns[i];
+				if (i < detailGridColumns.Count - 1) {
+					headerString += gridColumnModel["GridHeader"] + ",";
+					columnAlignString += gridColumnModel["GridColAlign"] + ",";
+					columnWidthString += gridColumnModel["GridWidth"] + ",";
+					columnSortString += gridColumnModel["GridColSorting"] + ",";
+					columnTypeString += gridColumnModel["GridColType"] + ",";
+				}
+				else
+				{
+					headerString += gridColumnModel["GridHeader"];
+					columnAlignString += gridColumnModel["GridColAlign"];
+					columnWidthString += "*";
+					columnSortString += gridColumnModel["GridColSorting"];
+					columnTypeString += gridColumnModel["GridColType"];
+				}		
+			}
+		}
+		else
+		{
+			for (var i = 0; i < detailGridMainReferColumns.Count; i++) {
+				gridColumnModel = detailGridMainReferColumns[i];
+				if (i < detailGridColumns.Count - 1) {
+					headerString += gridColumnModel["GridHeader"] + ",";
+					columnAlignString += gridColumnModel["GridColAlign"] + ",";
+					columnWidthString += gridColumnModel["GridWidth"] + ",";
+					columnSortString += gridColumnModel["GridColSorting"] + ",";
+					columnTypeString += gridColumnModel["GridColType"] + ",";
+				}
+				else
+				{
+					headerString += gridColumnModel["GridHeader"];
+					columnAlignString += gridColumnModel["GridColAlign"];
+					columnWidthString += "*";
+					columnSortString += gridColumnModel["GridColSorting"];
+					columnTypeString += gridColumnModel["GridColType"];
+				}		
+			}
+		}		
+    #>
+
+	detailGrid.setHeader("<#= headerString #>");
+	detailGrid.setInitWidths("<#= columnWidthString #>");
+	detailGrid.setColAlign("<#= columnAlignString #>");
+	detailGrid.setColSorting("<#= columnSortString #>");
+	detailGrid.setColTypes("<#= columnTypeString #>");
+    detailGrid.enableDistributedParsing(true, 20);
+    detailGrid.attachEvent("onRowSelect", function (rowID, cIndex) {
+        if (billState == "已创建" && uIState == "Editing") {
+            if (cIndex == 3) {
+                for (var i = 0; i < detailDataList.rows.length; i++) {
+                    if (detailDataList.rows[i].id == rowID) {
+                        $("#txt<#= detailObjeName #>ID").val(rowID);
+                        $("#txt<#= detailMainReferObjeName #>ID").val(detailDataList.rows[i].data[2]);
+
+					<#for (var i = 0; i < detailGridMainReferColumns.Count; i++)
+					{
+						gridColumnModel = detailGridMainReferColumns[i] ;
+						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						for (var j = 0; j < detailMainReferFormItems.Count; j++)
+						{
+							formItemModel = detailMainReferFormItems[j] ;
+							formItemName = formItemModel["FormItemName"] as string;
+							columnIndex = j + 5;
+							if (formItemName == gridColumnName){#> 			
+						$("#txt<#= formItemName #>").val(detailGrid.cells(rowID, <#= columnIndex #>).getValue());
+						<#}}#> 
+					<#}#>
+					<#for (var i = 0; i < detailGridColumns.Count; i++)
+					{
+						gridColumnModel = detailGridColumns[i] ;
+						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						for (var j = 0; j < detailFormItems.Count; j++)
+						{
+							formItemModel = detailFormItems[j] ;
+							formItemName = formItemModel["FormItemName"] as string;
+							columnIndex = j + 5 + detailMainReferFormItems.Count;
+							if (formItemName == gridColumnName){#> 			
+						$("#txt<#= formItemName #>").val(detailGrid.cells(rowID, <#= columnIndex #>).getValue());
+						<#}}#> 
+					<#}#>
+                    }
+                }
+                for (var j = 0; j < detailObjList.length; j++) {
+                    if (detailObjList[j].departmentDetailID == rowID ) {
+                        <#= detailObjeName #> = detailObjList[j];
+                        break;
+                    }
+                }
+                detailEditState = "modify";
+                showDetailForm();
+            }
+            if (cIndex == 4) {
+                if (confirm("您确定要删除选定的行吗?")) {
+                    //两种情况主表新增的直接删除,主表是修改的:又分两种情况,新增的直接删除,修改的,标记为删除
+                    if (editState == "add") {
+                        for (var i = 0; i < detailDataList.rows.length; i++) {
+                            if (detailDataList.rows[i].id == rowID) {
+                                detailDataList.rows.splice(i, 1);
+                                detailGrid.deleteRow(rowID);
+                                break;
+                            }
+                        }
+                        for (var i = 0; i < detailObjList.length; i++) {
+                            if (detailObjList[i].<#= detailObjeName #>ID == rowID) {
+                                detailObjList.splice(i, 1);
+                            }
+                        }
+                    }
+                    else {
+                        for (var i = 0; i < detailDataList.rows.length; i++) {
+                            if (detailDataList.rows[i].id == rowID) {
+                                detailDataList.rows.splice(i, 1);
+                                detailGrid.deleteRow(rowID);
+                                break;
+                            }
+                        }
+                        for (var i = 0; i < detailObjList.length; i++) {
+                            if (detailObjList[i].<#= detailObjeName #>ID == rowID) {
+                                if (detailObjList[i].editState == "add") {
+                                    detailObjList.splice(i, 1);
+                                }
+                                else {
+                                    detailObjList[i].editState = "delete";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+    detailGrid.init();  
+
+	//初始化主参照选择表格
+    mainReferGrid = new dhtmlXGridObject('mainReferGrid');
+    mainReferGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
+    mainReferGrid.setSkin("dhx_skyblue");
+	<#  headerString = "序号,,"; 
+		columnAlignString = "center,left,";
+		columnWidthString = "40,0,";
+		columnSortString = "na,na,";
+		columnTypeString = "cntr,ro,";		
+
+		for (var i = 0; i < detailMainReferGridColumns.Count; i++) {
+			gridColumnModel = detailMainReferGridColumns[i];
+			if (i < detailMainReferGridColumns.Count - 1) {
+				headerString += gridColumnModel["GridHeader"] + ",";
+				columnAlignString += gridColumnModel["GridColAlign"] + ",";
+				columnWidthString += gridColumnModel["GridWidth"] + ",";
+				columnSortString += gridColumnModel["GridColSorting"] + ",";
+				columnTypeString += gridColumnModel["GridColType"] + ",";
+			}
+			else
+			{
+				headerString += gridColumnModel["GridHeader"];
+				columnAlignString += gridColumnModel["GridColAlign"];
+				columnWidthString += "*";
+				columnSortString += gridColumnModel["GridColSorting"];
+				columnTypeString += gridColumnModel["GridColType"];
+			}		
+		}	
+    #>
+	mainReferGrid.setHeader("<#= headerString #>");
+	mainReferGrid.setInitWidths("<#= columnWidthString #>");
+	mainReferGrid.setColAlign("<#= columnAlignString #>");
+	mainReferGrid.setColSorting("<#= columnSortString #>");
+	mainReferGrid.setColTypes("<#= columnTypeString #>");
+    mainReferGrid.enableDistributedParsing(true, 20);   
+    mainReferGrid.attachEvent("onRowSelect", function (rowID, cIndex) {
+        return true;
+    });
+    mainReferGrid.attachEvent("onRowDblClicked", function (rowID, cIndex) {
+        $("#txt<#= detailMainReferObjeName #>ID").val(rowID);
+		$("#txt<#= detailMainReferObjeName #>Name").val(mainReferGrid.cells(rowID, 2).getValue());
+	<#for (var i = 0; i < detailMainReferFormItems.Count; i++)
+	{
+		formItemModel = detailMainReferFormItems[i] ;
+		formItemName = formItemModel["FormItemName"] as string;
+		for (var j = 0; j < detailMainReferGridColumns.Count; j++)
+		{
+			gridColumnModel = detailMainReferGridColumns[j] ;
+			gridColumnName = gridColumnModel["GridColumnName"] as string;
+			columnIndex = j + 2;
+			if (formItemName == gridColumnName){#> 			
+		$("#txt<#= formItemName #>").val(mainReferGrid.cells(rowID, <#= columnIndex #>).getValue());
+		<#}}#> 
+	<#}#> 
+        hideMainReferForm();
+    });
+    mainReferGrid.init();
+
+	//<#= billName #>明细弹窗
+    detailForm = $("#detailForm");
+    detailForm.mousedown(function (e) {
+        iDiffX = e.pageX - $(this).offset().left;
+        iDiffY = e.pageY - $(this).offset().top;
+        var top = $("#detailForm").offset().top;
+        var left = $("#detailForm").offset().left;
+
+        if (iDiffY < 30) {
+            $(document).mousemove(function (e) {
+                detailForm.css({ "left": (e.pageX - iDiffX), "top": (e.pageY - iDiffY) });
+                mainReferForm.css({ "left": (e.pageX - iDiffX + 126), "top": (e.pageY - iDiffY + 87) });
+            });
+        }
+        if (e.srcElement.id != "txt<#= detailMainReferObjeName #>Name") {
+             hideMainReferForm();
+        }
+    <# if(detailpopFormItemNameLists.Count > 0 )
+    { 
+	    for (var i = 0; i < detailpopFormItemNameLists.Count; i++)
+	    {
+			formItemName = detailpopFormItemNameLists[i];#>
+		if (e.srcElement.id != "txt<#= formItemName #>") {
+			hide<#= formItemName #>Pop();
+		}
+			<#}#>     
+    <#}#>	
+
+    });
+    detailForm.mouseup(function () {
+        $(document).unbind("mousemove");
+    });
+    hideDetailForm();
+    function hideDetailForm() {
+        detailForm.css({ top: 200, left: -1300 }).hide();
+    }
+    function showDetailForm() {
+        detailForm.css({ top: 100, left: 180 }).show();
+    }
+
+    $("#btnDetailForm_Cancle").click(function () {
+        hideDetailForm();
+    <# if(detailpopFormItemNameLists.Count > 0 )
+    { 
+	    for (var i = 0; i < detailpopFormItemNameLists.Count; i++)
+	    {
+			formItemName = detailpopFormItemNameLists[i];#>
+		hide<#= formItemName #>Pop();
+			<#}#>     
+    <#}#>	
+    });
+
+    $("#imgDetailForm_Close").click(function () {
+        hideDetailForm();
+    <# if(detailpopFormItemNameLists.Count > 0 )
+    { 
+	    for (var i = 0; i < detailpopFormItemNameLists.Count; i++)
+	    {
+			formItemName = detailpopFormItemNameLists[i];#>
+		hide<#= formItemName #>Pop();
+			<#}#>     
+    <#}#>	
+    });
+
+
+    $("#btnDetailForm_Save").click(function () {
+        if ($.trim($("#txt<#= detailMainReferObjeName #>ID").val()) == '') {
+            alert('<#= detailMainReferName #>不能为空!');
+            return false;
+        }
+		var <#= detailMainReferObjeName #>ID = $("#txt<#= detailMainReferObjeName #>ID").val();
+        //分两种情况判断,新增的明细不直接保存;修改的明细直接保存到数据库
+        if (editState == "add") {
+            if (detailEditState == "add") {
+				 //判断明细是否重复选择
+                for (var j = 0; j < detailObjList.length; j++) {
+                    if (detailObjList[j].<#= detailMainReferObjeName #>ID == <#= detailMainReferObjeName #>ID) {
+                        alert("<#= detailMainReferName #>不能重复选择");
+                        return;
+                    }
+                }
+			    <#= detailObjeName #> = <#= detailType #>Class.createInstance();
+				if (!<#= detailObjeName #>.ValidateValue()) {
+					return;
+				}           
+                //获取明细ID
+                ISystemService.getNextID.typeName = '<#= detailType #>';
+                rock.AjaxRequest(ISystemService.getNextID, rock.exceptionFun);
+                if (ISystemService.getNextID.success) {
+                    (function (e) {
+                        <#= detailObjeName #>.<#= detailObjeName #>ID = e.value;
+                    }(ISystemService.getNextID.resultValue))
+                }
+
+                <#= detailObjeName #>.<#= masterObjeName #>ID = $("#txt<#= masterObjeName #>ID").val();
+                <#= detailObjeName #>.<#= detailMainReferObjeName #>ID = <#= detailMainReferObjeName #>ID;
+			<#for (var i = 0; i < detailFormItems.Count; i++)
+			{
+				formItemModel = detailFormItems[i] ;
+				queryType = formItemModel["QueryType"] as string;
+				formItemName = formItemModel["FormItemName"] as string;
+				referType = formItemModel["ReferType"] as string;
+				inputType = formItemModel["InputType"] as string;
+				switch (inputType)
+				{
+					case "TextBox": 
+						if((bool)formItemModel["IsRequired"])
+						{
+							if(queryType == "Struct"){#>
+				<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
+							<#}
+							else
+							{#>
+				 <#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val(); 
+							<#}#>
+						<#}
+						else
+						{
+						   if(queryType == "Struct"){#>
+				if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
+					<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
+				}
+				else {
+					<#= detailObjeName #>.<#= formItemName #>ID = null;
+				}
+							<#}
+							else
+							{#>
+				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+					<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+				}
+				else {
+					<#= detailObjeName #>.<#= formItemName #>ID = null;
+				}
+							<#}#>
+					<#} break;
+					case "Date": 
+						if((bool)formItemModel["IsRequired"]){#>
+				<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+					<#}else{#>
+				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+					<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+				}
+				else {
+					<#= detailObjeName #>.<#= formItemName #> = null;
+				}
+					<#} break;
+					case "Checkbox": #>
+			if (<#= detailObjeName #>.<#= formItemName #>) {
+				$("#chk<#= formItemName #>").attr("checked", true);
+			}
+			else {
+				$("#chk<#= formItemName #>").attr("checked", false);
+			}
+					<# break;
+					case "Combox": 
+					if(queryType == "Struct")
+					{#>	
+				<#= detailObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
+					<#}else
+						if(queryType == "Refer")
+						{
+							if((bool)formItemModel["IsRequired"])
+							{#>
+				<#= detailObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
+							<#}
+							else
+							{#>
+				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+					<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+				}
+				else {
+					<#= detailObjeName #>.<#= formItemName #> = null;
+				}
+							<#}#>	
+					 <#}#>
+					<# break;
+				}
+			} #>
+                <#= detailObjeName #>.editState = "add";
+                detailObjList.push(<#= detailObjeName #>);
+
+                var detailData = new rock.JsonData(<#= detailObjeName #>.<#= detailObjeName #>ID);
+                detailData.data.push(null);
+                detailData.data.push(<#= detailObjeName #>.<#= detailObjeName #>ID);
+                detailData.data.push($("#txt<#= detailMainReferObjeName #>ID").val());
+                detailData.data.push(editImg);
+                detailData.data.push(deleteImg);
+			<#for (var i = 0; i < detailGridMainReferColumns.Count; i++)
+			{
+				gridColumnModel = detailGridMainReferColumns[i] ;
+				gridColumnName = gridColumnModel["GridColumnName"] as string;
+				queryForm = gridColumnModel["QueryForm"] as string;#>					
+				detailData.data.push($("#txt<#= gridColumnName #>").val());					  					  				
+			<#}#> 
+			<#for (var i = 0; i < detailGridColumns.Count; i++)
+			{
+				gridColumnModel = detailGridColumns[i] ;
+				gridColumnName = gridColumnModel["GridColumnName"] as string;
+				queryForm = gridColumnModel["QueryForm"] as string;
+					if (queryForm == "Combox")
+					{#> 
+					detailData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());    
+					<#}else{#>
+					detailData.data.push($("#txt<#= gridColumnName #>").val());					  					  				
+			<#}}#>                
+                detailDataList.rows.push(detailData);
+            }
+            else {
+				if (!<#= detailObjeName #>.ValidateValue()) {
+					return;
+				}  
+                //判断明细是否重复选择
+                for (var j = 0; j < detailObjList.length; j++) {
+                    if (detailObjList[j].<#= detailMainReferObjeName #>ID == <#= detailMainReferObjeName #>ID && detailObjList[j].<#= detailObjeName #>ID != <#= detailObjeName #>.<#= detailObjeName #>ID) {
+                        alert("<#= detailMainReferName #>不能重复选择");
+                        return;
+                    }
+                }
+                for (var i = 0; i < detailDataList.rows.length; i++) {
+                    if (detailDataList.rows[i].id.toString() == <#= detailObjeName #>.<#= detailObjeName #>ID) {
+                        detailDataList.rows[i].data[1] = <#= detailObjeName #>.<#= detailObjeName #>ID;
+                        detailDataList.rows[i].data[2] = $("#txt<#= detailMainReferObjeName #>ID").val();
+                        detailDataList.rows[i].data[3] = editImg;
+                        detailDataList.rows[i].data[4] = deleteImg;
+
+					<#for (var i = 0; i < detailGridMainReferColumns.Count; i++)
+					{
+						gridColumnModel = detailGridMainReferColumns[i] ;
+						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						queryForm = gridColumnModel["QueryForm"] as string;
+							if (queryForm == "Combox")
+							{#>
+							detailDataList.rows[i].data[<#= i + 5 #>] =$("#combo<#= gridColumnName #>").find("option:selected").text();
+							<#}else{#>
+							detailDataList.rows[i].data[<#= i + 5 #>] =$("#txt<#= gridColumnName #>").val();
+							<#}					
+					} #>   
+					<#for (var i = 0; i < detailGridColumns.Count; i++)
+					{
+						gridColumnModel = detailGridColumns[i] ;
+						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						queryForm = gridColumnModel["QueryForm"] as string;
+							if (queryForm == "Combox")
+							{#>
+							detailDataList.rows[i].data[<#= i + detailColumnIndex  #>] =$("#combo<#= gridColumnName #>").find("option:selected").text();
+							<#}else{#>
+							detailDataList.rows[i].data[<#= i + detailColumnIndex #>] =$("#txt<#= gridColumnName #>").val();
+							<#}					
+					} #>                            
+
+                        for (var j = 0; j < detailObjList.length; j++) {
+                            if (detailObjList[j].<#= detailObjeName #>ID == <#= detailObjeName #>.<#= detailObjeName #>ID) {
+                                detailObjList[j].materialID = $("#txt<#= detailMainReferObjeName #>ID").val();
+							<#for (var i = 0; i < detailFormItems.Count; i++)
+							{
+								formItemModel = detailFormItems[i] ;
+								queryType = formItemModel["QueryType"] as string;
+								formItemName = formItemModel["FormItemName"] as string;
+								referType = formItemModel["ReferType"] as string;
+								inputType = formItemModel["InputType"] as string;
+								switch (inputType)
+								{
+									case "TextBox": 
+										if((bool)formItemModel["IsRequired"])
+										{
+											if(queryType == "Struct"){#>
+								<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
+											<#}
+											else
+											{#>
+								 <#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val(); 
+											<#}#>
+										<#}
+										else
+										{
+										   if(queryType == "Struct"){#>
+								if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
+									<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
+								}
+								else {
+									<#= detailObjeName #>.<#= formItemName #>ID = null;
+								}
+											<#}
+											else
+											{#>
+								if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+									<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+								}
+								else {
+									<#= detailObjeName #>.<#= formItemName #>ID = null;
+								}
+											<#}#>
+									<#} break;
+									case "Date": 
+										if((bool)formItemModel["IsRequired"]){#>
+								<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+									<#}else{#>
+								if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+									<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+								}
+								else {
+									<#= detailObjeName #>.<#= formItemName #> = null;
+								}
+									<#} break;
+									case "Checkbox": #>
+							if (<#= detailObjeName #>.<#= formItemName #>) {
+								$("#chk<#= formItemName #>").attr("checked", true);
+							}
+							else {
+								$("#chk<#= formItemName #>").attr("checked", false);
+							}
+									<# break;
+									case "Combox": 
+									if(queryType == "Struct")
+									{#>	
+								<#= detailObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
+									<#}else
+										if(queryType == "Refer")
+										{
+											if((bool)formItemModel["IsRequired"])
+											{#>
+								<#= detailObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
+											<#}
+											else
+											{#>
+								if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+									<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+								}
+								else {
+									<#= detailObjeName #>.<#= formItemName #> = null;
+								}
+											<#}#>	
+									 <#}#>
+									<# break;
+								}
+							} #>
+                                detailObjList[j].editState = "add";
+                            }
+                        }
+                    }
+                }
+            }
+            detailGrid.clearAll();
+            detailGrid.parse(detailDataList, "json");
+            hideDetailForm();
+        }
+        else {
+            if (detailEditState == "add") {
+				//判断明细是否重复选择
+                for (var j = 0; j < detailObjList.length; j++) {
+                    if (detailObjList[j].<#= detailMainReferObjeName #>ID == <#= detailMainReferObjeName #>ID) {
+                        alert("<#= detailMainReferName #>不能重复选择");
+                        return;
+                    }
+                }
+
+			    <#= detailObjeName #> = <#= detailType #>Class.createInstance();
+                //获取明细ID
+                ISystemService.getNextID.typeName = '<#= detailType #>';
+                rock.AjaxRequest(ISystemService.getNextID, rock.exceptionFun);
+                if (ISystemService.getNextID.success) {
+                    (function (e) {
+                        <#= detailObjeName #>.<#= detailObjeName #>ID = e.value;
+                    }(ISystemService.getNextID.resultValue))
+                }
+                <#= detailObjeName #>.<#= masterObjeName #>ID = $("#txt<#= masterObjeName #>ID").val();
+                <#= detailObjeName #>.<#= detailMainReferObjeName #>ID = $("#txt<#= detailMainReferObjeName #>ID").val();
+			<#for (var i = 0; i < detailFormItems.Count; i++)
+			{
+				formItemModel = detailFormItems[i] ;
+				queryType = formItemModel["QueryType"] as string;
+				formItemName = formItemModel["FormItemName"] as string;
+				referType = formItemModel["ReferType"] as string;
+				inputType = formItemModel["InputType"] as string;
+				switch (inputType)
+				{
+					case "TextBox": 
+						if((bool)formItemModel["IsRequired"])
+						{
+							if(queryType == "Struct"){#>
+				<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
+							<#}
+							else
+							{#>
+				 <#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val(); 
+							<#}#>
+						<#}
+						else
+						{
+						   if(queryType == "Struct"){#>
+				if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
+					<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
+				}
+				else {
+					<#= detailObjeName #>.<#= formItemName #>ID = null;
+				}
+							<#}
+							else
+							{#>
+				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+					<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+				}
+				else {
+					<#= detailObjeName #>.<#= formItemName #>ID = null;
+				}
+							<#}#>
+					<#} break;
+					case "Date": 
+						if((bool)formItemModel["IsRequired"]){#>
+				<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+					<#}else{#>
+				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+					<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+				}
+				else {
+					<#= detailObjeName #>.<#= formItemName #> = null;
+				}
+					<#} break;
+					case "Checkbox": #>
+			if (<#= detailObjeName #>.<#= formItemName #>) {
+				$("#chk<#= formItemName #>").attr("checked", true);
+			}
+			else {
+				$("#chk<#= formItemName #>").attr("checked", false);
+			}
+					<# break;
+					case "Combox": 
+					if(queryType == "Struct")
+					{#>	
+				<#= detailObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
+					<#}else
+						if(queryType == "Refer")
+						{
+							if((bool)formItemModel["IsRequired"])
+							{#>
+				<#= detailObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
+							<#}
+							else
+							{#>
+				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+					<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+				}
+				else {
+					<#= detailObjeName #>.<#= formItemName #> = null;
+				}
+							<#}#>	
+					 <#}#>
+					<# break;
+				}
+			} #>
+                <#= detailObjeName #>.editState = "add";
+                detailObjList.push(<#= detailObjeName #>);
+
+                var detailData = new rock.JsonData(<#= detailObjeName #>.<#= detailObjeName #>ID);
+                detailData.data.push(null);
+                detailData.data.push(<#= detailObjeName #>.<#= detailObjeName #>ID);
+                detailData.data.push($("#txt<#= detailMainReferObjeName #>ID").val());
+                detailData.data.push(editImg);
+                detailData.data.push(deleteImg);
+			<#for (var i = 0; i < detailGridMainReferColumns.Count; i++)
+			{
+				gridColumnModel = detailGridMainReferColumns[i] ;
+				gridColumnName = gridColumnModel["GridColumnName"] as string;
+				queryForm = gridColumnModel["QueryForm"] as string;
+					if (queryForm == "Combox")
+					{#> 
+					detailData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());    
+					<#}else{#>
+					detailData.data.push($("#txt<#= gridColumnName #>").val());					  					  				
+			<#}}#> 
+			<#for (var i = 0; i < detailGridColumns.Count; i++)
+			{
+				gridColumnModel = detailGridColumns[i] ;
+				gridColumnName = gridColumnModel["GridColumnName"] as string;
+				queryForm = gridColumnModel["QueryForm"] as string;
+					if (queryForm == "Combox")
+					{#> 
+					detailData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());    
+					<#}else{#>
+					detailData.data.push($("#txt<#= gridColumnName #>").val());					  					  				
+			<#}}#>                
+                detailDataList.rows.push(detailData);
+            }
+            else {
+                //判断明细是否重复选择
+                for (var j = 0; j < detailObjList.length; j++) {
+                    if (detailObjList[j].<#= detailMainReferObjeName #>ID == <#= detailMainReferObjeName #>ID && detailObjList[j].<#= detailObjeName #>ID != <#= detailObjeName #>.<#= detailObjeName #>ID) {
+                        alert("<#= detailMainReferName #>不能重复选择");
+                        return;
+                    }
+                }
+                for (var i = 0; i < detailDataList.rows.length; i++) {
+                    if (detailDataList.rows[i].id.toString() == <#= detailObjeName #>.<#= detailObjeName #>ID) {
+                        detailDataList.rows[i].data[1] = <#= detailObjeName #>.<#= detailObjeName #>ID;
+                        detailDataList.rows[i].data[2] = $("#txt<#= detailMainReferObjeName #>ID").val();
+                        detailDataList.rows[i].data[3] = editImg;
+                        detailDataList.rows[i].data[4] = deleteImg;
+
+					<#for (var i = 0; i < detailGridMainReferColumns.Count; i++)
+					{
+						gridColumnModel = detailGridMainReferColumns[i] ;
+						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						queryForm = gridColumnModel["QueryForm"] as string;
+							if (queryForm == "Combox")
+							{#>
+							detailDataList.rows[i].data[<#= i + 5 #>] =$("#combo<#= gridColumnName #>").find("option:selected").text();
+							<#}else{#>
+							detailDataList.rows[i].data[<#= i + 5 #>] =$("#txt<#= gridColumnName #>").val();
+							<#}					
+					} #>   
+					<#for (var i = 0; i < detailGridColumns.Count; i++)
+					{
+						gridColumnModel = detailGridColumns[i] ;
+						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						queryForm = gridColumnModel["QueryForm"] as string;
+							if (queryForm == "Combox")
+							{#>
+							detailDataList.rows[i].data[<#= i + detailColumnIndex  #>] =$("#combo<#= gridColumnName #>").find("option:selected").text();
+							<#}else{#>
+							detailDataList.rows[i].data[<#= i + detailColumnIndex #>] =$("#txt<#= gridColumnName #>").val();
+							<#}					
+					} #>                            
+
+                        for (var j = 0; j < detailObjList.length; j++) {
+                            if (detailObjList[j].<#= detailObjeName #>ID == <#= detailObjeName #>.<#= detailObjeName #>ID) {
+                                detailObjList[j].materialID = $("#txt<#= detailMainReferObjeName #>ID").val();
+							<#for (var i = 0; i < detailFormItems.Count; i++)
+							{
+								formItemModel = detailFormItems[i] ;
+								queryType = formItemModel["QueryType"] as string;
+								formItemName = formItemModel["FormItemName"] as string;
+								referType = formItemModel["ReferType"] as string;
+								inputType = formItemModel["InputType"] as string;
+								switch (inputType)
+								{
+									case "TextBox": 
+										if((bool)formItemModel["IsRequired"])
+										{
+											if(queryType == "Struct"){#>
+								<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
+											<#}
+											else
+											{#>
+								 <#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val(); 
+											<#}#>
+										<#}
+										else
+										{
+										   if(queryType == "Struct"){#>
+								if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
+									<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
+								}
+								else {
+									<#= detailObjeName #>.<#= formItemName #>ID = null;
+								}
+											<#}
+											else
+											{#>
+								if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+									<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+								}
+								else {
+									<#= detailObjeName #>.<#= formItemName #>ID = null;
+								}
+											<#}#>
+									<#} break;
+									case "Date": 
+										if((bool)formItemModel["IsRequired"]){#>
+								<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+									<#}else{#>
+								if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+									<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+								}
+								else {
+									<#= detailObjeName #>.<#= formItemName #> = null;
+								}
+									<#} break;
+									case "Checkbox": #>
+							if (<#= detailObjeName #>.<#= formItemName #>) {
+								$("#chk<#= formItemName #>").attr("checked", true);
+							}
+							else {
+								$("#chk<#= formItemName #>").attr("checked", false);
+							}
+									<# break;
+									case "Combox": 
+									if(queryType == "Struct")
+									{#>	
+								<#= detailObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
+									<#}else
+										if(queryType == "Refer")
+										{
+											if((bool)formItemModel["IsRequired"])
+											{#>
+								<#= detailObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
+											<#}
+											else
+											{#>
+								if ($.trim($("#txt<#= formItemName #>").val()) != '') {
+									<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
+								}
+								else {
+									<#= detailObjeName #>.<#= formItemName #> = null;
+								}
+											<#}#>	
+									 <#}#>
+									<# break;
+								}
+							} #>
+                                detailObjList[j].editState = "modify";
+                            }
+                        }
+                    }
+                }
+            }
+            detailGrid.clearAll();
+            detailGrid.parse(detailDataList, "json");
+            hideDetailForm();
+        }
+    });
+
+    //主参照选择弹窗
+    mainReferForm = $("#mainReferForm");
+    hideMainReferForm();
+    function hideMainReferForm() {
+        mainReferForm.css({ top: 200, left: -1300 }).hide();
+        mainReferForm.css("visibility", "visible");
+    }
+    function showMainReferForm() {
+        var top = $("#txt<#= detailMainReferObjeName #>Name").offset().top;
+        var left = $("#txt<#= detailMainReferObjeName #>Name").offset().left;
+        mainReferForm.css({ top: top + 23, left: left }).show();
+    }   
+
+  //主参照选择弹窗autocomplete快速搜索处理
+    $("#txt<#= detailMainReferObjeName #>Name").keyup(function () {
+        mainReferComplete($("#txt<#= detailMainReferObjeName #>Name").val());        
+    });
+    $('#txt<#= detailMainReferObjeName #>Name').focus(function (e) {
+        showMainReferForm();
+    });
+	    <#for (var i = 0; i < detailMainReferGridColumns.Count; i++)
+        {
+            gridColumnModel = detailMainReferGridColumns[i] ;
+			gridColumnName = gridColumnModel["GridColumnName"] as string;
+			structName = gridColumnModel["StructName"] as string;
+            if (i < detailMainReferGridColumns.Count - 1)
+            {
+                if (!string.IsNullOrEmpty(structName))
+                {
+                    if (structName.Trim() == "")
+                    {
+                        sql += "[" + detailMainReferType + "].[" + gridColumnName + "], ";
+                    }
+                    else
+                    {
+                        sql += "[" + structName + "].[" + structName + "Name], ";
+                        referClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
+                    }
+                }
+                else
+                {
+					if(gridColumnModel["DataType"] as string == "Date")
+					{
+						sql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
+					}
+					else
+					{
+						sql += "[" + detailMainReferType + "].[" + gridColumnName + "], ";
+					}
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(structName))
+                {
+                    if (structName.Trim() == "")
+                    {
+                        sql += "[" + detailMainReferType + "].[" + gridColumnName + "] from [" + detailMainReferType + "]";
+                    }
+                    else
+                    {
+                        sql += "[" + structName + "].[" + structName + "Name] from [" + detailMainReferType + "]";
+                        referClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
+                    }
+                }
+                else
+                {
+					if(gridColumnModel["DataType"] as string == "Date")
+					{
+						sql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + detailMainReferType + "]";
+					}
+					else
+					{
+						sql += "[" + detailMainReferType + "].[" + gridColumnName + "] from [" + detailMainReferType + "]";
+					}
+                }
+                sql += referClause;
+            }
+        }#>
+	    <#for (var i = 0; i < detailMainReferFuzzyColumns.Count; i++)
+        {
+            gridColumnModel = detailMainReferFuzzyColumns[i] ;
+			gridColumnName = gridColumnModel["GridColumnName"] as string;
+			structName = gridColumnModel["StructName"] as string;
+            if (i == 0)
+            {
+                if (!string.IsNullOrEmpty(structName))
+                {
+					if(referClause == "")
+					{
+						sql += " WHERE ([" + structName + "].[" + structName + "Name] like '%\"" + " + $(\"#txt" + detailMainReferObjeName +  "Name\").val() + " + "\"%' ";
+					}
+					else
+					{
+						sql += " AND ([" + structName + "].[" + structName + "Name] like '%\"" + " + $(\"#txt" + detailMainReferObjeName +  "Name\").val() + " + "\"%' ";
+					}
+                }
+				else
+				{
+
+					if(referClause == "")
+					{
+						sql += " WHERE ([" + detailMainReferType + "].[" + gridColumnName + "] like '%\"" + " + $(\"#txt" + detailMainReferObjeName +  "Name\").val() + " + "\"%'";
+					}
+					else
+					{
+						sql += " AND ([" + detailMainReferType + "].[" + gridColumnName + "] like '%\"" + " + $(\"#txt" + detailMainReferObjeName +  "Name\").val() + " + "\"%'";
+					}
+				}               
+            }
+            else
+            {
+                if (i == (detailMainReferFuzzyColumns.Count -1))
+                {
+					if (!string.IsNullOrEmpty(structName))
+					{
+						sql += " OR [" + structName + "].[" + structName + "Name] like '%\"" + " + $(\"#txt" + detailMainReferObjeName +  "Name\").val() + " + "\"%')";
+					}
+					else
+					{
+						sql += " OR [" + detailMainReferType + "].[" + gridColumnName + "] like '%\"" + " + $(\"#txt" + detailMainReferObjeName +  "Name\").val() + " + "\"%')";
+					}
+                }
+                else
+                {
+					if (!string.IsNullOrEmpty(structName))
+					{
+						sql += " OR [" + structName + "].[" + structName + "Name] like '%\"" + " + $(\"#txt" + detailMainReferObjeName +  "Name\").val() + " + "\"%'";
+					}
+					else
+					{
+						sql += " OR [" + detailMainReferType + "].[" + gridColumnName + "] like '%\"" + " + $(\"#txt" + detailMainReferObjeName +  "Name\").val() + " + "\"%'";
+					}               
+                }
+            }
+        }
+		sql += ")";
+		#>
+    function mainReferComplete(searchCode) {
+        ISystemService.execQuery.sqlString = "select top 20 [<#= detailMainReferType #>].[<#= detailMainReferType #>ID], <#= sql #>";
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {
+                rock.tableToListGrid(e, mainReferGrid, mainReferGridDataList);
+            }(ISystemService.execQuery.resultValue));
+        }
+    }
+	//加载弹窗Div
+    <# if(hasPop)
+    {
+	     for (int i = 0; i < popDivLists.Count; i++)
+         {
+		     structPopStr = popDivLists[i];
+		 #>
+    $(document.body).append('<#= structPopStr #>');  
+         <#}		
+     }#>    
+	 
+//初始化实体弹窗树
+<#foreach (KeyValuePair<string, string> item in structPopDict)
+{
+    formItemName = item.Key;
+    structName = item.Value;#>
+
+    <#= formItemName #>Tree = new dhtmlXTreeObject("<#= formItemName #>Tree", "100%", "100%", 0);
+    <#= formItemName #>Tree.setImagePath("/resource/dhtmlx/codebase/imgs/csh_bluefolders/");
+    <#= formItemName #>Tree.setStdImages("icon_leaf.png", "folderOpen.gif", "folderClosed.gif");
+    <#= formItemName #>Tree.attachEvent("onSelect", <#= formItemName #>TreeSelect);
+    <#= formItemName #>Tree.attachEvent("onDblClick", function (id) {
+	$("#txt<#= formItemName #>Search").val(<#= formItemName #>Tree.getSelectedItemText());
+    $("#txt<#= formItemName #>ID").val(id);
+	hide<#= formItemName #>Pop();
+    });
+
+    function <#= formItemName #>TreeSelect(itemid) {
+        if (!<#= formItemName #>Tree.hasChildren(itemid)) {
+            ISystemService.execQuery.sqlString = "select [<#= structName #>ID],[<#= structName #>Name] from [<#= structName #>] where ParentID = " + itemid;
+            rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+            if (ISystemService.execQuery.success) {
+                (function (e) {
+                    var rows = e.rows;
+                    for (var i = 0; i < rows.length; i++) {
+                        var rowResult = rows[i].values;
+                        <#= formItemName #>Tree.insertNewChild(itemid, rowResult[0].value, rowResult[1].value);
+                    }
+                }(ISystemService.execQuery.resultValue));
+            }
+        }
+    }
+	<#= formItemName #>Pop = $("#<#= formItemName #>Pop")	
+    $('#txt<#= formItemName #>Search').focus(function (e) {
+        show<#= formItemName #>SearchPop();
+    });
+    function show<#= formItemName #>SearchPop() {
+        var top = $("#txt<#= formItemName #>Search").offset().top;
+        var left = $("#txt<#= formItemName #>Search").offset().left;
+        <#= formItemName #>Pop.css({ top: top + 22, left: left }).show();    
+	}	
+
+    function hide<#= formItemName #>Pop() {
+        <#= formItemName #>Pop.css({ top: 200, left: -1300 }).hide();
+    }
+	hide<#= formItemName #>Pop();
+
+<#}#>    
+    //初始化通用参照弹窗树
+<#foreach (KeyValuePair<string, string> item in referPopDict)
+{
+    formItemName = item.Key;
+    referType = item.Value;#>
+
+    <#= formItemName #>Tree = new dhtmlXTreeObject("<#= formItemName #>Tree", "100%", "100%", 0);
+    <#= formItemName #>Tree.setImagePath("/resource/dhtmlx/codebase/imgs/csh_bluefolders/");
+    <#= formItemName #>Tree.setStdImages("icon_leaf.png", "folderOpen.gif", "folderClosed.gif");
+    <#= formItemName #>Tree.attachEvent("onSelect", <#= formItemName #>TreeSelect);
+    <#= formItemName #>Tree.attachEvent("onDblClick", function (id) {
+		$("#txt<#= formItemName #>Search").val(<#= formItemName #>Tree.getSelectedItemText());  
+        hide<#= formItemName #>Pop()
+    });
+
+    function <#= formItemName #>TreeSelect(itemid) {
+        if (!<#= formItemName #>Tree.hasChildren(itemid)) {
+            ISystemService.execQuery.sqlString = "select [ReferID],[ReferName] from [Refer] where [ReferType] = '<#= referType #>' and [ParentID] = " + itemid;
+            rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+            if (ISystemService.execQuery.success) {
+                (function (e) {
+                    var rows = e.rows;
+                    for (var i = 0; i < rows.length; i++) {
+                        var rowResult = rows[i].values;
+                        <#= formItemName #>Tree.insertNewChild(itemid, rowResult[0].value, rowResult[1].value);
+                    }
+                }(ISystemService.execQuery.resultValue));
+            }
+        }
+    }
+
+	<#= formItemName #>Pop = $("#<#= formItemName #>Pop")	
+    $('#txt<#= formItemName #>Search').focus(function (e) {
+        show<#= formItemName #>SearchPop();
+    });
+    function show<#= formItemName #>SearchPop() {
+        var top = $("#txt<#= formItemName #>Search").offset().top;
+        var left = $("#txt<#= formItemName #>Search").offset().left;
+        <#= formItemName #>Pop.css({ top: top + 22, left: left }).show();    
+	} 			
+	
+    function hide<#= formItemName #>Pop() {
+        <#= formItemName #>Pop.css({ top: 200, left: -1300 }).hide();
+    }
+	hide<#= formItemName #>Pop();
+<#}#> 
+    //表单快查弹窗
+<#foreach (KeyValuePair<string, string> item in quickPopDict)
+{   
+    formItemName = item.Key;
+    structName = item.Value;#>
+    <#= formItemName #>QuickGrid = new dhtmlXGridObject("<#= formItemName #>QuickGrid");
+    <#= formItemName #>QuickGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
+    <#= formItemName #>QuickGrid.setSkin("dhx_skyblue");
+	<#= formItemName #>QuickGrid.setHeader(",,");
+	<#= formItemName #>QuickGrid.setInitWidths("0,0,*");
+	<#= formItemName #>QuickGrid.setColAlign("center,center,left");
+	<#= formItemName #>QuickGrid.setColSorting("na,na,str");
+	<#= formItemName #>QuickGrid.setColTypes("ro,ro,ro");
+    <#= formItemName #>QuickGrid.enableDistributedParsing(true, 20);
+    <#= formItemName #>QuickGrid.attachEvent("onRowDblClicked", function (rowID, cIndex) {	   
+		$("#txt<#= formItemName #>ID").val(rowID)
+		$("#txt<#= formItemName #>").val(<#= formItemName #>QuickGrid.cells(rowID, 2).getValue())
+		hide<#= formItemName #>Pop();
+    });   
+    <#= formItemName #>QuickGrid.init(); 
+	<#= formItemName #>QuickGrid.detachHeader(0); 
+	<#= formItemName #>Pop = $("#<#= formItemName #>Pop")	
+    $('#txt<#= formItemName #>').focus(function (e) {
+        show<#= formItemName #>Pop();
+    });	
+
+	function show<#= formItemName #>Pop() {
+        var top = $("#txt<#= formItemName #>").offset().top;
+        var left = $("#txt<#= formItemName #>").offset().left;
+        <#= formItemName #>Pop.css({ top: top + 22, left: left }).show();
+    }
+
+    function hide<#= formItemName #>Pop() {
+        <#= formItemName #>Pop.css({ top: 200, left: -1300 }).hide();
+    }
+	hide<#= formItemName #>Pop();
+
+    $("#txt<#= formItemName #>").keyup(function () {
+        <#= formItemName #>Complete($("#txt<#= formItemName #>").val());        
+    });
+	var  <#= formItemName #>DataList = new rock.JsonList();
+    function <#= formItemName #>Complete(searchCode) {
+        ISystemService.execQuery.sqlString = "select top 20 [<#= structName #>].[<#= structName #>ID], [<#= structName #>].[<#= structName #>Name] from [<#= structName #>] where [<#= structName #>Name] like  '%" + $("#txt<#= formItemName #>").val() + "%' or [SearchCode] like  '%" + $("#txt<#= formItemName #>").val() + "%'";
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {
+                rock.tableToListGrid(e, <#= formItemName #>QuickGrid, <#= formItemName #>DataList);
+            }(ISystemService.execQuery.resultValue));
+        }
+    }
+<#}#>
+	
+	//处理点击显示关闭弹窗事件
+    $('#mainbody').mousedown(function (e) {
+        if (e.srcElement.id != "txt<#= detailMainReferObjeName #>Name") {
+            hideMainReferForm();
+        }
+    <# if(masterPopFormItemNameLists.Count > 0 )
+    { 
+		for (var i = 0; i < masterPopFormItemNameLists.Count; i++)
+		{
+		    formItemName = masterPopFormItemNameLists[i];#>
+        if (e.srcElement.id != "txt<#= formItemName #>") {
+            hide<#= formItemName #>Pop();
+        }
+		<#}#>
+    <#}#>
+    <# if(masterPopFormItemNameLists.Count > 0 )
+    { 
+		for (var i = 0; i < detailpopFormItemNameLists.Count; i++)
+		{
+		    formItemName = detailpopFormItemNameLists[i];#>
+        if (e.srcElement.id != "txt<#= formItemName #>") {
+            hide<#= formItemName #>Pop();
+        }
+		<#}#>
+    <#}#>
+    }); 
+    function fillPageItem() {
+        if (<#= masterObjeName #>) {
+            $("#txt<#= masterObjeName #>ID").val(<#= masterObjeName #>.<#= masterObjeName #>ID);
+		<#for (var i = 0; i < masterFormItems.Count; i++)
+		{
+			formItemModel = masterFormItems[i] ;
+			formItemName = formItemModel["FormItemName"] as string;
+			queryType = formItemModel["QueryType"] as string;
+			structName = formItemModel["StructName"] as string;
+			switch ( formItemModel["InputType"] as string)
+			{
+				case "TextBox": 
+				if(queryType == "Struct")
+				{#>
+			$("#txt<#= formItemName #>ID").val(<#= masterObjeName #>.<#= formItemName #>ID);
+			ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + <#= masterObjeName #>.<#= formItemName #>ID;
+			rock.AjaxRequest(ISystemService.executeScalar, rock.exceptionFun);
+			var warehouseName = null;
+			if (ISystemService.executeScalar.success) {
+				(function (e) {
+					$("#txt<#= formItemName #>").val(e.value);
+				}(ISystemService.executeScalar.resultValue));
+			}
+				<#}else{#>
+			$("#txt<#= formItemName #>").val(<#= masterObjeName #>.<#= formItemName #>);
+				<#}#>
+				<# break;
+				case "Date": #>
+			$("#txt<#= formItemName #>").val(<#= masterObjeName #>.<#= formItemName #>.split(' ')[0]);
+				<# break;
+				case "Checkbox": #>
+		if (<#= masterObjeName #>.<#= formItemName #>) {
+			$("#chk<#= formItemName #>").attr("checked", true);
+		}
+		else {
+			$("#chk<#= formItemName #>").attr("checked", false);
+		}
+				<# break;
+				case "Combox": 
+				if(queryType == "Struct")
+				{#>
+			rock.setSelectItem("combo<#= formItemName #>", <#= masterObjeName #>.<#= formItemName #>ID, "value");
+				<#}else{#>
+			rock.setSelectItem("combo<#= formItemName #>", <#= masterObjeName #>.<#= formItemName #>, "text"); 
+				<#}#>
+				<# break;
+			}
+		} #>
+            //填充明细列表 
+            detailObjList = [];
+            detailDataList.rows = [];
+            for (var i = 0; i < <#= detailObjeName #>.<#= detailObjeName #>List.length; i++) {
+                var temp<#= detailType #> = <#= masterObjeName #>.<#= detailObjeName #>List[i];
+                var detailData = new rock.JsonData(temp<#= detailType #>.<#= detailObjeName #>ID);
+                var <#= detailMainReferObjeName #> = null;
+                detailData.data.push(null);
+                detailData.data.push(temp<#= detailType #>.<#= masterObjeName #>ID);
+                detailData.data.push(temp<#= detailType #>.<#= detailMainReferObjeName #>ID);
+                detailData.data.push(editImg);
+                detailData.data.push(deleteImg);
+                //获取物料
+                ISystemService.getDynObjectByID.dynObjectID = temp<#= detailType #>.<#= detailMainReferObjeName #>ID;
+                ISystemService.getDynObjectByID.structName = "<#= detailMainReferType #>";
+                rock.AjaxRequest(ISystemService.getDynObjectByID, rock.exceptionFun);
+                if (ISystemService.getDynObjectByID.success) {
+                    (function (e) {
+                        <#= detailMainReferObjeName #> = e;
+                    }(ISystemService.getDynObjectByID.resultValue));
+                }
+		<#for (var i = 0; i < detailGridMainReferColumns.Count; i++)
+		{
+			gridColumnModel = detailGridMainReferColumns[i] ;
+			gridColumnName = gridColumnModel["GridColumnName"] as string;
+			structName = gridColumnModel["StructName"] as string;
+			if(string.IsNullOrEmpty(structName)){#>
+				detailData.data.push(<#= detailMainReferObjeName #>.<#= gridColumnName #>);
+			<#}else{#>	
+                ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + <#= detailMainReferObjeName #>.<#= gridColumnName #>ID;
+                rock.AjaxRequest(ISystemService.executeScalar, rock.exceptionFun);
+                if (ISystemService.executeScalar.success) {
+                    (function (e) {
+                       detailData.data.push(e.value);
+                    }(ISystemService.executeScalar.resultValue));
+                }
+			<#}#>					  					  				
+		<#}#> 
+		<#for (var i = 0; i < detailGridColumns.Count; i++)
+		{
+			gridColumnModel = detailGridColumns[i] ;
+			gridColumnName = gridColumnModel["GridColumnName"] as string;
+			structName = gridColumnModel["StructName"] as string;
+			if(string.IsNullOrEmpty(structName)){#>			
+				detailData.data.push(temp<#= detailType #>.<#= gridColumnName #>);
+			<#}else{#>	
+                ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + <#= detailMainReferObjeName #>.<#= gridColumnName #>ID;
+                rock.AjaxRequest(ISystemService.executeScalar, rock.exceptionFun);
+                if (ISystemService.executeScalar.success) {
+                    (function (e) {
+                       detailData.data.push(e.value);
+                    }(ISystemService.executeScalar.resultValue));
+                }
+			<#}#>					  					  				
+		<#}#>                
+                detailDataList.rows.push(detailData);
+                detailObjList.push(temp<#= detailType #>);
+            }
+            detailGrid.clearAll();
+            detailGrid.parse(detailDataList, "json");
+        }
+    }
+    function clearPageItem() {
+        $("#txt<#= masterObjeName #>ID").val("");
+
+	<#for (var i = 0; i < masterFormItems.Count; i++)
+	{
+		formItemModel = masterFormItems[i] ;
+		formItemName = formItemModel["FormItemName"] as string;
+		queryType = formItemModel["QueryType"] as string;
+		structName = formItemModel["StructName"] as string;
+		switch ( formItemModel["InputType"] as string)
+		{
+			case "TextBox": 
+			if(queryType == "Struct")
+			{#>
+		$("#txt<#= formItemName #>ID").val("");
+		$("#txt<#= formItemName #>").val("");		
+			<#}else{#>
+		$("#txt<#= formItemName #>").val("");
+			<#}#>
+			<# break;
+			case "Date": #>
+		$("#txt<#= formItemName #>").val("");
+			<# break;
+			case "Checkbox": #>
+		$("#chk<#= formItemName #>").attr("checked", false);
+			<# break;
+			case "Combox": #>
+        $("#combo<#= formItemName #>").get(0).selectedIndex = 0;			
+			<# break;
+		}
+	} #>        
+        //清空明细列表
+        detailGrid.clearAll();
+        detailDataList.rows = [];
+        detailObjList = [];
+    }
+
+    function refreshToolBarState() {
+        switch (uIState) {
+            case "Init":
+                toolBar.enableItem("add");
+                toolBar.disableItem("renounce");
+                toolBar.disableItem("modify");
+                toolBar.disableItem("save");
+                toolBar.disableItem("delete");
+                toolBar.disableItem("submit");
+                toolBar.disableItem("repeal");
+                toolBar.disableItem("addDetail");
+                break;
+            case "Editing":
+                toolBar.disableItem("add");
+                toolBar.enableItem("renounce");
+                toolBar.disableItem("modify");
+                toolBar.enableItem("save");
+                toolBar.disableItem("submit");
+                toolBar.disableItem("repeal");
+                //根据单据状态判断
+                if (billState == "已创建") {
+                    toolBar.enableItem("addDetail");
+                    //修改状态可以删除,新增状态不可以删除
+                    if (editState == "add") {
+                        toolBar.disableItem("delete");
+                    }
+                    else {
+                        toolBar.enableItem("delete");
+                    }
+                }
+                else {
+                    toolBar.disableItem("addDetail");
+                    toolBar.disableItem("delete");
+                }
+                break;
+            case "Browsing":
+                toolBar.enableItem("add");
+                toolBar.disableItem("renounce");
+                toolBar.disableItem("save");
+                toolBar.disableItem("addDetail");
+                //根据单据状态判断
+                if (billState == "已创建") {
+                    toolBar.enableItem("modify");
+                    toolBar.enableItem("delete");
+                    toolBar.enableItem("submit");
+                    toolBar.disableItem("repeal");
+                }
+                if (billState == "已提交") {
+                    toolBar.disableItem("modify");
+                    toolBar.disableItem("delete");
+                    toolBar.disableItem("submit");
+                    toolBar.enableItem("repeal");
+                }
+                break;
+        }
+    }
+
+    function addInit() {
+        clearPageItem();
+        <#= masterObjeName #> = <#= masterType #>Class.createInstance();
+        <#= masterObjeName #>.state = "已创建";
+        ISystemService.getNextID.typeName = '<#= masterType #>';
+        rock.AjaxRequest(ISystemService.getNextID, rock.exceptionFun);
+        if (ISystemService.getNextID.success) {
+            (function (e) {
+			    <#= masterObjeName #>.<#= masterObjeName #>ID = e.value;
+                $("#txt<#= masterObjeName #>ID").val(e.value);
+            }(ISystemService.getNextID.resultValue))
+        }
+		if ($("#txt<#= masterObjeName #>Code").length > 0)
+		{
+			ISystemService.getBillNO.billType = "<#= billName #>";
+			rock.AjaxRequest(ISystemService.getBillNO, rock.exceptionFun);
+			if (ISystemService.getBillNO.success) {
+				(function (e) {
+					$("#txt<#= masterObjeName #>Code").val(e.value);
+				}(ISystemService.getBillNO.resultValue));
+			}
+		}
+        
+	<#for (var i = 0; i < masterFormItems.Count; i++)
+	{
+		formItemModel = masterFormItems[i] ;
+		formItemName = formItemModel["FormItemName"] as string;
+		inputType = formItemModel["InputType"] as string;
+		structName = formItemModel["StructName"] as string;
+		if (inputType == "Date")
+		{#>			
+		$("#txt<#= formItemName #>").val(serverDate);					
+		<#}
+	} #>        
+        editState = "add";
+        uIState = "Editing";
+        billState = "已创建";
+        refreshToolBarState();
+    }    
+    <#if(hasDate)
+    {#>	
+	//日期控件处理 
+	var dateboxArray = [];
+        <#for (int i = 0; i < dateControlLists.Count; i++)
+        {#>
+    dateboxArray.push(<#= dateControlLists[i] #>);            
+        <#}#>
+	myCalendar = new dhtmlXCalendarObject(dateboxArray);
+    myCalendar.loadUserLanguage('cn');
+    <#}#>
+})

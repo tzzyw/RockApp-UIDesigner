@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2AD4A456-67C3-4C16-A68E-0E6DBDF9B9B1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Rock.RunCommon</RootNamespace>
+    <AssemblyName>Rock.RunCommon</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Rock.Common">
+      <HintPath>..\Libraries\Rock\Rock.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Rock.Dyn.Comm">
+      <HintPath>..\Libraries\Rock\Rock.Dyn.Comm.dll</HintPath>
+    </Reference>
+    <Reference Include="Rock.Dyn.Core">
+      <HintPath>..\Libraries\Rock\Rock.Dyn.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Rock.Dyn.Msg">
+      <HintPath>..\Libraries\Rock\Rock.Dyn.Msg.dll</HintPath>
+    </Reference>
+    <Reference Include="Rock.Orm.Common">
+      <HintPath>..\Libraries\Rock\Rock.Orm.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Rock.Orm.Data">
+      <HintPath>..\Libraries\Rock\Rock.Orm.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppLoader.cs" />
+    <Compile Include="AuthService.cs" />
+    <Compile Include="DataSetHelper.cs" />
+    <Compile Include="Gateways.cs" />
+    <Compile Include="JsScriptLoader.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReflectMethod.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Rock.StaticEntities\Rock.StaticEntities.csproj">
+      <Project>{fdbb2d45-a2c5-45d3-b1d1-fc238a7c0183}</Project>
+      <Name>Rock.StaticEntities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

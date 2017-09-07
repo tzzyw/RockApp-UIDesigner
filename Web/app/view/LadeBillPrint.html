@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>提货单打印</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/ladeBillPrint.js"></script>
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            /*background-color: silver;*/
+            overflow: auto;
+        }
+
+        input {
+            border: 0;
+            background: #ffffff;
+            text-align: center;
+        }
+
+        .bordertable {
+            border: 1px solid black;
+            border-collapse: collapse;
+            margin: 3px;
+            text-align: center;
+        }
+
+            .bordertable td {
+                border: 1px solid black;
+                padding-left: 3px;
+                height: 27px;
+                font-size: 12pt;
+            }
+    </style>
+</head>
+<body>
+    <div style="margin: 0 auto; width: 705px">
+        <table style="width: 100%">           
+            <tr>
+                <td style="width: 705px; height: 18px;" colspan="4" align="center">
+                    <strong><span style="font-size: 14pt; text-decoration: underline">南京扬子石化炼化有限责任公司</span></strong>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 420px; height: 18px;" colspan="2" align="right"><strong><span style="font-size: 12pt">产品提货通知单</span></strong></td>
+                <td style="width: 280px; height: 18px;" colspan="2" align="right"><span style="font-size: 10pt">查询网址:http://www.njlhgs.com</span></td>
+            </tr>
+            <tr>
+                <td style="width: 45px; height: 18px;">
+                    提货编号：
+                </td>
+                <td style="width: 275px;text-align:left; height: 18px;">
+                    <input id="txtladeBillNum" class="smallInput" style="width:203px;text-align:left" type="text" readonly="readonly" />
+                </td>
+                <td style="width: 230px; height: 18px;">
+                    提货日期：<input id="txtladeDate" class="smallInput" style="width:103px" type="text" readonly="readonly" />
+                </td>
+            </tr>
+        </table>       
+        <table class="bordertable" style="background-image: url(../../Images/cpthd.png); background-repeat: no-repeat; ">
+            <tbody>
+                <tr>
+                    <td style="width: 80px; height: 18px;">
+                        产品名称
+                    </td>
+                    <td style="width: 200px; height: 18px;">
+                        <input id="txtmaterialName" class="smallInput" style="width: 192px" type="text" readonly="readonly"/>
+                    </td>
+                    <td style="width: 80px; height: 18px;">
+                        备注
+                    </td>
+                    <td style="width: 320px; height: 18px;">
+                        <input id="txtcomment" class="smallInput" style="width: 295px" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 80px; height: 18px;">
+                        收货单位
+                    </td>
+                    <td style="width: 200px; height: 18px;" colspan="3">
+                        <input id="txtreceiver" class="smallInput" style="width: 592px" type="text" readonly="readonly" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 80px; height: 18px;">
+                        开票时间
+                    </td>
+                    <td style="width: 200px; height: 18px;">
+                        <input id="txtbillingTime" class="smallInput" style="width: 189px" type="text" readonly="readonly" /> 
+                    </td>
+                    <td style="width: 80px; height: 18px;">
+                        运输方式
+                    </td>
+                    <td style="width: 320px; height: 18px;">
+                        <input id="txtshipType" class="smallInput" style="width: 290px" type="text" readonly="readonly" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 80px; height: 18px;">
+                        计划量(吨)
+                    </td>
+                    <td style="width: 200px; height: 18px;">
+                        <input id="txtplanQuantity" class="smallInput" style="width: 192px" type="text" readonly="readonly" /> 
+                    </td>
+                    <td style="width: 80px; height: 18px;">
+                        车号
+                    </td>
+                    <td style="width: 320px; height: 18px;">
+                        <input id="txtvehicleNum" class="smallInput" style="width: 293px" type="text" readonly="readonly" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 80px; height: 18px;">
+                        开票人
+                    </td>
+                    <td style="width: 200px; height: 18px;">
+                        <input id="txtkaipiao" class="smallInput" style="width: 187px" type="text" readonly="readonly" /> 
+                    </td>
+                    <td style="width: 80px; height: 18px;">
+                        发货罐体
+                    </td>
+                    <td style="width: 320px; height: 18px;">
+                        &nbsp;<input id="txtdeliveryTank" class="smallInput" style="width: 298px" type="text" readonly="readonly" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 80px; height: 18px">
+                        发货人
+                    </td>
+                    <td style="width: 200px; height: 18px">
+                        <input id="txtsender" class="smallInput" style="width: 73px" type="text" readonly="readonly" /> 提货人<input id="txtpicker" class="smallInput" style="width: 73px" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 80px; height: 18px">
+                        目的地
+                    </td>
+                    <td style="width: 320px; height: 18px">
+                        <input id="txtdestination" class="smallInput" style="width: 298px" type="text" readonly="readonly" /> 
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 80px; height: 18px;">
+                        实发量
+                    </td>
+                    <td colspan="3" style="width: 605px; height: 18px;">
+                        大写：<input id="txtactualQuantityd" class="smallInput" style="width: 292px" type="text" readonly="readonly" /> 小写：<input id="txtactualQuantityx" class="smallInput" style="width: 165px" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table style="width: 100%">
+            <tr>
+                <td style="width: 70%; height: 60px;text-align:left;vertical-align:top">
+                    封签号：<input id="txtsealNum" class="smallInput" style="width: 308px;text-align:left" type="text" readonly="readonly" />请扫描二维码查询
+                </td>
+                <td style="width: 30%; height: 60px;">
+                    <img id="qrCode" style="width: 60px; height: 60px; "/>
+                </td>               
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>关联对象</title>
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/mainmenu.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/skins/terrace/dhtmlx.css" rel="stylesheet" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js" type="text/javascript"></script>
+    <script src="../controller/RelationFormPage.js"></script>
+</head>
+<body>
+    <div id="mainbody" style="position: absolute; width: 100%; height: 100%;">
+    </div> 
+    <div id="masterForm" style="z-index: 7; width: 300px; height: 150px; top: 200px; left: 250px; position: absolute; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; visibility:hidden">
+        <div id="formItem">
+            <div style="width: 100%; height: 26px">
+                <div id="masterFormTitle" style="width: 80%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700"></div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px;cursor:pointer" id="master_Close"/>
+                </div>
+            </div>
+            <hr style="margin-top:5px" />
+            <div id="masterEditItem" style="width: 98%; margin-top: 15px">           
+            </div>
+        </div>
+        <div style="height: 20px"></div>
+        <div style="text-align: right">
+            <button class="btn" id="master_Save" style="margin-right: 15px; margin-top: 5px; height: 28px">保存</button>
+            <button class="btn" id="master_Cancle" style="margin-right: 30px; margin-top: 5px; height: 28px">取消</button>
+        </div>
+    </div>
+    <div id="slaveForm" style="z-index: 8; width: 500px; height: 275px; top: 200px; left: 250px; position: absolute; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; visibility:hidden">
+        <div style="width:100%;height:80px">
+            <div style="width: 100%; height: 26px">
+                <div id="relationTitle" style="width: 80%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700"></div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px;cursor:pointer" id="slave_Close" />
+                </div>
+            </div>
+            <hr style="margin-top:5px" />
+            <div id="slaveSearchKeyItem" style="width: 98%; margin-top: 15px">           
+            </div>            
+        </div>
+        <div id="slaveWaitGrid" style="background-color: White; border: 1px solid #C1C1C1; width: 500px;height:150px"></div>
+        <div style="text-align: right">
+            <button class="btn" id="slave_Save" disabled="" style="margin-right: 15px; margin-top: 5px; height: 28px">确定</button>
+            <button class="btn" id="slave_Cancle" style="margin-right: 30px; margin-top: 5px; height: 28px">取消</button>
+        </div>
+    </div>    
+    <div id="masterOperate" style="width: 100%;height:100%">
+        <div id="masterToolBar" style="height: 25px; width: 100%; float: left; padding-bottom: 2px">
+        </div>
+        <div id="masterGrid" style="width: 100%; height: 95%;margin-right: 5px">
+        </div>
+    </div>
+    <div id="slaveOperate" style="width: 100%;height:100%">
+        <div id="slaveToolBar" style="height: 25px; width: 100%; float: left; padding-bottom: 2px">
+        </div>
+        <div id="slaveGrid" style="width: 99%; height: 94%; margin-right: 5px">
+        </div>
+    </div> 
+</body>
+</html>

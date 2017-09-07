@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>客户账户余额自助查询 </title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/customerBalanceQuery.js"></script>
+</head>
+<body>
+    <div id="mainbody" style="position: absolute; width: 100%; height: 100%;">
+    </div>
+    <div id="masterDiv" style="width: 100%; height: 100%; background-color: White;">
+        <div id="toolBar">
+        </div>
+        <div id="masterGrid" style="width: 100%; height: 92%">
+            <table style="width: 98%;margin-top:10px">
+                <tr>
+                    <td style="width: 30%">
+                        客户当前余额:<input id="txtcurrenteBalance" class="smallInput" style="color:red" type="text" readonly="readonly" /><input id="txtcustomerID" type="hidden" />
+                    </td>
+                    <td style="width: 25%">
+                        冻结余额:<input id="txtfreezeBalance" class="smallInput" style="color:red" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 30%">
+                        客户可用余额:<input id="txtavailableBalance" class="smallInput" style="color:red" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 15%"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="cashRecordDiv" style="width: 100%; height: 100%; background-color: White;">
+        <div id="cashRecordGrid" style="width: 100%; height: 100%">
+        </div>
+    </div>
+    <div id="ladeBillDiv" style="width: 100%; height: 100%; background-color: White;">
+        <div id="ladeBillGrid" style="width: 100%; height: 100%">
+        </div>
+    </div>   
+</body>
+</html>

@@ -1,0 +1,349 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>工业用1-丁烯合格证</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/certificatePage.js"></script>
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+            /*background-color: silver;*/
+            overflow: auto;
+        }
+
+        input {
+            border: 0;
+            background: #ffffff;
+            text-align: center;
+        }
+
+        .bordertable {
+            border: 1px solid black;
+            border-collapse: collapse;
+            margin: 3px;
+            text-align: center;
+        }
+
+            .bordertable td {
+                border: 1px solid black;
+                padding-left: 3px;
+                height: 27px;
+                font-size: 12pt;
+            }
+    </style>
+</head>
+<body>
+    <div style="margin: 0 auto; width: 650px">
+        <table style="background-image: url(../../Images/QS3.PNG); background-repeat: no-repeat; width: 100%">
+            <tr>
+                <td style="width: 640px; height: 32px;text-align:right">
+                    YZLH-2-01-011R17<input id="product" value="丁烯1" type="hidden" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 640px; height: 37px;text-align:center">
+                    中 国 石 化 扬 子 石 油 化 工 有 限 公 司 塑 料 厂
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 640px; height: 37px; text-align: center">
+                    <span style="font-size: 23pt; text-decoration: underline"><strong>产 品 质 量 合 格 证</strong></span>
+                </td>
+            </tr>
+        </table>
+        <table style="width: 100%">
+            <tr>
+                <td style="width: 300px; height: 21px;">
+                    本产品执行标准：SH/T 1546
+                </td>
+                <td style="width: 340px; height: 21px; text-align:right">
+                    检验日期:<input id="txtexamineDate" class="smallInput" type="text" /><!--<input id="lbl年" runat="server" Width="150px"></asp:Label>-->
+                </td>
+            </tr>
+        </table>
+        <table class="bordertable" style="height: 609px; background-image: url(../../Images/GZ.png); background-repeat: no-repeat; background-position: 380px 410px; ">
+            <tbody>
+                <tr>
+                    <td style="width: 37%;  letter-spacing: 0.1em;">
+                        产品名称
+                    </td>
+                    <td colspan="2">
+                        贮存批号
+                    </td>
+                    <td class="style2">
+                        出厂数量(吨)
+                    </td>
+                    <td style="width: 25%; ">
+                        车号
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  letter-spacing: 0.1em">
+                        工业用1-丁烯
+                    </td>
+                    <td style="height: 25px" colspan="2">
+                        <input id="txtstorageBatch" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td class="style2">
+                        <input id="txt出厂数量" class="smallInput" type="text" />
+                    </td>
+                    <td style="width: 25%;">
+                        <input id="txt发往地点" class="smallInput" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%; letter-spacing: 0.5em" rowspan="2">
+                        项目
+                    </td>
+                    <td style=" letter-spacing: 0.5em" colspan="2">
+                        指标
+                    </td>
+                    <td class="style2" style="letter-spacing: 0.5em" rowspan="2">
+                        实际
+                    </td>
+                    <td style="width: 25%;" rowspan="2">
+                        试验方法
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 10%;">
+                        优级品
+                    </td>
+                    <td class="style1">
+                        一级品
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">1-丁烯,%(质量分数)</span><span style="float: right">≥</span>
+                    </td>
+                    <td style="width: 10%;">
+                        99.3
+                    </td>
+                    <td class="style1">
+                        99.0
+                    </td>
+                    <td class="style2">
+                        <input id="txtdingx1" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;" rowspan="3">
+                        SH/T 1492
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">正、异丁烷,%(质量分数)</span>
+                    </td>
+                    <td style="height: 25px" colspan="2">
+                        报告
+                    </td>
+                    <td class="style2">
+                        <input id="txtzhengydw" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        异丁烯+2-丁烯,%(质量分数)≤
+                    </td>
+                    <td style="width: 10%;">
+                        0.4
+                    </td>
+                    <td class="style1">
+                        0.6
+                    </td>
+                    <td class="style2">
+                        <input id="txtyidx2dx" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">1,3-丁二烯+丙二烯,mL/m<sup>3</sup></span><span style="float: right">≤</span>
+                    </td>
+                    <td style="width: 10%;">
+                        120
+                    </td>
+                    <td class="style1">
+                        200
+                    </td>
+                    <td class="style2">
+                        <input id="txtdingexbex" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;">
+                        SH/T 1492<sup>a</sup><br />
+                        和 SH/T 1548
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">丙炔,mL/m<sup>3</sup></span><span style="float: right">≤</span>
+                    </td>
+                    <td style="width: 10%;">
+                        5
+                    </td>
+                    <td class="style1">
+                        5
+                    </td>
+                    <td class="style2">
+                        <input id="txtbingq" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;">
+                        SH/T 1548
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">总羰基(以乙醛计),mg/kg<sup>3</sup></span><span style="float: right">≤</span>
+                    </td>
+                    <td style="width: 10%;">
+                        5
+                    </td>
+                    <td class="style1">
+                        10
+                    </td>
+                    <td class="style2">
+                        <input id="txtzongqj" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;">
+                        SH/T 1493 或<br />
+                        SH/T 1494<sup>b</sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">水,mg/kg</span><span style="float: right">≤</span>
+                    </td>
+                    <td style="width: 10%;">
+                        20
+                    </td>
+                    <td class="style1">
+                        25
+                    </td>
+                    <td class="style2">
+                        <input id="txtshuihl" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;">
+                        GB/T 6023
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">硫,mg/kg</span><span style="float: right">≤</span>
+                    </td>
+                    <td style="width: 10%;">
+                        1
+                    </td>
+                    <td class="style1">
+                        1
+                    </td>
+                    <td class="style2">
+                        <input id="txtliuhl" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;">
+                        GB/T 11141
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">甲醇,mL/m<sup>3</sup></span><span style="float: right">≤</span>
+                    </td>
+                    <td style="width: 10%;">
+                        5
+                    </td>
+                    <td class="style1">
+                        10
+                    </td>
+                    <td class="style2">
+                        <input id="txtjiac" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;">
+                        SH/T 1547
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">甲基叔丁基醚,mL/m<sup>3</sup></span><span style="float: right">≤</span>
+                    </td>
+                    <td style="width: 10%;">
+                        5
+                    </td>
+                    <td class="style1">
+                        10
+                    </td>
+                    <td class="style2">
+                        <input id="txtmTBE" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;">
+                        SH/T 1547
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">一氧化碳,mL/m<sup>3</sup></span><span style="float: right">≤</span>
+                    </td>
+                    <td style="width: 10%;">
+                        1
+                    </td>
+                    <td class="style1">
+                        1
+                    </td>
+                    <td class="style2">
+                        <input id="txtcO" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;">
+                        GB/T 3394
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%;  text-align: left; padding-left: 5px; padding-right: 10px">
+                        <span style="float: left">二氧化碳,mL/m<sup>3</sup></span><span style="float: right">≤</span>
+                    </td>
+                    <td style="width: 10%;">
+                        5
+                    </td>
+                    <td class="style1">
+                        5
+                    </td>
+                    <td class="style2">
+                        <input id="txtcO2" style="width:50%" type="text" readonly="readonly" />
+                    </td>
+                    <td style="width: 25%;">
+                        GB/T 3394
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height: 50px; text-align: left; padding-left: 5px; padding-right: 10px" colspan="5">
+                        质量判定：<input id="txtcomment" style="width:35%" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 37%; height: 110px; text-align: left; padding-left: 5px; padding-right: 10px">
+                        质量检验员:<input id="txtinspector" style="width:45%" type="text" readonly="readonly" />
+                    </td>
+                    <td style="height: 110px" colspan="4">
+                        安全生产部盖章
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table style="width: 100%">
+            <tr>
+                <td style="text-align: center;">
+                    <asp:Image ID="Image1" runat="server" />
+                </td>
+                <td style="text-align: center;">
+                    &nbsp;&nbsp;打印时间: <input id="txtprintTime" type="text" readonly="readonly" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

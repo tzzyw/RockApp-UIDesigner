@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>扬子石化炼化公司远程营销系统</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/purchaseICAudit.js"></script>
+    <style type="text/css">
+        .QueryPageTopdiv {
+            width: 98%;
+            height: 20px;
+            font-weight: bold;
+            text-align: left;
+            font-size: 15px;
+            color: #fd8f00;
+            font-family: Arial;
+            text-decoration: none;
+        }
+
+        .blue1 {
+            FONT-SIZE: 12px;
+            COLOR: #5a789f;
+            LINE-HEIGHT: 20px;
+            FONT-FAMILY: "Arial", "Helvetica", "sans-serif";
+            TEXT-DECORATION: none;
+            height: 25px;
+            text-align: right;
+        }
+
+        .gray {
+            FONT-SIZE: 12px;
+            COLOR: #707070;
+            FONT-FAMILY: "Arial", "Helvetica", "sans-serif";
+            TEXT-DECORATION: none;
+            height: 25px;
+            text-align: center;
+            width: 35%;
+        }
+
+        .smallInput {
+            background: #ffffff;
+            border-bottom-color: #8888AA;
+            border-bottom-width: 1px;
+            border-top-width: 0px;
+            border-left-width: 0px;
+            border-right-width: 0px;
+            color: #000000;
+            FONT-SIZE: 9pt;
+            FONT-STYLE: normal;
+            FONT-VARIANT: normal;
+            FONT-WEIGHT: normal;
+            LINE-HEIGHT: normal;
+            margin-bottom: 0px;
+            width: 95%;
+        }
+    </style>
+</head>
+<body>
+    <div class="QueryPageTopdiv">
+        <img id="Img1" src="../../Images/Arrow.jpg" alt="箭头图片" style="border-width: 0px;" />
+        采购IC卡验证
+    </div>
+    <div style="background-image: url(../../Images/line.gif); width: 98%; height: 3px">
+    </div>
+    <div id="main" style="border: 2px solid #AEDEF2; border-top: 0px solid gray; width: 98%; margin: 0; padding: 0;">
+        <table style="width: 98%; text-align: center; border: 0 solid gray; margin-top: 5px; border-collapse: collapse;">
+            <tr>
+                <td style="width: 100%">                   
+                    密码:<input id="txtICPassword" type="password" />
+                    <input type="button" id="btnReadCard" style="width:70px;margin-left:5px" value="读卡" />
+                    <input type="button" id="btnidentity" style="width:70px;margin-left:5px" value="身份验证" />
+                    <!--<input type="button" class="toolbar" id="btnInit" style="width:50px;margin-left:5px" value="初始化" />-->
+                    <!--<input type="button" id="btn查看待称重车辆" style="width:70px;margin-left:5px" value="查看车辆" />-->
+                    <input id="txtplatName" value="己烷站台" type="hidden" />
+                    <input id="txtICCustomerCode" type="hidden" />
+                    <input id="txtiCCardNumber" type="hidden" />
+                    <input id="txtmeasureID" type="hidden" />
+                </td>
+            </tr>
+        </table>
+        <table style="width: 98%; text-align: center; border: 0 solid gray; border-collapse: collapse;">
+            <tbody>
+                <tr>
+                    <td class="blue1">
+                        车辆选择
+                    </td>
+                    <td class="gray">
+                        <input id="txtvehicle" class="smallInput" />
+                    </td>
+                    <td class="blue1">
+                        计量日期
+                    </td>
+                    <td class="gray">
+                        <input id="txtladeDate" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="blue1">
+                        &nbsp;客户名称
+                    </td>
+                    <td class="gray">
+                        <input id="txtcustomer" class="smallInput" type="text" readonly="readonly" /><input id="txtcustomerID" type="hidden" />
+                    </td>
+                    <td class="blue1">
+                        站台
+                    </td>
+                    <td class="gray">
+                        <input id="txtplatform" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="blue1">
+                        &nbsp;产品名称
+                    </td>
+                    <td class="gray">
+                        <input id="txtmaterial" class="smallInput" type="text" readonly="readonly" /><input id="txtmaterialID" type="hidden" />
+                    </td>
+                    <td class="blue1">
+                        计量单类型
+                    </td>
+                    <td class="gray">
+                        <input id="txtmeasureType" class="smallInput" type="text" readonly="readonly" />
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="blue1">
+                        &nbsp;车号
+                    </td>
+                    <td class="gray">
+                        <input id="txtvehicleNum" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                    <td class="blue1">
+                        计划量(吨)
+                    </td>
+                    <td class="gray">
+                        <input id="txtplanQuantity" class="smallInput" type="text" readonly="readonly" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="blue1">
+                        &nbsp;备注
+                    </td>
+                    <td class="gray">
+                        <input id="txtcomment" class="smallInput" />
+                    </td>
+                    <td class="blue1">
+                        
+                    </td>
+                    <td class="gray">
+                        
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table style="width: 98%; text-align: center; border: 0 solid gray; border-collapse: collapse;">
+            <tr>
+                <td style="width: 100%;">
+                    <input type="button" id="btnsave" style="width:70px;margin-left:5px" value="车辆放行" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="vehiclePop" style="width: 560px; height: 400px; position: absolute; background-color: White;display: none;z-index:9">
+        <div id="vehicleGrid" style="width: 540px; height: 400px; float: left; border: 1px solid #E3E3E3;">
+        </div>
+    </div>
+    <!--<div>
+        <object id="cSharpActiveX" classid="clsid:65D8E97F-D3E2-462A-B389-241D7C38C518" codebase="CSharpActiveX.CAB#version=1,0,6" style="display: none;"></object>
+    </div>-->
+</body>
+</html>

@@ -1,0 +1,35 @@
+﻿.span
+        {
+            background-color: White;
+            border: 1px solid #61899F;
+            text-align: center;
+            vertical-align: middle;
+            height: 22px;
+            line-height: 22px;
+            width: 70px;
+            font-size: 10pt;
+            color:#135c86;
+            background-image: url(../../codebase/imgs/own/titlediv_bg1.GIF);
+            cursor: pointer;
+            padding: 0;
+            float: left;
+            display: block;
+            list-style: none;
+            margin-right:2px;
+        }
+.mode
+        {
+            text-align: center;
+            vertical-align: middle;
+            height: 27px;
+            line-height: 22px;
+            width: 95px;
+            font-size: 13pt;
+            color:#ffffff;
+            cursor: pointer;
+            padding: 0;
+            float: left;
+            display: block;
+            list-style: none;
+            margin-right:0px;
+        }

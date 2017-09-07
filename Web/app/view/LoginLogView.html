@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>用户维护</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/skins/dhtmlxgrid.css" rel="stylesheet" />
+    <link href="../../resource/dhtmlx/codebase/skins/dhtmlxgrid_dhx_terrace.css" rel="stylesheet" />
+    <link href="../../resource/dhtmlx/codebase/skins/dhtmlxtoolbar_dhx_terrace.css" rel="stylesheet" />
+    <link href="../../resource/dhtmlx/codebase/css/dhtmlxcombo.css" rel="stylesheet" />
+    <link href="../../resource/dhtmlx/codebase/css/dhtmlxcalendar.css" rel="stylesheet" />
+    <link href="../../resource/dhtmlx/codebase/css/dhtmlxcalendar_dhx_skyblue.css" rel="stylesheet" />
+
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/dhtmlx/codebase/js/dhtmlxcommon.js" type="text/javascript"></script>
+    <script src="../../resource/dhtmlx/codebase/js/dhtmlxcontainer.js" type="text/javascript"></script>
+    <script src="../../resource/dhtmlx/codebase/js/dhtmlxlayout.js" type="text/javascript"></script>
+    <script src="../../resource/dhtmlx/codebase/js/dhtmlxtoolbar.js"></script>
+    <script src="../../resource/dhtmlx/codebase/js/dhtmlxgrid.js"></script>
+    <script src="../../resource/dhtmlx/codebase/js/dhtmlxgridcell.js"></script>
+    <script src="../../resource/dhtmlx/codebase/ext/dhtmlxgrid_filter.js"></script>
+    <script src="../../resource/dhtmlx/codebase/ext/dhtmlxgrid_pgn.js" type="text/javascript" charset="gbk"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/loginLogView.js"></script>
+    <script src="../../resource/common/md5.js"></script>
+</head>
+<body>
+    <div id="divMainPage" style="width: 99%; height: 100%">
+        <div id="querydiv" style="width: 100%; float: right; margin-top: 5px">
+            <table style="width: 100%;">
+                <tr>
+                    <td class="label">操作类型</td>
+                    <td class="inputtd">
+                        <select id="operateType" class="combo" />
+                    </td>
+                    <td style="padding-left: 100px; width: 20%">
+                        <input id="queryuserName" class="queryInput" value="请输入用户名" /></td>
+                    <td>
+                        <button class="querybtn" id="btn_Query">查询</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="gridlist" style="width: 99%; height: 80%; margin-left: 10px; margin-right: 5px">
+        </div>
+    </div>
+
+    <div id="editForm" style="z-index: 2; width: 700px; height: 280px; top: 200px; left: 250px; position: absolute; overflow: auto; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; visibility: hidden">
+        <div id="formItem">
+            <div style="width: 100%; height: 26px">
+                <div id="editFormTitle" style="width: 90%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700">添加用户</div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px" id="img_Close" />
+                </div>
+            </div>
+            <hr />
+            <table style="width: 98%">
+                <tr>
+                    <td class="label">流水号
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtuserID" class="smallInput" type="text" readonly="readonly" disabled="disabled" />
+                        <span class="red" style="visibility: hidden">*</span>
+                    </td>
+                    <td class="label">用户名
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtuserName" class="smallInput" type="text" />
+                        <span class="red">*</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">显示名称
+                    </td>
+                    <td class="inputtd">
+                        <input id="txttrueName" class="smallInput" type="text" />
+                        <span class="red">*</span>
+                    </td>
+                    <td class="label">电子邮箱
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtemail" class="smallInput" type="text" />
+                        <span class="red" style="visibility: hidden">*</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">电话号码
+                    </td>
+                    <td class="inputtd">
+                        <input id="txttelphone" class="smallInput" type="text" />
+                        <span class="red" style="visibility: hidden">*</span>
+                    </td>
+                    <td class="label">手机号码
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtmobile" class="smallInput" type="text" style="ime-mode: disabled" />
+                        <span class="red" style="visibility: hidden">*</span>
+                    </td>
+                </tr>
+                <tr id="appSelect" style="visibility: hidden">
+                    <td class="label">所属系统
+                    </td>
+                    <td class="inputtd">
+                        <select id="comboApp" class="combo">
+                        </select>
+                        <span class="red">*</span>
+                    </td>
+                    <td class="label"></td>
+                    <td class="inputtd">
+                        <input id="Text2" class="smallInput" type="text" style="visibility: hidden" />
+                        <span class="red" style="visibility: hidden">*</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="height: 20px"></div>
+        <div style="text-align: right">
+            <button class="btn" id="btn_Save" style="margin-right: 15px; margin-top: 5px; height: 28px">保存</button>
+            <button class="btn" id="btn_Cancle" style="margin-right: 30px; margin-top: 5px; height: 28px">取消</button>
+        </div>
+    </div>
+</body>
+</html>

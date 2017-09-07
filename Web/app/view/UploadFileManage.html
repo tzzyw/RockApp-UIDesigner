@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>上传文档管理</title>
+    <link href="../../resource/dhtmlx/codebase/css/global.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/css/form.css" rel="stylesheet" type="text/css" />
+    <link href="../../resource/dhtmlx/codebase/dhtmlx.css" rel="stylesheet" />
+    <script src="../../resource/dhtmlx/codebase/dhtmlx.js"></script>
+    <script src="../../resource/common/jquery-1.8.2.min.js" type="text/javascript"></script>
+    <script src="../../resource/common/rock-common.js"></script>
+    <script src="../controller/uploadFileManage.js"></script>
+</head>
+<body>
+    <div id="mainbody" style="position: absolute; width: 100%; height: 100%;">
+    </div>
+    <div id="divMainPage" style="width: 100%; height: 100%">
+        <div id="toolBar" style="height: 25px; width: 100%; float: left">
+        </div>
+        <div id="gridlist" style="width: 100%; height: 95%">
+        </div>
+    </div>
+    <div id="equipmentDiv" style="width: 100%; height: 100%">
+        <div id="equipmentRelationToolbar" style="height: 25px; width: 100%; float: left">
+        </div>
+        <div id="equipmentRelationGrid" style="width: 100%; height: 97%">
+        </div>
+    </div>
+    <div id="uploadFile" style="z-index: 99; width: 800px; height: 400px; top: 200px; left: 250px; position: absolute; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; visibility: hidden">
+        <div style="width:100%;height:35px">
+            <div style="width: 100%; height: 26px">
+                <div style="width: 80%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700">上传文件</div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px;cursor:pointer" id="uploadFile_Close" />
+                </div>
+            </div>
+            <hr style="margin-top:5px" />
+        </div>
+        <div id="divUpload" style="background-color: White; border: 1px solid #C1C1C1; width: 99%;height:360px"></div>
+    </div>
+    <div id="equipmentForm" style="z-index: 8; width: 890px; height: 380px; top: 200px; left: 250px; position: absolute; background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px; visibility: hidden">
+        <div>
+            <div style="width: 100%; height: 26px">
+                <div id="title" style="width: 90%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700">选择文档所属设备</div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px; cursor: pointer" id="imgEquipment_Close" />
+                </div>
+            </div>
+            <hr style="margin-top: 5px" />
+            <div id="equipmentLayout" style="width: 100%; height: 300px"></div>
+        </div>
+        <div style="height: 3px"></div>
+        <div style="text-align: right">
+            <button class="btn" id="equipment_Save" style="margin-right: 15px; margin-top: 5px; height: 28px">确定</button>
+            <button class="btn" id="equipment_Cancle" style="margin-right: 30px; margin-top: 5px; height: 28px">取消</button>
+        </div>
+    </div>
+    <div id="equipmentSelect" style="width: 100%; height: 100%">
+        <div>
+            <table style="width: 98%">
+                <tr>
+                    <td style="width: 9%">编号名称规格
+                    </td>
+                    <td style="width: 12%">
+                        <input id="txtEquipmentSearch" style="width: 98%" type="text" />
+                    </td>
+                    <td style="width: 4%">厂商
+                    </td>
+                    <td style="width: 10%">
+                        <input id="txtProducerSearch" style="width: 98%" type="text" />
+                    </td>
+                    <td style="width: 4%">备注
+                    </td>
+                    <td style="width: 8%">
+                        <input id="txtSerialNumberSearch" style="width: 98%" type="text" />
+                    </td>
+                    <td style="width: 4%">回路
+                    </td>
+                    <td style="width: 10%">
+                        <input id="txtControlLoopName" style="width: 98%" type="text" />
+                    </td>
+                    <td style="width: 4%"><button id="query">查询</button>
+                    </td>
+                     <td style="width: 4%">显行
+                    </td>
+                     <td style="width: 4%">
+                        <input id="txtCount" style="width: 98%" value="200" type="text" />
+                    </td>
+                    <td style="width: 4%">查行
+                    </td>
+                     <td style="width: 4%">
+                        <input id="txtQueryCount" style="width: 98%" type="text" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="equipmentGrid" style="width: 100%; height: 100%"></div>
+    </div>
+    <div id="ticketForm" style="width: 450px; height: 150px; top: 300px; left: 200px; position: absolute;z-index:99;
+        background-color: #FBFBFB; border-style: solid; border-color: #E3E3E3; border-width: 2px;display:none">
+        <div >
+            <div style="width: 100%; height: 26px">
+                <div style="width: 90%; float: left; padding: 10px 5px 5px 5px; font-size: 13px; font-weight: 700">扫描票证编码</div>
+                <div style="width: 25px; float: right; padding: 5px">
+                    <img alt="关闭" src="../../resource/dhtmlx/codebase/imgs/own/close.png" style="width: 9px; height: 8px;cursor:pointer" id="ticket_Close" />
+                </div>
+            </div>
+            <hr style="margin-top:5px" />
+            <table style="width: 98%;padding-top:20px">
+                <tr>
+                    <td class="label">
+                        票证编码
+                    </td>
+                    <td class="inputtd">
+                        <input id="txtTicketCode" class="smallInput" type="text" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="height: 20px"></div>
+        <div style="text-align: right">
+            <button class="btn" id="ticket_Save" style="margin-right: 15px; margin-top: 5px; height: 28px">确定</button>
+            <button class="btn" id="ticket_Cancle" style="margin-right: 30px; margin-top: 5px; height: 28px">取消</button>
+        </div>
+    </div>
+
+</body>
+</html>
