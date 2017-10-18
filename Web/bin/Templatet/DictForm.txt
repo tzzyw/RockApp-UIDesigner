@@ -190,7 +190,7 @@ $(function () {
                     var rowLength = rows.length;
                     for (var i = 0; i < rowLength; i++) {
                         var rowResult = rows[i].values;
-                        $("#combo<#= formItemName #>").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>")
+                        $("#combo<#= formItemName #>").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>");
 						<#for (var j = 0; j < queryItems.Count; j++)
 						{
 							queryItemModel = queryItems[j] ;
@@ -198,31 +198,14 @@ $(function () {
 							string queryDisplayName = queryItemModel["DisplayName"] as string;
 							if(queryItemName == formItemName)
 							{#>
-						$("#combo<#= formItemName #>Search").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>")
+						$("#combo<#= formItemName #>Search").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>");
 							<#}#>	   
 						<#}#>
                     }
                 }
             }(ISystemService.execQuery.resultValue));
         }
-		<#}
-	    if(queryType == "Quick")
-	    {#>
-        sqlStr = "SELECT [<#= structName #>ID],[<#= structName #>Name] FROM [<#= structName #>] order by <#= structName #>Name";
-        ISystemService.execQuery.sqlString = sqlStr;
-        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
-        if (ISystemService.execQuery.success) {
-            (function (e) {				
-                if (e != null) {
-                    var rows = e.rows;
-                    var rowLength = rows.length;
-                    for (var i = 0; i < rowLength; i++) {
-                        var rowResult = rows[i].values;
-                    }
-                }
-            }(ISystemService.execQuery.resultValue));
-        }
-		<#}#>
+		<#}#>	   
     <#}#>
 	//初始化通用参照
 	<#for (var i = 0; i < formItems.Count; i++)
@@ -254,7 +237,7 @@ $(function () {
                     var rowLength = rows.length;
                     for (var i = 0; i < rowLength; i++) {
                         var rowResult = rows[i].values;
-                        $("#combo<#= formItemName #>").append("<option value='" + rowResult[0].value + "'>" + rowResult[0].value + "</option>")
+                        $("#combo<#= formItemName #>").append("<option value='" + rowResult[0].value + "'>" + rowResult[0].value + "</option>");
 						<#for (var j = 0; j < queryItems.Count; j++)
 						{
 							queryItemModel = queryItems[j] ;
@@ -262,7 +245,7 @@ $(function () {
 							string queryDisplayName = queryItemModel["DisplayName"] as string;
 							if(queryItemName == formItemName)
 							{#>
-						$("#combo<#= queryItemName #>Search").append("<option value='" + rowResult[0].value + "'>" + rowResult[0].value + "</option>")
+						$("#combo<#= queryItemName #>Search").append("<option value='" + rowResult[0].value + "'>" + rowResult[0].value + "</option>");
 							<#}#>	   
 						<#}#>
                     }
@@ -1457,7 +1440,7 @@ $(function () {
 			$("#txt<#= formItemName #>").val(<#= formItemName #>QuickGrid.cells(rowID, 2).getValue())
         }
         else {
-            $("#txt<#= formItemName #>Search").val(customerQuickGrid.cells(rowID, 2).getValue());
+            $("#txt<#= formItemName #>Search").val(<#= formItemName #>QuickGrid.cells(rowID, 2).getValue());
         }
 	<#}
 	else
@@ -1637,10 +1620,7 @@ $(function () {
 			    sql += referClause ;
 			}            
         }
-    }	
-#>
-				
-
+    }#>
     function getDataList() {
 		  <#for (var i = 0; i < queryItems.Count; i++)
             {
@@ -1736,8 +1716,6 @@ $(function () {
             }(ISystemService.execQuery.resultValue));
         }
     }
-
-
     //工具栏按钮状态控制
     function refreshToolBarState() {       
         var checked = listGrid.getCheckedRows(0);
