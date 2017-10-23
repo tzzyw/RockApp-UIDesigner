@@ -1050,11 +1050,14 @@ $(function () {
             return false;
         }
 						<#}#>
-					<#} else {#>
-		if (!$("#txt<#= formItemName #>ID").validate("required", "<#= displayName #>")) {
+					<#} else  //是对象引用类型
+					{
+						if(inputType == "TextBox"){#>
+		if (!$("#txt<#= formItemName #>").validate("required", "<#= displayName #>")) {
             return false;
-        }				
+        }
 					<#}#>
+				<#}#>
 	<#}}}}#>
 	<#for (var i = 0; i < formItems.Count; i++)
 	{
@@ -1167,24 +1170,10 @@ $(function () {
 			if(queryType == "Struct")
 			{#>	
 		<#= modelObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
-		    <#}else
-			    if(queryType == "Refer")
-			    {
-				    if((bool)formItemModel["IsRequired"])
-				    {#>
+		    <#}else {#>
 		<#= modelObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
-		            <#}
-				    else
-				    {#>
-        if ($.trim($("#txt<#= formItemName #>").val()) != '') {
-            <#= modelObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
-        }
-        else {
-            <#= modelObjeName #>.<#= formItemName #> = null;
-        }
-				    <#}#>	
-			 <#}#>
-			<# break;
+			<#}
+				 break;
 		}
 	} #>     
         if (editState == "add") {

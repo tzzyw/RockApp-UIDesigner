@@ -748,18 +748,92 @@ $(function () {
     <#}#>	
 
 	//加载明细数据    
-<# 
-            sql = "";
-            referClause = " join [" + detailMainReferType + "] on [" + detailType + "].[" + detailMainReferType + "ID] = [" + detailMainReferType + "].[" + detailMainReferType + "ID]";
-            //判断detailGridColumns.Count是否大于零
-			if(detailGridColumns.Count > 0)
+	<# 
+        sql = "";
+        referClause = " join [" + detailMainReferType + "] on [" + detailType + "].[" + detailMainReferType + "ID] = [" + detailMainReferType + "].[" + detailMainReferType + "ID]";
+        //判断detailGridColumns.Count是否大于零
+		if(detailGridColumns.Count > 0)
+		{
+			for (var i = 0; i < detailMainReferGridColumns.Count; i++)
 			{
-				for (var i = 0; i < detailMainReferGridColumns.Count; i++)
-				{
-					gridColumnModel = detailMainReferGridColumns[i] ;
-					gridColumnName = gridColumnModel["GridColumnName"] as string;
-					structName = gridColumnModel["StructName"] as string;	
+				gridColumnModel = detailMainReferGridColumns[i] ;
+				gridColumnName = gridColumnModel["GridColumnName"] as string;
+				structName = gridColumnModel["StructName"] as string;	
 				
+				if (!string.IsNullOrEmpty(structName))
+				{
+					sql += "[" + structName + "].[" + structName + "Name], ";
+					referClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
+				}
+				else
+				{
+					if(gridColumnModel["DataType"] as string == "Date")
+					{
+						sql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
+					}
+					else
+					{
+						sql += "[" + detailMainReferType + "].[" + gridColumnName + "], ";
+					}
+				}
+			}
+			for (var i = 0; i < detailGridColumns.Count; i++)
+			{
+				gridColumnModel = detailGridColumns[i] ;
+				gridColumnName = gridColumnModel["GridColumnName"] as string;
+				structName = gridColumnModel["StructName"] as string;	
+
+				if (i < detailGridColumns.Count - 1)
+				{
+					if (!string.IsNullOrEmpty(structName))
+					{
+						sql += "[" + structName + "].[" + structName + "Name], ";
+						referClause += " join [" + structName + "] on [" + detailType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
+					}
+					else
+					{
+						if(gridColumnModel["DataType"] as string == "Date")
+						{
+							sql +=  "convert(nvarchar(10)," + "[" + detailType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
+						}
+						else
+						{
+							sql += "[" + detailType + "].[" + gridColumnName + "], ";
+						}
+					}
+				}
+				else
+				{
+					if (!string.IsNullOrEmpty(structName))
+					{
+						sql += "[" + structName + "].[" + structName + "Name] from [" + detailType + "]";
+						referClause += " join [" + structName + "] on [" + detailType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
+					}
+					else
+					{
+						if(gridColumnModel["DataType"] as string == "Date")
+						{
+							sql +=  "convert(nvarchar(10)," + "[" + detailType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + detailType + "]";
+						}
+						else
+						{
+							sql += "[" + detailType + "].[" + gridColumnName + "] from [" + detailType + "]";
+						}
+					}
+					sql += referClause;
+				}
+			}			
+		}
+		else
+		{
+			for (var i = 0; i < detailMainReferGridColumns.Count; i++)
+			{
+				gridColumnModel = detailMainReferGridColumns[i] ;
+				gridColumnName = gridColumnModel["GridColumnName"] as string;
+				structName = gridColumnModel["StructName"] as string;	
+
+				if (i < detailMainReferGridColumns.Count - 1)
+				{
 					if (!string.IsNullOrEmpty(structName))
 					{
 						sql += "[" + structName + "].[" + structName + "Name], ";
@@ -777,103 +851,29 @@ $(function () {
 						}
 					}
 				}
-				for (var i = 0; i < detailGridColumns.Count; i++)
+				else
 				{
-					gridColumnModel = detailGridColumns[i] ;
-					gridColumnName = gridColumnModel["GridColumnName"] as string;
-					structName = gridColumnModel["StructName"] as string;	
-
-					if (i < detailGridColumns.Count - 1)
+					if (!string.IsNullOrEmpty(structName))
 					{
-						if (!string.IsNullOrEmpty(structName))
-						{
-							sql += "[" + structName + "].[" + structName + "Name], ";
-							referClause += " join [" + structName + "] on [" + detailType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
-						}
-						else
-						{
-							if(gridColumnModel["DataType"] as string == "Date")
-							{
-								sql +=  "convert(nvarchar(10)," + "[" + detailType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
-							}
-							else
-							{
-								sql += "[" + detailType + "].[" + gridColumnName + "], ";
-							}
-						}
+						sql += "[" + structName + "].[" + structName + "Name] from [" + detailType + "]";
+						referClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
 					}
 					else
 					{
-						if (!string.IsNullOrEmpty(structName))
+						if(gridColumnModel["DataType"] as string == "Date")
 						{
-							sql += "[" + structName + "].[" + structName + "Name] from [" + detailType + "]";
-							referClause += " join [" + structName + "] on [" + detailType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
+							sql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + detailType + "]";
 						}
 						else
 						{
-							if(gridColumnModel["DataType"] as string == "Date")
-							{
-								sql +=  "convert(nvarchar(10)," + "[" + detailType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + detailType + "]";
-							}
-							else
-							{
-								sql += "[" + detailType + "].[" + gridColumnName + "] from [" + detailType + "]";
-							}
-						}
-						sql += referClause;
-					}
-				}			
-			}
-			else
-			{
-				for (var i = 0; i < detailMainReferGridColumns.Count; i++)
-				{
-					gridColumnModel = detailMainReferGridColumns[i] ;
-					gridColumnName = gridColumnModel["GridColumnName"] as string;
-					structName = gridColumnModel["StructName"] as string;	
-
-					if (i < detailMainReferGridColumns.Count - 1)
-					{
-						if (!string.IsNullOrEmpty(structName))
-						{
-							sql += "[" + structName + "].[" + structName + "Name], ";
-							referClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
-						}
-						else
-						{
-							if(gridColumnModel["DataType"] as string == "Date")
-							{
-								sql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
-							}
-							else
-							{
-								sql += "[" + detailMainReferType + "].[" + gridColumnName + "], ";
-							}
+							sql += "[" + detailMainReferType + "].[" + gridColumnName + "] from [" + detailType + "]";
 						}
 					}
-					else
-					{
-						if (!string.IsNullOrEmpty(structName))
-						{
-							sql += "[" + structName + "].[" + structName + "Name] from [" + detailType + "]";
-							referClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
-						}
-						else
-						{
-							if(gridColumnModel["DataType"] as string == "Date")
-							{
-								sql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + detailType + "]";
-							}
-							else
-							{
-								sql += "[" + detailMainReferType + "].[" + gridColumnName + "] from [" + detailType + "]";
-							}
-						}
-						sql += referClause;
-					}
+					sql += referClause;
 				}
 			}
-#>
+		}
+	#>
 
     function getDetail(masterID) {
         ISystemService.execQuery.sqlString = "select [<#= detailType #>].[<#= detailType #>ID], <#= sql #> and [<#= detailType #>].[<#= masterType #>ID] = " + masterID;

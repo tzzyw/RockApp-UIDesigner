@@ -49,7 +49,7 @@
  int rowlength = 0;
  int columnIndex = 0;
  int detailEditFormHeight = (detailMainReferFormItems.Count + detailFormItems.Count)*25+125; ;
- int detailColumnIndex = detailMainReferGridColumns.Count + 5;
+ int detailColumnIndex = detailGridMainReferColumns.Count + 5;
  for (var i = 0; i < masterFormItems.Count; i++)
  {
     formItemModel = masterFormItems[i] ;
@@ -65,21 +65,21 @@
             case "Struct":
 				structPopDict.Add(formItemName, structName);
 				masterPopFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "Tree\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
 		        popVar +=  formItemName + "Pop, " + formItemName + "Tree, ";
 				hasPop = true;
                 break;
             case "Refer":
 				referPopDict.Add(formItemName, referType);
 				masterPopFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "Tree\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
 		        popVar +=  formItemName + "Pop, " + formItemName + "Tree, ";
 				hasPop = true;
                 break;
             case "Quick":
 				quickPopDict.Add(formItemName, structName);
 				masterPopFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 268px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
 		        popVar +=  formItemName + "Pop, " + formItemName + "QuickGrid, ";
 				hasPop = true;
                 break;
@@ -93,7 +93,6 @@
 	    hasDate = true;
 	}
  }
-
  for (var i = 0; i < detailFormItems.Count; i++)
  {
     formItemModel = detailFormItems[i] ;
@@ -109,21 +108,21 @@
             case "Struct":
 				structPopDict.Add(formItemName, structName);
 				detailpopFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
 		        popVar +=  formItemName + "Pop, ";
 				hasPop = true;
                 break;
             case "Refer":
 				referPopDict.Add(formItemName, referType);
 				detailpopFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
 		        popVar +=  formItemName + "Pop, ";
 				hasPop = true;
                 break;
             case "Quick":
 				quickPopDict.Add(formItemName, structName);
 				detailpopFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 268px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
 		        popVar +=  formItemName + "Pop, ";
 				hasPop = true;
                 break;
@@ -136,9 +135,7 @@
 	    dateControlLists.Add("\"txt" + formItemName + "\"");
 	    hasDate = true;
 	}
- }
-
- #>
+ }#>
 $(function () {
     //初始化系统通用变量
     var toolBar, dhxLayout, editState, detailEditState, detailForm, detailGrid,mainReferForm, mainReferGrid, billState, uIState,<#= detailMainReferObjeName #>Grid, <#= detailMainReferObjeName #>Form, serverDate, sqlStr,<#if (!string.IsNullOrEmpty(popVar)){ #><#= popVar #><# }#>
@@ -152,7 +149,7 @@ $(function () {
 	masterEditItem = $("#masterEditItem"),
 	detailForm = $("#detailForm"),
 	detailEditItem = $("#detailEditItem"),
-	<#= masterObjeName #>ID = decodeURI($.getUrlParam("<#= masterObjeName #>ID"));
+	<#= masterObjeName #>ID = decodeURI($.getUrlParam("ID"));
     //加载动态脚本
     var jsTypes = "ISystemService,DataTable,DataRow,DataColumn,<#= masterType #>,<#= detailType #>,<#= detailMainReferType #><#if (!string.IsNullOrEmpty(referTypes)){ #>,<#= referTypes #><# }#><#if (!string.IsNullOrEmpty(bizService)){ #>,<#= bizService #><# }#>";
     $.getScript('/LoadDomainJS.ashx?JsTypes=' + jsTypes, function () {
@@ -414,6 +411,7 @@ $(function () {
                 }
                 break;
             case "save":
+				//处理数据验证
                if (detailDataList.rows.length == 0) {
                     alert("<#= billName #>必须要有明细!");
                     return false;
@@ -421,10 +419,83 @@ $(function () {
                 if (<#= masterObjeName #> == null) {
                         alert("修改的<#= billName #>不存在,请检查!");
                         return false;
-                }
-				if (!<#= masterObjeName #>.ValidateValue()) {
-					return;
-				}   
+                }				
+    <#for (var i = 0; i < masterFormItems.Count; i++)
+	{
+		formItemModel = masterFormItems[i] ;
+		inputType = formItemModel["InputType"] as string;
+		formItemName = formItemModel["FormItemName"] as string;
+		displayName = formItemModel["DisplayName"] as string;
+		structName = formItemModel["StructName"] as string;
+		referType = formItemModel["ReferType"] as string;
+		if((bool)formItemModel["IsRequired"])
+		{
+			if(inputType != "CheckBox")
+			{
+				if(string.IsNullOrWhiteSpace(referType))     //不是通用参照引用
+				{
+					if(string.IsNullOrWhiteSpace(structName))  //不是对象类型引用
+					{
+						if(inputType != "Combox") //不是下拉选择框
+						{#>			
+				if (!$("#txt<#= formItemName #>").validate("required", "<#= displayName #>")) {
+					return false;
+				}
+						<#}#>
+					<#}else     //是对象引用类型
+					{
+						if(inputType == "TextBox"){#>
+				if (!$("#txt<#= formItemName #>ID").validate("required", "<#= displayName #>")) {
+					return false;
+				}		
+						<#}#>
+					<#}#>
+
+			  <#}#>
+	<#}}}#>
+	<#for (var i = 0; i < masterFormItems.Count; i++)
+	{
+		formItemModel = masterFormItems[i] ;
+		inputType = formItemModel["InputType"] as string;
+		formItemName = formItemModel["FormItemName"] as string;
+		string validateType = formItemModel["ValidateType"] as string;
+		displayName = formItemModel["DisplayName"] as string;
+		structName = formItemModel["StructName"] as string;
+		switch (validateType)
+		{
+			case "number":
+				if((bool)formItemModel["IsRequired"])
+				{#>
+		if (!$("#txt<#= formItemName #>").validate("number", "<#= displayName #>")) {
+            return false;
+        }
+				<#}else{#>
+		if ($.trim($("#txt<#= formItemName #>").val()) != "") {
+            if (!$("#txt<#= formItemName #>").validate("number", "<#= displayName #>")) {
+				return false;
+			}	
+        }
+				<#}		
+			break;
+			case "date": 
+			if((bool)formItemModel["IsRequired"])
+			{#>
+		if (!$("#txt<#= formItemName #>").validate("date", "<#= displayName #>")) {
+            return false;
+        }
+			<#}else {#>
+		if ($.trim($("#txt<#= formItemName #>").val()) != "") {
+            if (!$("#txt<#= formItemName #>").validate("date", "<#= displayName #>")) {
+				return false;
+			}	
+        }
+			<#}	
+			 break;			
+		}
+	} #>
+				//if (!<#= masterObjeName #>.ValidateValue()) {
+				//	return;
+				//}   
 			<#for (var i = 0; i < masterFormItems.Count; i++)
 			{
 				formItemModel = masterFormItems[i] ;
@@ -476,13 +547,8 @@ $(function () {
 					<#= masterObjeName #>.<#= formItemName #> = null;
 				}
 					<#} break;
-					case "Checkbox": #>
-			if (<#= masterObjeName #>.<#= formItemName #>) {
-				$("#chk<#= formItemName #>").attr("checked", true);
-			}
-			else {
-				$("#chk<#= formItemName #>").attr("checked", false);
-			}
+					case "CheckBox": #>
+			<#= masterObjeName #>.<#= formItemName #> = $("#chk<#= formItemName #>").prop("checked");			
 					<# break;
 					case "Combox": 
 					if(queryType == "Struct")
@@ -578,35 +644,71 @@ $(function () {
                 break;
             case "addDetail":
                 $("#detailFormTitle").text("添加<#= billName #>明细");
-
 		<#for (var i = 0; i < detailMainReferFormItems.Count; i++)
 		{
 			    formItemModel = detailMainReferFormItems[i] ;
 				formItemName = formItemModel["FormItemName"] as string;
+				inputType = formItemModel["InputType"] as string;
 				queryType = formItemModel["QueryType"] as string;
-				switch ( formItemModel["InputType"] as string)
+				switch (inputType)
 				{
-					case "TextBox": #>											
-			    $("#txt<#= formItemName #>").val("");
+					case "TextBox":
+						if(queryType == "Struct" || queryType == "Quick"){#>						
+				$("#txt<#= formItemName #>").val("");
+				$("#txt<#= formItemName #>ID").val("");
+							<#}else{#>
+				$("#txt<#= formItemName #>").val("");
+						<#}#>											
 					<# break;
 					case "Date": #>                       
 			    $("#txt<#= formItemName #>").val("");
 					<# break;
 					case "Checkbox": #>
-			    $("#chk<#= formItemName #>").attr("checked", false);
+			    $("#chk<#= formItemName #>").prop("checked", false);
 					<# break;
 					case "Combox":#>
-			    $("#txt<#= formItemName #>").val("");
+			    $("#combo<#= formItemName #>").get(0).selectedIndex = 0;
 					<# break;
 				}#>
         <#}#>
+    
+		<#for (var i = 0; i < detailFormItems.Count; i++)
+		{
+			formItemModel = detailFormItems[i] ;
+			formItemName = formItemModel["FormItemName"] as string;
+			inputType = formItemModel["InputType"] as string;
+			queryType = formItemModel["QueryType"] as string;			
+			switch (inputType)
+			{
+				case "TextBox":
+					if(queryType == "Struct" || queryType == "Quick"){#>						
+			$("#txt<#= formItemName #>").val("");
+			$("#txt<#= formItemName #>ID").val("");
+						<#}else{#>
+			$("#txt<#= formItemName #>").val("");
+					<#}#>											
+				<# break;
+				case "Date": #>                       
+			$("#txt<#= formItemName #>").val("");
+				<# break;
+				case "CheckBox": #>
+			$("#chk<#= formItemName #>").prop("checked", false);
+				<# break;
+				case "Combox":#>
+			$("#combo<#= formItemName #>").get(0).selectedIndex = 0;
+				<# break;
+			}#>
+
+		<#}#>
+
+		
                 detailEditState = "add";
                 showDetailForm();
                 break;
         }
     });
 
-		//处理主表编辑项
+		//处理主表编辑项		
 		<#  tableString = "<table style=\"width: 100%\">";
 			if (masterFormItems.Count > 0)
 			{			
@@ -614,16 +716,17 @@ $(function () {
 				for (var i = 0; i < rowlength; i++)
 				{
 					if( i < rowlength -1)
-					{
+					{						
 						formItemModel = masterFormItems[3 * i];
 						formItemName = formItemModel["FormItemName"] as string;
+						inputType = formItemModel["InputType"] as string;
 						queryType = formItemModel["QueryType"] as string;
 						//构造html文本
 						tableString += "<tr>";
 						tableString += "<td class=\"label\" style=\"width: 6%\">";
 						tableString += (formItemModel["DisplayName"] as string);
 						tableString += "</td>";
-						switch (formItemModel["InputType"] as string)
+						switch (inputType)
 						{
 							case "TextBox":
 								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -655,8 +758,8 @@ $(function () {
 								tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
 								break;
 							case "CheckBox":
-								tableString += "<td class=\"chktd\">";
-								tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+								tableString += "<td class=\"inputtd\" style=\"text-align:left;width: 14%\">";
+								tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:25px\" type=\"checkbox\" />";
 								break;
 							case "Date":
 								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -665,12 +768,13 @@ $(function () {
 						}
 						tableString += "</td>";
 						formItemModel = masterFormItems[3 * i + 1];
-						formItemName = formItemModel["FormItemName"] as string;		
+						formItemName = formItemModel["FormItemName"] as string;	
+						inputType = formItemModel["InputType"] as string;	
 						queryType = formItemModel["QueryType"] as string;			
 						tableString += "<td class=\"label\" style=\"width: 6%\">";
 						tableString += (formItemModel["DisplayName"] as string);
-						tableString += "</td>";
-						switch (formItemModel["InputType"] as string)
+						tableString += "</td>";						
+						switch (inputType)
 						{
 							case "TextBox":
 								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -702,8 +806,8 @@ $(function () {
 								tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
 								break;
 							case "CheckBox":
-								tableString += "<td class=\"chktd\" style=\"width: 14%\">";
-								tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+								tableString += "<td class=\"inputtd\" style=\"text-align:left;width: 14%\">";
+								tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:25px\" type=\"checkbox\" />";
 								break;
 							case "Date":
 								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -713,11 +817,12 @@ $(function () {
 						tableString += "</td>";
 						formItemModel = masterFormItems[3 * i + 2];
 						formItemName = formItemModel["FormItemName"] as string;
+						inputType = formItemModel["InputType"] as string;
 						queryType = formItemModel["QueryType"] as string;
 						tableString += "<td class=\"label\" style=\"width: 6%\">";
 						tableString += (formItemModel["DisplayName"] as string);
-						tableString += "</td>";
-						switch (formItemModel["InputType"] as string)
+						tableString += "</td>";						
+						switch (inputType)
 						{
 							case "TextBox":
 								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -748,9 +853,9 @@ $(function () {
 								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
 								tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
 								break;
-							case "Checkbox":
-								tableString += "<td class=\"chktd\" style=\"width: 14%\">";
-								tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+							case "CheckBox":
+								tableString += "<td class=\"inputtd\" style=\"text-align:left;width: 14%\">";
+								tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:25px\" type=\"checkbox\" />";
 								break;
 							case "Date":
 								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -760,16 +865,17 @@ $(function () {
 						tableString += "</td>";
 					}
 					else
-					{
+					{									
 						if((masterFormItems.Count - 3*i) == 1)
 						{
 							formItemModel = masterFormItems[3 * i];
 							formItemName = formItemModel["FormItemName"] as string;
+							inputType = formItemModel["InputType"] as string;
 							queryType = formItemModel["QueryType"] as string;
 							tableString += "<td class=\"label\" style=\"width: 6%\">";
 							tableString += (formItemModel["DisplayName"] as string);
-							tableString += "</td>";
-							switch (formItemModel["InputType"] as string)
+							tableString += "</td>";							
+							switch (inputType)
 							{
 								case "TextBox":
 									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -800,9 +906,9 @@ $(function () {
 									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
 									tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
 									break;
-								case "Checkbox":
-									tableString += "<td class=\"chktd\" style=\"width: 14%\">";
-									tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+								case "CheckBox":
+									tableString += "<td class=\"inputtd\" style=\"text-align:left;width: 14%\">";
+									tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:25px\" type=\"checkbox\" />";
 									break;
 								case "Date":
 									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -819,16 +925,17 @@ $(function () {
 							tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
 							tableString += "</td>";
 						}
-
+						
 						if((masterFormItems.Count - 3*i) == 2)
 						{
 							formItemModel = masterFormItems[3 * i];
 							formItemName = formItemModel["FormItemName"] as string;
+							inputType = formItemModel["InputType"] as string;
 							queryType = formItemModel["QueryType"] as string;
 							tableString += "<td class=\"label\" style=\"width: 6%\">";
 							tableString += (formItemModel["DisplayName"] as string);
-							tableString += "</td>";
-							switch (formItemModel["InputType"] as string)
+							tableString += "</td>";							
+							switch (inputType)
 							{
 								case "TextBox":
 									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -859,9 +966,9 @@ $(function () {
 									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
 									tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
 									break;
-								case "Checkbox":
-									tableString += "<td class=\"chktd\" style=\"width: 14%\">";
-									tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+								case "CheckBox":
+									tableString += "<td class=\"inputtd\" style=\"text-align:left;width: 14%\">";
+									tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:25px\" type=\"checkbox\" />";
 									break;
 								case "Date":
 									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -871,11 +978,12 @@ $(function () {
 							tableString += "</td>";
 							formItemModel = masterFormItems[3 * i + 1];
 							formItemName = formItemModel["FormItemName"] as string;
+							inputType = formItemModel["InputType"] as string;
 							queryType = formItemModel["QueryType"] as string;
 							tableString += "<td class=\"label\" style=\"width: 6%\">";
 							tableString += (formItemModel["DisplayName"] as string);
-							tableString += "</td>";
-							switch (formItemModel["InputType"] as string)
+							tableString += "</td>";							
+							switch (inputType)
 							{
 								case "TextBox":
 									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -906,9 +1014,9 @@ $(function () {
 									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
 									tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
 									break;
-								case "Checkbox":
-									tableString += "<td class=\"chktd\" style=\"width: 14%\">";
-									tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+								case "CheckBox":
+									tableString += "<td class=\"inputtd\" style=\"text-align:left;width: 14%\">";
+									tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:25px\" type=\"checkbox\" />";
 									break;
 								case "Date":
 									tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
@@ -920,7 +1028,157 @@ $(function () {
 						    tableString += "</td>";
 							tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
 							tableString += "</td>";
-						}					
+						}
+
+						if((masterFormItems.Count - 3*i) == 3)
+						{
+							formItemModel = masterFormItems[3 * i];
+						formItemName = formItemModel["FormItemName"] as string;
+						inputType = formItemModel["InputType"] as string;
+						queryType = formItemModel["QueryType"] as string;
+						//构造html文本
+						tableString += "<tr>";
+						tableString += "<td class=\"label\" style=\"width: 6%\">";
+						tableString += (formItemModel["DisplayName"] as string);
+						tableString += "</td>";
+						switch (inputType)
+						{
+							case "TextBox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								if ((bool)formItemModel["IsReadOnly"])
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/>";
+									}
+								}
+								else
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+									}										
+								}
+								break;
+							case "Combox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
+								break;
+							case "CheckBox":
+								tableString += "<td class=\"inputtd\" style=\"text-align:left;width: 14%\">";
+								tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:25px\" type=\"checkbox\" />";
+								break;
+							case "Date":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\"/>";
+								break;
+						}
+						tableString += "</td>";
+						formItemModel = masterFormItems[3 * i + 1];
+						formItemName = formItemModel["FormItemName"] as string;	
+						inputType = formItemModel["InputType"] as string;
+						queryType = formItemModel["QueryType"] as string;			
+						tableString += "<td class=\"label\" style=\"width: 6%\">";
+						tableString += (formItemModel["DisplayName"] as string);
+						tableString += "</td>";						
+						switch (inputType)
+						{
+							case "TextBox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								if ((bool)formItemModel["IsReadOnly"])
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/>";
+									}
+								}
+								else
+								{
+									if(queryType == "Struct" || queryType == "Quick")
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+									}
+									else
+									{
+										tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+									}										
+								}
+								break;
+							case "Combox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
+								break;
+							case "CheckBox":
+								tableString += "<td class=\"inputtd\" style=\"text-align:left;width: 14%\">";
+								tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:25px\" type=\"checkbox\" />";
+								break;
+							case "Date":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\"  type=\"text\"/>";
+								break;
+						}
+						tableString += "</td>";
+						formItemModel = masterFormItems[3 * i + 2];
+						formItemName = formItemModel["FormItemName"] as string;
+						inputType = formItemModel["InputType"] as string;
+						queryType = formItemModel["QueryType"] as string;
+						tableString += "<td class=\"label\" style=\"width: 6%\">";
+						tableString += (formItemModel["DisplayName"] as string);
+						tableString += "</td>";						
+						switch (inputType)
+						{
+							case "TextBox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+							if ((bool)formItemModel["IsReadOnly"])
+							{
+								if(queryType == "Struct" || queryType == "Quick")
+								{
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+								}
+								else
+								{
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/>";
+								}
+							}
+							else
+							{
+								if(queryType == "Struct" || queryType == "Quick")
+								{
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
+								}
+								else
+								{
+									tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+								}										
+							}
+								break;
+							case "Combox":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
+								break;
+							case "CheckBox":
+								tableString += "<td class=\"inputtd\" style=\"text-align:left;width: 14%\">";
+								tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:25px\" type=\"checkbox\" />";
+								break;
+							case "Date":
+								tableString += "<td class=\"inputtd\" style=\"width: 14%\">";
+								tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";
+								break;
+						}
+						tableString += "</td>";
+						}						
 					}					
 					tableString += "</tr>";
 				}
@@ -936,13 +1194,14 @@ $(function () {
 			{
 				formItemModel = detailMainReferFormItems[i];
 				formItemName = formItemModel["FormItemName"] as string;
+				inputType = formItemModel["InputType"] as string;
 				queryType = formItemModel["QueryType"] as string;
 				//构造html文本
 				tableString += "<tr>";
 				tableString += "<td class=\"label\">";
 				tableString += (formItemModel["DisplayName"] as string);
 				tableString += "</td>";
-				switch (formItemModel["InputType"] as string)
+				switch (inputType)
 				{
 					case "TextBox":
 						tableString += "<td class=\"inputtd\">";
@@ -957,8 +1216,8 @@ $(function () {
 						tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" />";						
 						break;
 					case "CheckBox":
-						tableString += "<td class=\"chktd\">";
-						tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+						tableString += "<td class=\"inputtd\" style=\"text-align:left\">";
+						tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:35px\" type=\"checkbox\" />";
 						break;
 					case "Date":
 						tableString += "<td class=\"inputtd\">";
@@ -978,13 +1237,14 @@ $(function () {
 			{
 				formItemModel = detailFormItems[i];
 				formItemName = formItemModel["FormItemName"] as string;
+				inputType = formItemModel["InputType"] as string;
 				queryType = formItemModel["QueryType"] as string;
 				//构造html文本
 				tableString += "<tr>";
 				tableString += "<td class=\"label\">";
 				tableString += (formItemModel["DisplayName"] as string);
 				tableString += "</td>";
-				switch (formItemModel["InputType"] as string)
+				switch (inputType)
 				{
 					case "TextBox":
 						tableString += "<td class=\"inputtd\">";
@@ -1016,8 +1276,8 @@ $(function () {
 						tableString += "<select id=\"combo" + formItemName + "\" class=\"combo\" />";
 						break;
 					case "CheckBox":
-						tableString += "<td class=\"chktd\">";
-						tableString += "<input id=\"chk" + formItemName + "\" class=\"smallInput\" type=\"checkbox\" />";
+						tableString += "<td class=\"inputtd\" style=\"text-align:left\">";
+						tableString += "<input id=\"chk" + formItemName + "\" style=\"margin-left:35px\" type=\"checkbox\" />";
 						break;
 					case "Date":
 						tableString += "<td class=\"inputtd\">";
@@ -1114,32 +1374,64 @@ $(function () {
 					{
 						gridColumnModel = detailGridMainReferColumns[i] ;
 						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						string dataType = gridColumnModel["DataType"] as string;
+						queryForm = gridColumnModel["QueryForm"] as string;
 						for (var j = 0; j < detailMainReferFormItems.Count; j++)
 						{
 							formItemModel = detailMainReferFormItems[j] ;
 							formItemName = formItemModel["FormItemName"] as string;
 							columnIndex = j + 5;
-							if (formItemName == gridColumnName){#> 			
+							if (formItemName == gridColumnName)
+							{
+								if(dataType == "Bool"){#>
+						$("#chk<#= formItemName #>").prop("checked", (detailGrid.cells(rowID, <#= columnIndex #>).getValue()=='是') ? true : false);
 						$("#txt<#= formItemName #>").val(detailGrid.cells(rowID, <#= columnIndex #>).getValue());
-						<#}}#> 
+								<#}else if(queryForm == "Quick"){#>
+						$("#txt<#= formItemName #>").val(detailGrid.cells(rowID, <#= columnIndex #>).getValue());
+						for (var i = 0; i < <#= masterObjeName #>.<#= detailObjeName #>List.length; i++) 
+						{						 
+                            if (<#= masterObjeName #>.<#= detailObjeName #>List[i].<#= detailObjeName #>ID == rowID) {
+								$("#txt<#= formItemName #>ID").val(<#= masterObjeName #>.<#= detailObjeName #>List[i].<#= formItemName #>ID);
+                            }
+                        }
+								<#} else {#>
+						$("#txt<#= formItemName #>").val(detailGrid.cells(rowID, <#= columnIndex #>).getValue());
+								<#}#>
+							<#}#>
+						<#}#>
 					<#}#>
 					<#for (var i = 0; i < detailGridColumns.Count; i++)
 					{
 						gridColumnModel = detailGridColumns[i] ;
 						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						string dataType = gridColumnModel["DataType"] as string;
+						queryForm = gridColumnModel["QueryForm"] as string;
 						for (var j = 0; j < detailFormItems.Count; j++)
 						{
 							formItemModel = detailFormItems[j] ;
 							formItemName = formItemModel["FormItemName"] as string;
 							columnIndex = j + 5 + detailMainReferFormItems.Count;
-							if (formItemName == gridColumnName){#> 			
+							if (formItemName == gridColumnName)
+							{
+								if(dataType == "Bool"){#>
+						$("#chk<#= formItemName #>").prop("checked", (detailGrid.cells(rowID, <#= columnIndex #>).getValue()=='是') ? true : false);	
+								<#}else if(queryForm == "Quick"){#>	
 						$("#txt<#= formItemName #>").val(detailGrid.cells(rowID, <#= columnIndex #>).getValue());
+						 for (var i = 0; i < <#= masterObjeName #>.<#= detailObjeName #>List.length; i++) 
+						 {						 
+                            if (<#= masterObjeName #>.<#= detailObjeName #>List[i].<#= detailObjeName #>ID == rowID) {
+								$("#txt<#= formItemName #>ID").val(<#= masterObjeName #>.<#= detailObjeName #>List[i].<#= formItemName #>ID);
+                            }
+                        }
+								<#}else {#>
+						$("#txt<#= formItemName #>").val(detailGrid.cells(rowID, <#= columnIndex #>).getValue());
+								<#}#>
 						<#}}#> 
 					<#}#>
                     }
                 }
                 for (var j = 0; j < detailObjList.length; j++) {
-                    if (detailObjList[j].departmentDetailID == rowID ) {
+                    if (detailObjList[j].<#= detailObjeName #>ID == rowID ) {
                         <#= detailObjeName #> = detailObjList[j];
                         break;
                     }
@@ -1184,6 +1476,13 @@ $(function () {
                         }
                     }
                 }
+            }
+        }else {
+            if (cIndex == 3) {
+                alert("请点击修改按钮后再进行修改操作!");
+            }
+            if (cIndex == 4) {
+                alert("请点击修改按钮后再进行删除操作!");
             }
         }
     });
@@ -1313,11 +1612,84 @@ $(function () {
 
 
     $("#btnDetailForm_Save").click(function () {
-        if ($.trim($("#txt<#= detailMainReferObjeName #>ID").val()) == '') {
-            alert('<#= detailMainReferName #>不能为空!');
-            return false;
+		//处理数据验证
+	    if ($.trim($("#txt<#= detailMainReferObjeName #>ID").val()) == '') {
+        alert('<#= detailMainReferName #>不能为空!');
+        return false;
         }
 		var <#= detailMainReferObjeName #>ID = $("#txt<#= detailMainReferObjeName #>ID").val();
+    <#for (var i = 0; i < detailFormItems.Count; i++)
+	{
+		formItemModel = detailFormItems[i] ;
+		inputType = formItemModel["InputType"] as string;
+		formItemName = formItemModel["FormItemName"] as string;
+		displayName = formItemModel["DisplayName"] as string;
+		structName = formItemModel["StructName"] as string;
+		referType = formItemModel["ReferType"] as string;			
+		if((bool)formItemModel["IsRequired"])
+		{
+			if(inputType != "CheckBox")
+			{
+				if(string.IsNullOrWhiteSpace(referType))     //不是通用参照引用
+				{
+					if(string.IsNullOrWhiteSpace(structName))  //不是对象类型引用
+					{
+						if(inputType != "Combox") //不是下拉选择框
+						{#>			
+		if (!$("#txt<#= formItemName #>").validate("required", "<#= displayName #>")) {
+            return false;
+        }	
+						<#}#>
+						<#}else //是对象引用类型
+						{ 
+							if(inputType == "TextBox"){#>
+		if (!$("#txt<#= formItemName #>ID").validate("required", "<#= displayName #>")) {
+            return false;
+        }
+							<#}#>
+					<#}#>
+			<#}#>
+	<#}}}#>	
+	<#for (var i = 0; i < detailFormItems.Count; i++)
+	{
+		formItemModel = detailFormItems[i] ;
+		inputType = formItemModel["InputType"] as string;
+		formItemName = formItemModel["FormItemName"] as string;
+		string validateType = formItemModel["ValidateType"] as string;
+		displayName = formItemModel["DisplayName"] as string;
+		structName = formItemModel["StructName"] as string;
+		switch (validateType)
+		{
+			case "number":
+				if((bool)formItemModel["IsRequired"])
+				{#>
+		if (!$("#txt<#= formItemName #>").validate("number", "<#= displayName #>")) {
+            return false;
+        }
+				<#}else{#>
+		if ($.trim($("#txt<#= formItemName #>").val()) != "") {
+            if (!$("#txt<#= formItemName #>").validate("number", "<#= displayName #>")) {
+				return false;
+			}	
+        }
+				<#}		
+			break;
+			case "date": 
+			if((bool)formItemModel["IsRequired"])
+			{#>
+		if (!$("#txt<#= formItemName #>").validate("date", "<#= displayName #>")) {
+            return false;
+        }
+			<#}else {#>
+		if ($.trim($("#txt<#= formItemName #>").val()) != "") {
+            if (!$("#txt<#= formItemName #>").validate("date", "<#= displayName #>")) {
+				return false;
+			}	
+        }
+			<#}	
+			 break;			
+		}
+	} #>		
         //分两种情况判断,新增的明细不直接保存;修改的明细直接保存到数据库
         if (editState == "add") {
             if (detailEditState == "add") {
@@ -1328,10 +1700,7 @@ $(function () {
                         return;
                     }
                 }
-			    <#= detailObjeName #> = <#= detailType #>Class.createInstance();
-				if (!<#= detailObjeName #>.ValidateValue()) {
-					return;
-				}           
+			    <#= detailObjeName #> = <#= detailType #>Class.createInstance();				      
                 //获取明细ID
                 ISystemService.getNextID.typeName = '<#= detailType #>';
                 rock.AjaxRequest(ISystemService.getNextID, rock.exceptionFun);
@@ -1355,7 +1724,7 @@ $(function () {
 					case "TextBox": 
 						if((bool)formItemModel["IsRequired"])
 						{
-							if(queryType == "Struct"){#>
+							if(queryType == "Struct" || queryType == "Quick"){#>
 				<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
 							<#}
 							else
@@ -1365,7 +1734,7 @@ $(function () {
 						<#}
 						else
 						{
-						   if(queryType == "Struct"){#>
+						   if(queryType == "Struct" || queryType == "Quick"){#>
 				if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
 					<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
 				}
@@ -1379,7 +1748,7 @@ $(function () {
 					<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
 				}
 				else {
-					<#= detailObjeName #>.<#= formItemName #>ID = null;
+					<#= detailObjeName #>.<#= formItemName #> = null;
 				}
 							<#}#>
 					<#} break;
@@ -1394,36 +1763,17 @@ $(function () {
 					<#= detailObjeName #>.<#= formItemName #> = null;
 				}
 					<#} break;
-					case "Checkbox": #>
-			if (<#= detailObjeName #>.<#= formItemName #>) {
-				$("#chk<#= formItemName #>").attr("checked", true);
-			}
-			else {
-				$("#chk<#= formItemName #>").attr("checked", false);
-			}
+					case "CheckBox": #>
+			<#= detailObjeName #>.<#= formItemName #> = $("#chk<#= formItemName #>").prop("checked");			
 					<# break;
 					case "Combox": 
 					if(queryType == "Struct")
 					{#>	
 				<#= detailObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
-					<#}else
-						if(queryType == "Refer")
-						{
-							if((bool)formItemModel["IsRequired"])
-							{#>
+					<#}else {#>
 				<#= detailObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
-							<#}
-							else
-							{#>
-				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
-					<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
-				}
-				else {
-					<#= detailObjeName #>.<#= formItemName #> = null;
-				}
-							<#}#>	
-					 <#}#>
-					<# break;
+					<#}
+					  break;
 				}
 			} #>
                 <#= detailObjeName #>.editState = "add";
@@ -1439,26 +1789,33 @@ $(function () {
 			{
 				gridColumnModel = detailGridMainReferColumns[i] ;
 				gridColumnName = gridColumnModel["GridColumnName"] as string;
-				queryForm = gridColumnModel["QueryForm"] as string;#>					
+				string dataType = gridColumnModel["DataType"] as string;
+				queryForm = gridColumnModel["QueryForm"] as string;
+				if (queryForm == "Combox")
+				{#>	
+				detailData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());	
+				<#}else if (dataType == "Bool") {#>		
+				detailData.data.push(($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否");	
+				<#}else {#>
 				detailData.data.push($("#txt<#= gridColumnName #>").val());					  					  				
-			<#}#> 
+			<#}}#> 
 			<#for (var i = 0; i < detailGridColumns.Count; i++)
 			{
 				gridColumnModel = detailGridColumns[i] ;
 				gridColumnName = gridColumnModel["GridColumnName"] as string;
+				string dataType = gridColumnModel["DataType"] as string;
 				queryForm = gridColumnModel["QueryForm"] as string;
-					if (queryForm == "Combox")
-					{#> 
-					detailData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());    
+				if (queryForm == "Combox")
+				{#> 
+					detailData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text()); 
+					<#}else if (dataType == "Bool") {#>	 
+					detailData.data.push(($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否");	  
 					<#}else{#>
 					detailData.data.push($("#txt<#= gridColumnName #>").val());					  					  				
 			<#}}#>                
                 detailDataList.rows.push(detailData);
             }
-            else {
-				if (!<#= detailObjeName #>.ValidateValue()) {
-					return;
-				}  
+            else {				
                 //判断明细是否重复选择
                 for (var j = 0; j < detailObjList.length; j++) {
                     if (detailObjList[j].<#= detailMainReferObjeName #>ID == <#= detailMainReferObjeName #>ID && detailObjList[j].<#= detailObjeName #>ID != <#= detailObjeName #>.<#= detailObjeName #>ID) {
@@ -1477,10 +1834,13 @@ $(function () {
 					{
 						gridColumnModel = detailGridMainReferColumns[i] ;
 						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						string dataType = gridColumnModel["DataType"] as string;
 						queryForm = gridColumnModel["QueryForm"] as string;
 							if (queryForm == "Combox")
 							{#>
 							detailDataList.rows[i].data[<#= i + 5 #>] =$("#combo<#= gridColumnName #>").find("option:selected").text();
+							<#}else if (dataType == "Bool") {#>
+							detailDataList.rows[i].data[<#= i + 5 #>] =($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否";
 							<#}else{#>
 							detailDataList.rows[i].data[<#= i + 5 #>] =$("#txt<#= gridColumnName #>").val();
 							<#}					
@@ -1489,10 +1849,13 @@ $(function () {
 					{
 						gridColumnModel = detailGridColumns[i] ;
 						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						string dataType = gridColumnModel["DataType"] as string;
 						queryForm = gridColumnModel["QueryForm"] as string;
 							if (queryForm == "Combox")
 							{#>
 							detailDataList.rows[i].data[<#= i + detailColumnIndex  #>] =$("#combo<#= gridColumnName #>").find("option:selected").text();
+							<#}else if (dataType == "Bool") {#>
+							detailDataList.rows[i].data[<#= i + detailColumnIndex  #>] =($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否";
 							<#}else{#>
 							detailDataList.rows[i].data[<#= i + detailColumnIndex #>] =$("#txt<#= gridColumnName #>").val();
 							<#}					
@@ -1513,7 +1876,7 @@ $(function () {
 									case "TextBox": 
 										if((bool)formItemModel["IsRequired"])
 										{
-											if(queryType == "Struct"){#>
+											if(queryType == "Struct" || queryType == "Quick"){#>
 								<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
 											<#}
 											else
@@ -1523,7 +1886,7 @@ $(function () {
 										<#}
 										else
 										{
-										   if(queryType == "Struct"){#>
+										   if(queryType == "Struct" || queryType == "Quick"){#>
 								if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
 									<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
 								}
@@ -1537,7 +1900,7 @@ $(function () {
 									<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
 								}
 								else {
-									<#= detailObjeName #>.<#= formItemName #>ID = null;
+									<#= detailObjeName #>.<#= formItemName #> = null;
 								}
 											<#}#>
 									<#} break;
@@ -1552,36 +1915,17 @@ $(function () {
 									<#= detailObjeName #>.<#= formItemName #> = null;
 								}
 									<#} break;
-									case "Checkbox": #>
-							if (<#= detailObjeName #>.<#= formItemName #>) {
-								$("#chk<#= formItemName #>").attr("checked", true);
-							}
-							else {
-								$("#chk<#= formItemName #>").attr("checked", false);
-							}
+									case "CheckBox": #>
+							<#= detailObjeName #>.<#= formItemName #> = $("#chk<#= formItemName #>").prop("checked");							
 									<# break;
 									case "Combox": 
 									if(queryType == "Struct")
 									{#>	
-								<#= detailObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
-									<#}else
-										if(queryType == "Refer")
-										{
-											if((bool)formItemModel["IsRequired"])
-											{#>
-								<#= detailObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
-											<#}
-											else
-											{#>
-								if ($.trim($("#txt<#= formItemName #>").val()) != '') {
-									<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
-								}
-								else {
-									<#= detailObjeName #>.<#= formItemName #> = null;
-								}
-											<#}#>	
-									 <#}#>
-									<# break;
+							<#= detailObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
+									<#}else {#>
+							<#= detailObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
+									<#}		
+									break;
 								}
 							} #>
                                 detailObjList[j].editState = "add";
@@ -1627,7 +1971,7 @@ $(function () {
 					case "TextBox": 
 						if((bool)formItemModel["IsRequired"])
 						{
-							if(queryType == "Struct"){#>
+							if(queryType == "Struct" || queryType == "Quick"){#>
 				<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
 							<#}
 							else
@@ -1637,7 +1981,7 @@ $(function () {
 						<#}
 						else
 						{
-						   if(queryType == "Struct"){#>
+						   if(queryType == "Struct" || queryType == "Quick"){#>
 				if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
 					<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
 				}
@@ -1651,7 +1995,7 @@ $(function () {
 					<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
 				}
 				else {
-					<#= detailObjeName #>.<#= formItemName #>ID = null;
+					<#= detailObjeName #>.<#= formItemName #> = null;
 				}
 							<#}#>
 					<#} break;
@@ -1666,36 +2010,17 @@ $(function () {
 					<#= detailObjeName #>.<#= formItemName #> = null;
 				}
 					<#} break;
-					case "Checkbox": #>
-			if (<#= detailObjeName #>.<#= formItemName #>) {
-				$("#chk<#= formItemName #>").attr("checked", true);
-			}
-			else {
-				$("#chk<#= formItemName #>").attr("checked", false);
-			}
+					case "CheckBox": #>
+				<#= detailObjeName #>.<#= formItemName #> = $("#chk<#= formItemName #>").prop("checked");			
 					<# break;
 					case "Combox": 
-					if(queryType == "Struct")
-					{#>	
+						if(queryType == "Struct")
+						{#>	
 				<#= detailObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
-					<#}else
-						if(queryType == "Refer")
-						{
-							if((bool)formItemModel["IsRequired"])
-							{#>
+						<#}else	{#>
 				<#= detailObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
-							<#}
-							else
-							{#>
-				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
-					<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
-				}
-				else {
-					<#= detailObjeName #>.<#= formItemName #> = null;
-				}
-							<#}#>	
-					 <#}#>
-					<# break;
+						<#}
+						break;
 				}
 			} #>
                 <#= detailObjeName #>.editState = "add";
@@ -1711,10 +2036,13 @@ $(function () {
 			{
 				gridColumnModel = detailGridMainReferColumns[i] ;
 				gridColumnName = gridColumnModel["GridColumnName"] as string;
+				string dataType = gridColumnModel["DataType"] as string;
 				queryForm = gridColumnModel["QueryForm"] as string;
 					if (queryForm == "Combox")
 					{#> 
-					detailData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());    
+					detailData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());  
+					<#}else if (dataType == "Bool") {#>  
+					detailData.data.push(($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否");
 					<#}else{#>
 					detailData.data.push($("#txt<#= gridColumnName #>").val());					  					  				
 			<#}}#> 
@@ -1722,10 +2050,13 @@ $(function () {
 			{
 				gridColumnModel = detailGridColumns[i] ;
 				gridColumnName = gridColumnModel["GridColumnName"] as string;
+				string dataType = gridColumnModel["DataType"] as string;
 				queryForm = gridColumnModel["QueryForm"] as string;
 					if (queryForm == "Combox")
 					{#> 
-					detailData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());    
+					detailData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());
+					<#}else if (dataType == "Bool") {#>
+					detailData.data.push(($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否");
 					<#}else{#>
 					detailData.data.push($("#txt<#= gridColumnName #>").val());					  					  				
 			<#}}#>                
@@ -1750,10 +2081,13 @@ $(function () {
 					{
 						gridColumnModel = detailGridMainReferColumns[i] ;
 						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						string dataType = gridColumnModel["DataType"] as string;
 						queryForm = gridColumnModel["QueryForm"] as string;
 							if (queryForm == "Combox")
 							{#>
 							detailDataList.rows[i].data[<#= i + 5 #>] =$("#combo<#= gridColumnName #>").find("option:selected").text();
+							<#}else if (dataType == "Bool") {#>
+							detailDataList.rows[i].data[<#= i + 5 #>] =($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否";
 							<#}else{#>
 							detailDataList.rows[i].data[<#= i + 5 #>] =$("#txt<#= gridColumnName #>").val();
 							<#}					
@@ -1762,10 +2096,13 @@ $(function () {
 					{
 						gridColumnModel = detailGridColumns[i] ;
 						gridColumnName = gridColumnModel["GridColumnName"] as string;
+						string dataType = gridColumnModel["DataType"] as string;
 						queryForm = gridColumnModel["QueryForm"] as string;
 							if (queryForm == "Combox")
 							{#>
 							detailDataList.rows[i].data[<#= i + detailColumnIndex  #>] =$("#combo<#= gridColumnName #>").find("option:selected").text();
+							<#}else if (dataType == "Bool") {#>
+							detailDataList.rows[i].data[<#= i + detailColumnIndex  #>] =($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否";
 							<#}else{#>
 							detailDataList.rows[i].data[<#= i + detailColumnIndex #>] =$("#txt<#= gridColumnName #>").val();
 							<#}					
@@ -1786,7 +2123,7 @@ $(function () {
 									case "TextBox": 
 										if((bool)formItemModel["IsRequired"])
 										{
-											if(queryType == "Struct"){#>
+											if(queryType == "Struct" || queryType == "Quick"){#>
 								<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
 											<#}
 											else
@@ -1796,7 +2133,7 @@ $(function () {
 										<#}
 										else
 										{
-										   if(queryType == "Struct"){#>
+										   if(queryType == "Struct" || queryType == "Quick"){#>
 								if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
 									<#= detailObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
 								}
@@ -1810,7 +2147,7 @@ $(function () {
 									<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
 								}
 								else {
-									<#= detailObjeName #>.<#= formItemName #>ID = null;
+									<#= detailObjeName #>.<#= formItemName #> = null;
 								}
 											<#}#>
 									<#} break;
@@ -1825,36 +2162,17 @@ $(function () {
 									<#= detailObjeName #>.<#= formItemName #> = null;
 								}
 									<#} break;
-									case "Checkbox": #>
-							if (<#= detailObjeName #>.<#= formItemName #>) {
-								$("#chk<#= formItemName #>").attr("checked", true);
-							}
-							else {
-								$("#chk<#= formItemName #>").attr("checked", false);
-							}
+									case "CheckBox": #>
+							<#= detailObjeName #>.<#= formItemName #> = $("#chk<#= formItemName #>").prop("checked");							
 									<# break;
 									case "Combox": 
 									if(queryType == "Struct")
 									{#>	
 								<#= detailObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
-									<#}else
-										if(queryType == "Refer")
-										{
-											if((bool)formItemModel["IsRequired"])
-											{#>
+									<#}else {#>
 								<#= detailObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
-											<#}
-											else
-											{#>
-								if ($.trim($("#txt<#= formItemName #>").val()) != '') {
-									<#= detailObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
-								}
-								else {
-									<#= detailObjeName #>.<#= formItemName #> = null;
-								}
-											<#}#>	
-									 <#}#>
-									<# break;
+									<#}
+									  break;
 								}
 							} #>
                                 detailObjList[j].editState = "modify";
@@ -2008,7 +2326,7 @@ $(function () {
 		sql += ")";
 		#>
     function mainReferComplete(searchCode) {
-        ISystemService.execQuery.sqlString = "select top 20 [<#= detailMainReferType #>].[<#= detailMainReferType #>ID], <#= sql #>";
+        ISystemService.execQuery.sqlString = "select top 14 [<#= detailMainReferType #>].[<#= detailMainReferType #>ID], <#= sql #>";
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {
             (function (e) {
@@ -2162,7 +2480,7 @@ $(function () {
     });
 	var  <#= formItemName #>DataList = new rock.JsonList();
     function <#= formItemName #>Complete(searchCode) {
-        ISystemService.execQuery.sqlString = "select top 20 [<#= structName #>].[<#= structName #>ID], [<#= structName #>].[<#= structName #>Name] from [<#= structName #>] where [<#= structName #>Name] like  '%" + $("#txt<#= formItemName #>").val() + "%' or [SearchCode] like  '%" + $("#txt<#= formItemName #>").val() + "%'";
+        ISystemService.execQuery.sqlString = "select top 14 [<#= structName #>].[<#= structName #>ID], [<#= structName #>].[<#= structName #>Name] from [<#= structName #>] where [<#= structName #>Name] like  '%" + $("#txt<#= formItemName #>").val() + "%' or [SearchCode] like  '%" + $("#txt<#= formItemName #>").val() + "%'";
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {
             (function (e) {
@@ -2207,10 +2525,11 @@ $(function () {
 			formItemName = formItemModel["FormItemName"] as string;
 			queryType = formItemModel["QueryType"] as string;
 			structName = formItemModel["StructName"] as string;
-			switch ( formItemModel["InputType"] as string)
+			inputType = formItemModel["InputType"] as string;
+			switch ( inputType)
 			{
 				case "TextBox": 
-				if(queryType == "Struct")
+				if(queryType == "Struct"|| queryType == "Quick")
 				{#>
 			$("#txt<#= formItemName #>ID").val(<#= masterObjeName #>.<#= formItemName #>ID);
 			ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + <#= masterObjeName #>.<#= formItemName #>ID;
@@ -2228,13 +2547,8 @@ $(function () {
 				case "Date": #>
 			$("#txt<#= formItemName #>").val(<#= masterObjeName #>.<#= formItemName #>.split(' ')[0]);
 				<# break;
-				case "Checkbox": #>
-		if (<#= masterObjeName #>.<#= formItemName #>) {
-			$("#chk<#= formItemName #>").attr("checked", true);
-		}
-		else {
-			$("#chk<#= formItemName #>").attr("checked", false);
-		}
+				case "CheckBox": #>
+			$("#chk<#= formItemName #>").prop("checked", <#= masterObjeName #>.<#= formItemName #>);		
 				<# break;
 				case "Combox": 
 				if(queryType == "Struct")
@@ -2249,7 +2563,7 @@ $(function () {
             //填充明细列表 
             detailObjList = [];
             detailDataList.rows = [];
-            for (var i = 0; i < <#= detailObjeName #>.<#= detailObjeName #>List.length; i++) {
+            for (var i = 0; i < <#= masterObjeName #>.<#= detailObjeName #>List.length; i++) {
                 var temp<#= detailType #> = <#= masterObjeName #>.<#= detailObjeName #>List[i];
                 var detailData = new rock.JsonData(temp<#= detailType #>.<#= detailObjeName #>ID);
                 var <#= detailMainReferObjeName #> = null;
@@ -2258,7 +2572,7 @@ $(function () {
                 detailData.data.push(temp<#= detailType #>.<#= detailMainReferObjeName #>ID);
                 detailData.data.push(editImg);
                 detailData.data.push(deleteImg);
-                //获取物料
+                //获取明细主参照对象
                 ISystemService.getDynObjectByID.dynObjectID = temp<#= detailType #>.<#= detailMainReferObjeName #>ID;
                 ISystemService.getDynObjectByID.structName = "<#= detailMainReferType #>";
                 rock.AjaxRequest(ISystemService.getDynObjectByID, rock.exceptionFun);
@@ -2272,14 +2586,26 @@ $(function () {
 			gridColumnModel = detailGridMainReferColumns[i] ;
 			gridColumnName = gridColumnModel["GridColumnName"] as string;
 			structName = gridColumnModel["StructName"] as string;
-			if(string.IsNullOrEmpty(structName)){#>
+			string dataType = gridColumnModel["DataType"] as string; 
+			if(string.IsNullOrEmpty(structName))
+			{ 
+				if(dataType == "Date"){#>
+				detailData.data.push(<#= detailMainReferObjeName #>.<#= gridColumnName #>.split(' ')[0]);
+				<#} else if(dataType == "Bool"){#>
+				if(<#= detailMainReferObjeName #>.<#= gridColumnName #>){
+					detailData.data.push("是");
+				}else {
+					detailData.data.push("否");
+				}
+				<#}else {#>
 				detailData.data.push(<#= detailMainReferObjeName #>.<#= gridColumnName #>);
+				<#}#>
 			<#}else{#>	
-                ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + <#= detailMainReferObjeName #>.<#= gridColumnName #>ID;
+                ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + temp<#= detailType #>.<#= gridColumnName #>ID;
                 rock.AjaxRequest(ISystemService.executeScalar, rock.exceptionFun);
                 if (ISystemService.executeScalar.success) {
                     (function (e) {
-                       detailData.data.push(e.value);
+                       detailData.data.push(e.value);     
                     }(ISystemService.executeScalar.resultValue));
                 }
 			<#}#>					  					  				
@@ -2289,14 +2615,26 @@ $(function () {
 			gridColumnModel = detailGridColumns[i] ;
 			gridColumnName = gridColumnModel["GridColumnName"] as string;
 			structName = gridColumnModel["StructName"] as string;
-			if(string.IsNullOrEmpty(structName)){#>			
+			string dataType = gridColumnModel["DataType"] as string;
+			if(string.IsNullOrEmpty(structName))
+			{
+				if(dataType == "Date"){#>
+				detailData.data.push(temp<#= detailType #>.<#= gridColumnName #>.split(' ')[0]);
+				<#}else if(dataType == "Bool"){#>
+				if(temp<#= detailType #>.<#= gridColumnName #>){		
+					detailData.data.push("是");
+				}else{
+					detailData.data.push("否");
+				}
+				<#}else {#>
 				detailData.data.push(temp<#= detailType #>.<#= gridColumnName #>);
+				<#}#>
 			<#}else{#>	
-                ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + <#= detailMainReferObjeName #>.<#= gridColumnName #>ID;
+                ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + temp<#= detailType #>.<#= gridColumnName #>ID;
                 rock.AjaxRequest(ISystemService.executeScalar, rock.exceptionFun);
                 if (ISystemService.executeScalar.success) {
                     (function (e) {
-                       detailData.data.push(e.value);
+						detailData.data.push(e.value);                       
                     }(ISystemService.executeScalar.resultValue));
                 }
 			<#}#>					  					  				
@@ -2320,7 +2658,7 @@ $(function () {
 		switch ( formItemModel["InputType"] as string)
 		{
 			case "TextBox": 
-			if(queryType == "Struct")
+			if(queryType == "Struct"|| queryType == "Quick")
 			{#>
 		$("#txt<#= formItemName #>ID").val("");
 		$("#txt<#= formItemName #>").val("");		
