@@ -17,18 +17,16 @@
  Rock.Dyn.Core.DynObject gridColumnModel = null;
  Dictionary<string, string> structPopDict = new Dictionary<string, string>();
  Dictionary<string, string> referPopDict = new Dictionary<string, string>();
- bool hasDate = false;
+ Dictionary<string, string> quickPopDict = new Dictionary<string, string>();
  bool hasQueryDate = false;
- bool hasStructPop = false;
- bool hasReferPop = false;
  bool hasQueryPop = false;
- bool hasQueryItem = false;
  List<string> dateControlLists = new List<string>();
  List<string> beginDateLists = new List<string>();
  List<string> endDateLists = new List<string>();
  List<string> popDivLists = new List<string>();
  List<string> referPopLists = new List<string>();
- string structPopStr = "";
+ List<string> popQueryItemNameLists = new List<string>();
+ string popDivStr = "";
  string referPopStr = ""; 
  string popVar = "";
  string queryType = "";
@@ -39,48 +37,279 @@
  string structName = "";
  string referType = "";
  string queryForm = "";
- string sql = "";
- string referClause = "";
- int stateIndex = 0;
+ string dataType = "";
+ string masterSql = "";
+ string masterReferClause = "";
+ string detailSql = "";
+ string detailReferClause = "";
+ int stateIndex = 0; 
  for (var i = 0; i < queryItems.Count; i++)
  {
     queryItemModel = queryItems[i] ;
 	queryItemName = queryItemModel["QueryItemName"] as string;
-	queryForm = queryItemModel["QueryForm"] as string;
-	structName = queryItemModel["StructName"] as string;
 	queryType = queryItemModel["QueryType"] as string;
+	queryForm = queryItemModel["QueryForm"] as string;
+	inputType = queryItemModel["InputType"] as string;
+	structName = queryItemModel["StructName"] as string;
 	referType = queryItemModel["ReferType"] as string;
-
-    switch (queryForm)
-    {
-        case "Date":
-			beginDateLists.Add("\"begin" + queryItemName + "\"");
-			endDateLists.Add("\"end" + queryItemName + "\"");			
-			hasQueryDate = true;		  
-            break;
-        case "Tree":
-			if(queryType == "Struct")
-			{   
-				popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-				popVar +=  queryItemName + "Pop, ";
-				structPopDict.Add(queryItemName, structName);
-				hasStructPop = true;
-			}
-			if(queryType == "Refer")
-			{   
-				popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-				referPopDict.Add(queryItemName, referType);
-				hasReferPop = true;	
-			}
-			hasQueryPop = true;		  
-            break;
-    }	
+	if(inputType == "TextBox")
+	{
+		switch (queryForm)
+        {
+            case "Quick":
+				quickPopDict.Add(queryItemName, structName);
+				popQueryItemNameLists.Add(queryItemName);
+				popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "QuickGrid\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+		        popVar +=  queryItemName + "Pop, " + queryItemName + "QuickGrid ";
+				hasQueryPop = true;
+                break;
+            case "Tree":
+					if(queryType == "Struct")
+					{
+						structPopDict.Add(queryItemName, structName);
+						popQueryItemNameLists.Add(queryItemName);
+						popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+						popVar +=  queryItemName + "Pop, " + queryItemName + "Tree ";
+						hasQueryPop = true;
+					}
+					if(queryType == "Refer")
+					{
+						referPopDict.Add(queryItemName, referType);
+						popQueryItemNameLists.Add(queryItemName);
+						popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+						popVar +=  queryItemName + "Pop, " + queryItemName + "Tree ";
+						hasQueryPop = true;
+					}
+                break;
+            case "Date":
+				dateControlLists.Add("toolBar.getInput(\"begin" + queryItemName + "\")");
+				dateControlLists.Add("toolBar.getInput(\"end" + queryItemName + "\")");
+				beginDateLists.Add("\"begin" + queryItemName + "\"");
+				endDateLists.Add("\"end" + queryItemName + "\"");			
+				hasQueryDate = true;
+                break;
+            default:
+                break;
+        }
+	}
  } 
-
- #>
+ for (var i = 0; i < masterGridColumns.Count; i++)
+ {
+	gridColumnModel = masterGridColumns[i];
+	gridColumnName = gridColumnModel["GridColumnName"] as string;
+	structName = gridColumnModel["StructName"] as string;
+	dataType = gridColumnModel["DataType"] as string;
+	if(gridColumnName == "state"){
+		stateIndex = i ;
+	}
+	if (i < masterGridColumns.Count - 1)
+	{
+		if (!string.IsNullOrEmpty(structName))
+		{
+			if (structName.Trim() == "")
+			{
+				masterSql += "[" + masterType + "].[" + gridColumnName + "], ";
+			}
+			else
+			{
+				masterSql += "[" + structName + "].[" + structName + "Name], ";
+				masterReferClause += " join [" + structName + "] on [" + masterType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
+			}
+		}
+		else
+		{
+			if(dataType == "Date")
+			{
+				masterSql +=  "convert(nvarchar(10)," + "[" + masterType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
+			}
+			else if(dataType == "Bool")
+			{
+				masterSql += "CASE [" + masterType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END, ";
+			}
+			else
+			{
+				masterSql += "[" + masterType + "].[" + gridColumnName + "], ";
+			}
+		}
+	}
+	else
+	{
+		if (!string.IsNullOrEmpty(structName))
+		{
+			if (structName.Trim() == "")
+			{
+				masterSql += "[" + masterType + "].[" + gridColumnName + "] from [" + masterType + "]";
+			}
+			else
+			{
+				masterSql += "[" + structName + "].[" + structName + "Name] from [" + masterType + "]";
+				masterReferClause += " join [" + structName + "] on [" + masterType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
+			}
+		}
+		else
+		{
+			if(dataType == "Date")
+			{
+				masterSql +=  "convert(nvarchar(10)," + "[" + masterType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + masterType + "]";
+			}
+			else if(dataType == "Bool")
+			{
+				masterSql += "CASE [" + masterType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END from [" + masterType + "]";
+			}
+			else
+			{
+				masterSql += "[" + masterType + "].[" + gridColumnName + "] from [" + masterType + "]";
+			}
+		}
+		masterSql += masterReferClause;
+	}
+ }
+ detailReferClause = " join [" + detailMainReferType + "] on [" + detailType + "].[" + detailMainReferType + "ID] = [" + detailMainReferType + "].[" + detailMainReferType + "ID]";
+ //判断detailGridColumns.Count是否大于零
+ if(detailGridColumns.Count > 0)
+ {
+	for (var i = 0; i < detailMainReferGridColumns.Count; i++)
+	{
+		gridColumnModel = detailMainReferGridColumns[i] ;
+		gridColumnName = gridColumnModel["GridColumnName"] as string;
+		structName = gridColumnModel["StructName"] as string;	
+		dataType = gridColumnModel["DataType"] as string;
+		if (!string.IsNullOrEmpty(structName))
+		{
+			detailSql += "[" + structName + "].[" + structName + "Name], ";
+			detailReferClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
+		}
+		else
+		{
+			if(dataType == "Date")
+			{
+				detailSql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
+			}
+			else if(dataType == "Bool")
+			{
+				detailSql += "CASE [" + detailMainReferType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END, ";
+			}
+			else 
+			{
+				detailSql += "[" + detailMainReferType + "].[" + gridColumnName + "], ";
+			}
+		}
+	}
+	for (var i = 0; i < detailGridColumns.Count; i++)
+	{
+		gridColumnModel = detailGridColumns[i] ;
+		gridColumnName = gridColumnModel["GridColumnName"] as string;
+		structName = gridColumnModel["StructName"] as string;	
+		dataType = gridColumnModel["DataType"] as string;
+		if (i < detailGridColumns.Count - 1)
+		{
+			if (!string.IsNullOrEmpty(structName))
+			{
+				detailSql += "[" + structName + "].[" + structName + "Name], ";
+				detailReferClause += " join [" + structName + "] on [" + detailType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
+			}
+			else
+			{
+				if(dataType == "Date")
+				{
+					detailSql +=  "convert(nvarchar(10)," + "[" + detailType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
+				}
+				else if(dataType == "Bool")
+				{
+					detailSql += "CASE [" + detailType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END, ";
+				}
+				else
+				{
+					detailSql += "[" + detailType + "].[" + gridColumnName + "], ";
+				}
+			}
+		}
+		else
+		{
+			if (!string.IsNullOrEmpty(structName))
+			{
+				detailSql += "[" + structName + "].[" + structName + "Name] from [" + detailType + "]";
+				detailReferClause += " join [" + structName + "] on [" + detailType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
+			}
+			else
+			{
+				if(dataType == "Date")
+				{
+					detailSql +=  "convert(nvarchar(10)," + "[" + detailType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + detailType + "]";
+				}
+				else if(dataType == "Bool")
+				{
+					detailSql += "CASE [" + detailType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END from [" + detailType + "]";
+				}
+				else
+				{
+					detailSql += "[" + detailType + "].[" + gridColumnName + "] from [" + detailType + "]";
+				}
+			}
+			detailSql += detailReferClause;
+		}
+	}			
+ }
+ else
+ {
+	for (var i = 0; i < detailMainReferGridColumns.Count; i++)
+	{
+		gridColumnModel = detailMainReferGridColumns[i] ;
+		gridColumnName = gridColumnModel["GridColumnName"] as string;
+		structName = gridColumnModel["StructName"] as string;	
+		dataType = gridColumnModel["DataType"] as string;
+		if (i < detailMainReferGridColumns.Count - 1)
+		{
+			if (!string.IsNullOrEmpty(structName))
+			{
+				detailSql += "[" + structName + "].[" + structName + "Name], ";
+				detailReferClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
+			}
+			else
+			{
+				if(dataType == "Date")
+				{
+					detailSql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
+				}
+				else if(dataType == "Bool")
+				{
+					detailSql += "CASE [" + detailMainReferType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END, ";
+				}
+				else
+				{
+					detailSql += "[" + detailMainReferType + "].[" + gridColumnName + "], ";
+				}
+			}
+		}
+		else
+		{
+			if (!string.IsNullOrEmpty(structName))
+			{
+				detailSql += "[" + structName + "].[" + structName + "Name] from [" + detailType + "]";
+				detailReferClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
+			}
+			else
+			{
+				if(dataType == "Date")
+				{
+					detailSql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + detailType + "]";
+				}
+				else if(dataType == "Bool")
+				{
+					detailSql += "CASE [" + detailMainReferType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END from [" + detailType + "]";
+				}
+				else
+				{
+					detailSql += "[" + detailMainReferType + "].[" + gridColumnName + "] from [" + detailType + "]";
+				}
+			}
+			detailSql += detailReferClause;
+		}
+	}
+}#>
 $(function () {
     //初始化系统通用变量
-    var toolBar, dhxLayout, masterGrid, detailGrid, sqlStr,<#if (!string.IsNullOrEmpty(popVar)){ #><#= popVar #><# }#>
+    var toolBar, dhxLayout, masterGrid, detailGrid, sqlStr,<#if (hasQueryDate){ #>serverDate,<# }#><#if (!string.IsNullOrEmpty(popVar)){ #><#= popVar #><# }#>
 	editImg = "/resource/dhtmlx/codebase/imgs/edit.gif",
     disEditImg = "/resource/dhtmlx/codebase/imgs/own/edit.png",
     masterDataList = new rock.JsonList(),
@@ -108,81 +337,6 @@ $(function () {
 			}(ISystemService.getServerDate.resultValue));
 		}
 	<#}#>
- 	//处理初始化加载数据
-<# 
-            sql = "";
-            referClause = "";			
-            for (var i = 0; i < masterGridColumns.Count; i++)
-            {
-                gridColumnModel = masterGridColumns[i] ;
-				gridColumnName = gridColumnModel["GridColumnName"] as string;	
-				structName = gridColumnModel["StructName"] as string;			
-				if(gridColumnName == "state"){
-				    stateIndex = i ;
-				}
-                if (i < masterGridColumns.Count - 1)
-                {
-                    if (!string.IsNullOrEmpty(structName))
-                    {
-                        if (structName.Trim() == "")
-                        {
-                            sql += "[" + masterType + "].[" + gridColumnName + "], ";
-                        }
-                        else
-                        {
-                            sql += "[" + structName + "].[" + structName + "Name], ";
-                            referClause += " join [" + structName + "] on [" + masterType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
-                        }
-                    }
-                    else
-                    {
-						if(gridColumnModel["DataType"] as string == "Date")
-						{
-						    sql +=  "convert(nvarchar(10)," + "[" + masterType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
-						}
-						else
-						{
-						    sql += "[" + masterType + "].[" + gridColumnName + "], ";
-						}
-                    }
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(structName))
-                    {
-                        if (structName.Trim() == "")
-                        {
-                            sql += "[" + masterType + "].[" + gridColumnName + "] from [" + masterType + "]";
-                        }
-                        else
-                        {
-                            sql += "[" + structName + "].[" + structName + "Name] from [" + masterType + "]";
-                            referClause += " join [" + structName + "] on [" + masterType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
-                        }
-                    }
-                    else
-                    {
-						if(gridColumnModel["DataType"] as string == "Date")
-						{
-						    sql +=  "convert(nvarchar(10)," + "[" + masterType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + masterType + "]";
-						}
-						else
-						{
-						    sql += "[" + masterType + "].[" + gridColumnName + "] from [" + masterType + "]";
-						}
-                    }
-                    sql += referClause;
-                }
-            }
-#>
-		sqlStr = "select top 100 [<#= masterType #>].[<#= masterType #>ID], <#= sql #>";
-		ISystemService.execQuery.sqlString = sqlStr;
-		rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
-		if (ISystemService.execQuery.success) {
-			(function (e) {
-		        rock.tableToBillGrid(e, masterGrid, masterDataList, <#= stateIndex #>, editImg, disEditImg);
-            }(ISystemService.execQuery.resultValue));		
-        }
 	//初始化实体参照及查询项
 	<#for (var i = 0; i < queryItems.Count; i++)
     {
@@ -193,18 +347,18 @@ $(function () {
 		structName = queryItemModel["StructName"] as string;
 	    if(queryType == "Struct")
 	    {#>
+		$("#combo<#= queryItemName #>Search").append("<option value='-1'>请选择<#= displayName #></option>");
         sqlStr = "SELECT [<#= structName #>ID],[<#= structName #>Name] FROM [<#= structName #>] order by <#= structName #>Name";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {
             (function (e) {
-			    toolBar.addListOption("combo<#= queryItemName #>Search", "<#= displayName #>", 1, "button", "<#= displayName #>")
                 if (e != null) {
                     var rows = e.rows;
                     var rowLength = rows.length;
                     for (var i = 0; i < rowLength; i++) {
                         var rowResult = rows[i].values;
-						toolBar.addListOption("combo<#= queryItemName #>Search", rowResult[0].value, i + 2, "button", rowResult[1].value)
+						$("#combo<#= queryItemName #>Search").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>");
                     }
                 }
             }(ISystemService.execQuery.resultValue));
@@ -221,18 +375,18 @@ $(function () {
 		referType = queryItemModel["ReferType"] as string;
 	    if(queryType == "Refer")
 	    {#>
+		$("#combo<#= queryItemName #>Search").append("<option value='-1'>请选择<#= displayName #></option>");
         sqlStr = "SELECT [ReferName] FROM [Refer] where [ReferType] = '<#= referType #>'";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {
             (function (e) {
-				toolBar.addListOption("combo<#= queryItemName #>Search", "<#= displayName #>", 1, "button", "<#= displayName #>")
                 if (e != null) {
                     var rows = e.rows;
                     var rowLength = rows.length;
                     for (var i = 0; i < rowLength; i++) {
                         var rowResult = rows[i].values;
-                        toolBar.addListOption("combo<#= queryItemName #>Search", rowResult[0].value, i + 2, "button", rowResult[0].value)
+                       $("#combo<#= queryItemName #>Search").append("<option value='" + rowResult[0].value + "'>" + rowResult[0].value + "</option>");
                     }
                 }
             }(ISystemService.execQuery.resultValue));
@@ -288,7 +442,27 @@ $(function () {
                 <#= queryItemName #>Tree.selectItem(rootID, true, false);
             }(ISystemService.execQuery.resultValue));
         }
-	<#}#>	
+	<#}#>
+	<#foreach (KeyValuePair<string, string> item in quickPopDict)
+    {  
+		queryItemName = item.Key;#>
+		<#= queryItemName #>Complete("");
+	<#}#>
+	 	//处理初始化加载数据
+	<#if(hasQueryDate)
+	{#>
+		getDataList();
+	<#}else 
+	{#>
+		sqlStr = "select top 30 [<#= masterType #>].[<#= masterType #>ID], <#= masterSql #>";
+		ISystemService.execQuery.sqlString = sqlStr;
+		rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+		if (ISystemService.execQuery.success) {
+			(function (e) {
+		        rock.tableToBillGrid(e, masterGrid, masterDataList, <#= stateIndex #>, editImg, disEditImg);
+            }(ISystemService.execQuery.resultValue));		
+        }
+	<#}#>
     });
 
 	dhxLayout = new dhtmlXLayoutObject("mainbody", "2E");
@@ -306,16 +480,9 @@ $(function () {
 		queryItemName = queryItemModel["QueryItemName"] as string;
 		displayName = queryItemModel["DisplayName"] as string;
 		queryForm = queryItemModel["QueryForm"] as string;
-		hasQueryItem = true;
 		switch (queryForm)
 		{
-			case "Date": 
-		        dateControlLists.Add("toolBar.getInput(\"begin" + queryItemName + "\")");
-			    dateControlLists.Add("toolBar.getInput(\"end" + queryItemName + "\")");
-		        beginDateLists.Add("\"begin" + queryItemName + "\"");
-			    endDateLists.Add("\"end" + queryItemName + "\"");			
-			    hasQueryDate = true;
-		        hasDate = true;#>
+			case "Date": #>
 	toolBar.addText("<#= queryItemName#>Begin", null, "<#= displayName #>");
     toolBar.addInput("begin<#= queryItemName#>", null, "", 75);
     toolBar.addText("<#= displayName #>End", null, "-");
@@ -330,154 +497,26 @@ $(function () {
 	toolBar.addInput("txt<#= queryItemName #>Search", null, "", 100);
 			<# break;
 			case "Combox": #>
-	toolBar.addButtonSelect("combo<#= queryItemName #>Search", null, "<#= displayName #>", [], null, null, true, true,15,"select")
+	toolBar.addInput("txt<#= queryItemName #>Search", null);
 			<# break;
 			case "Tree": #>
 	toolBar.addText("<#= queryItemName #>", null, "<#= displayName #>");
 	toolBar.addInput("txt<#= queryItemName #>Search", null, "", 100);
 			<# break;
+			case "Quick": #>
+	toolBar.addText("<#= queryItemName #>", null, "<#= displayName #>");
+	toolBar.addInput("txt<#= queryItemName #>Search", null, "", 100);
+			<# break;
         }#>	   
     <#}#>
-	<#if(hasQueryItem){#>
     toolBar.addButton("query", null, "查询");
    	toolBar.addSeparator("sepQuery", null);
-	<#}#>
     toolBar.addButton("add", null, "新增");	                
 	toolBar.attachEvent("onClick", function (id) {
 	    switch (id) {
 		<#if(queryItems.Count > 0){#>
 		    case "query":
-		  <#for (var i = 0; i < queryItems.Count; i++)
-            {
-                queryItemModel = queryItems[i] ;
-				queryItemName = queryItemModel["QueryItemName"] as string;
-				displayName = queryItemModel["DisplayName"] as string;
-				queryForm = queryItemModel["QueryForm"] as string;
-	            if(queryForm == "Date")
-	            {#>
-                if ($.trim(toolBar.getValue("begin<#= queryItemName #>")) == "") {
-                    alert("起始<#= displayName #>不能为空！");
-                    return;
-                }			    
-                if (!rock.chkdate(toolBar.getValue("begin<#= queryItemName #>"), "-")) {
-                    alert("起始<#= displayName #>格式不正确,正确格式为 2010-10-10！");
-                    return false;
-                }
-                if ($.trim(toolBar.getValue("end<#= queryItemName #>")) == "") {
-                    alert("截止<#= displayName #>不能为空！");
-                    return;
-                }
-                if (!rock.chkdate(toolBar.getValue("end<#= queryItemName #>"), "-")) {
-                    alert("截止<#= displayName #>格式不正确,正确格式为 2010-10-10！");
-                    return false;
-                }
-				<#}#>
-           <#}#>
-			    sqlStr = "select [<#= masterType #>].[<#= masterType #>ID], <#= sql #>";
-		  <#for (var i = 0; i < queryItems.Count; i++)
-            {
-                queryItemModel = queryItems[i] ;
-				queryItemName = queryItemModel["QueryItemName"] as string;
-				queryType = queryItemModel["QueryType"] as string;
-				structName = queryItemModel["StructName"] as string;
-				displayName = queryItemModel["DisplayName"] as string;
-				queryForm = queryItemModel["QueryForm"] as string;
-					switch (queryForm)
-					{
-						case "Date": 
-							if(i == 0)
-							{#>
-				sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] between '" + toolBar.getValue("begin<#= queryItemName #>") + " 0:0:0' AND '" + toolBar.getValue("end<#= queryItemName #>") + " 23:59:59' ";
-							<#}else
-							{#>
-				sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] between '" + toolBar.getValue("begin<#= queryItemName #>") + " 0:0:0' AND '" + toolBar.getValue("end<#= queryItemName #>") + " 23:59:59' ";
-							<#}#>
-						<# break;
-						case "Fuzzy":
-							if(i == 0)
-							{#>
-                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
-				    sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] like '%" + toolBar.getValue("txt<#= queryItemName #>Search") + "%'";
-                }
-							<#}else
-							{#>
-                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
-				    sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] like '%" + toolBar.getValue("txt<#= queryItemName #>Search") + "%'";
-                }
-							<#}#>
-						<# break;
-						case "Value": 
-							if(i == 0)
-							{#>
-                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
-				    sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] = '" + toolBar.getValue("txt<#= queryItemName #>Search") + "'";
-                }
-							<#}else
-							{#>
-                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
-				    sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] = '" + toolBar.getValue("txt<#= queryItemName #>Search") + "'";
-                }
-							<#}#>
-						<# break;
-						case "Tree": 
-							if(i == 0)
-							{
-							    if(queryType == "Struct"){#>
-                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
-				    sqlStr += " where [<#= masterType #>].[<#= queryItemName #>ID] = " + $("#txt<#= queryItemName #>ID").val() ;
-                }
-				                 <#}else{#>
-                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
-				    sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] = '" + $("#txt<#= queryItemName #>Search").val() + "'";
-                }
-				                 <#}#>
-							<#}else
-							{
-							    if(queryType == "Struct"){#>
-                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
-				    sqlStr += " and [<#= masterType #>].[<#= queryItemName #>ID] = " + $("#txt<#= queryItemName #>ID").val() ;
-                }
-				                <#}else{#>
-                if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
-				    sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] = '" + $("#txt<#= queryItemName #>Search").val() + "'";
-                }
-				                <#}#>
-							<#}#>
-						<# break;
-						case "Combox": 
-							if(i == 0)
-							{
-							     if(queryType == "Struct"){#>
-                if (toolBar.getItemText("combo<#= queryItemName #>Search") != "<#= displayName #>") {
-				    sqlStr += " where [<#= structName #>].[<#= structName #>Name] = '" + toolBar.getItemText("combo<#= queryItemName #>Search") + "'";
-                }
-							     <#}else{#>
-                if (toolBar.getItemText("combo<#= queryItemName #>Search") != "<#= displayName #>") {
-				    sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] = '" + toolBar.getItemText("combo<#= queryItemName #>Search") + "'";
-                }
-								 <#}#>
-							<#}else
-							{
-							    if(queryType == "Struct"){#>
-                if (toolBar.getItemText("combo<#= queryItemName #>Search") != "<#= displayName #>") {
-				    sqlStr += " and [<#= structName #>].[<#= structName #>Name] = '" + toolBar.getItemText("combo<#= queryItemName #>Search") + "'";
-                }
-				                <#}else{#>
-                if (toolBar.getItemText("combo<#= queryItemName #>Search") != "<#= displayName #>") {
-				    sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] = '" + toolBar.getItemText("combo<#= queryItemName #>Search") + "'";
-                }
-								<#}#>
-							<#}#>
-						<# break;
-					}#>	
-           <#}#>
-                ISystemService.execQuery.sqlString = sqlStr;
-                rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
-                if (ISystemService.execQuery.success) {
-                    (function (e) {
-                        rock.tableToBillGrid(e, masterGrid, masterDataList, <#= stateIndex #>, editImg, disEditImg);
-                    }(ISystemService.execQuery.resultValue));
-                }
+				getDataList();
                 break;
 			case "add":
                 window.parent.openBillManage(null, "<#= masterType #>Manage", "<#= billName #>维护");
@@ -495,11 +534,20 @@ $(function () {
 		queryItemName = queryItemModel["QueryItemName"] as string;
 		displayName = queryItemModel["DisplayName"] as string;
 		queryForm = queryItemModel["QueryForm"] as string;
-		if(queryForm == "Tree"){#>
+		inputType = queryItemModel["InputType"] as string;
+		if(queryForm == "Combox"){#>
+	toolBar.getInput("txt<#= queryItemName #>Search").id = "txt<#= queryItemName #>Search";
+    $("#txt<#= queryItemName #>Search").css("display", "none");
+    $("#txt<#= queryItemName #>Search").after("<select id='combo<#= queryItemName #>Search' style=\"width:100px\"></select>");
+		<#} if (inputType == "CheckBox"){#>
+	toolBar.getInput("txt<#= queryItemName #>Search").id = "txt<#= queryItemName #>Search";
+    $("#txt<#= queryItemName #>Search").css("display", "none");
+    $("#txt<#= queryItemName #>Search").after("<select id='combo<#= queryItemName #>Search' style=\"width:100px\"><option value='-1'>请选择</option><option value='1'>是</option><option value='0'>否</option></select>");		
+		<#}
+		if(queryForm == "Tree" || queryForm == "Quick"){#>
     toolBar.getInput("txt<#= queryItemName #>Search").id = "txt<#= queryItemName #>Search";
 		<#}#>
-    <#}#>		
-
+    <#}#>
     //初始化主表列表
     masterGrid = new dhtmlXGridObject("masterGrid");
     masterGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
@@ -616,40 +664,29 @@ $(function () {
     detailGrid.enableDistributedParsing(true, 20);   
     detailGrid.init(); 
 
-    <# if(hasStructPop)
+    <# if(hasQueryPop)
     {
 	     for (int i = 0; i < popDivLists.Count; i++)
          {
-		     structPopStr = popDivLists[i];
+		     popDivStr = popDivLists[i];
 		 #>
-    $(document.body).append('<#= structPopStr #>');  
+    $(document.body).append('<#= popDivStr #>');  
          <#}		
      }#>
 
-    <# if(hasReferPop)
-    {
-	     for (int i = 0; i < referPopLists.Count; i++)
-         {
-		     referPopStr = referPopLists[i];
-		 #>
-    $(document.body).append('<#= referPopStr #>');  
-         <#}		
-     }#>
-	 
     <#foreach (KeyValuePair<string, string> item in structPopDict)
     {
         queryItemName = item.Key;
         structName = item.Value;#>
-
     <#= queryItemName #>Tree = new dhtmlXTreeObject("<#= queryItemName #>Tree", "100%", "100%", 0);
     <#= queryItemName #>Tree.setImagePath("/resource/dhtmlx/codebase/imgs/csh_bluefolders/");
     <#= queryItemName #>Tree.setStdImages("icon_leaf.png", "folderOpen.gif", "folderClosed.gif");
     <#= queryItemName #>Tree.attachEvent("onSelect", <#= queryItemName #>TreeSelect);
     <#= queryItemName #>Tree.attachEvent("onDblClick", function (id) {
-
-	$("#txt<#= queryItemName #>Search").val(<#= queryItemName #>Tree.getSelectedItemText());
-    $("#txt<#= queryItemName #>ID").val(id);
-	hide<#= queryItemName #>Pop();
+		$("#txt<#= queryItemName #>ID").val(id);
+		$("#txt<#= queryItemName #>Search").val(<#= queryItemName #>Tree.getSelectedItemText());
+		$("#txt<#= queryItemName #>ID").val(id);
+		hide<#= queryItemName #>Pop();
     });
 
     function <#= queryItemName #>TreeSelect(itemid) {
@@ -671,17 +708,32 @@ $(function () {
     $('#txt<#= queryItemName #>Search').focus(function (e) {
         show<#= queryItemName #>SearchPop();
     });
+		<#for (var i = 0; i < queryItems.Count; i++)
+		{
+			queryItemModel = queryItems[i] ;
+			queryItemName = queryItemModel["QueryItemName"] as string;
+			queryForm = queryItemModel["QueryForm"] as string;
+			if(queryForm == "Tree" && queryItemName == queryItemName){#>
+	$('#txt<#= queryItemName #>Search').focus(function (e) {
+		show<#= queryItemName #>SearchPop();
+	});
     function show<#= queryItemName #>SearchPop() {
         var top = $("#txt<#= queryItemName #>Search").offset().top;
         var left = $("#txt<#= queryItemName #>Search").offset().left;
         <#= queryItemName #>Pop.css({ top: top + 22, left: left }).show();    
 	}	
+			<#}#>
+		<#}#>	
+	function show<#= queryItemName #>Pop() {
+		var top = $("#txt<#= queryItemName #>").offset().top;
+		var left = $("#txt<#= queryItemName #>").offset().left;
+		<#= queryItemName #>Pop.css({ top: top + 22, left: left }).show();
+	}
 
     function hide<#= queryItemName #>Pop() {
         <#= queryItemName #>Pop.css({ top: 200, left: -1300 }).hide();
     }
 	hide<#= queryItemName #>Pop();
-
 	<#}#>    
 
     <#foreach (KeyValuePair<string, string> item in referPopDict)
@@ -718,21 +770,83 @@ $(function () {
     $('#txt<#= queryItemName #>Search').focus(function (e) {
         show<#= queryItemName #>SearchPop();
     });
+	$('#txt<#= queryItemName #>Search').focus(function (e) {
+		show<#= queryItemName #>SearchPop();
+    });
     function show<#= queryItemName #>SearchPop() {
         var top = $("#txt<#= queryItemName #>Search").offset().top;
         var left = $("#txt<#= queryItemName #>Search").offset().left;
         <#= queryItemName #>Pop.css({ top: top + 22, left: left }).show();    
-	} 			
+	} 	
+	
+	function show<#= queryItemName #>Pop() {
+        var top = $("#txt<#= queryItemName #>").offset().top;
+        var left = $("#txt<#= queryItemName #>").offset().left;
+        <#= queryItemName #>Pop.css({ top: top + 22, left: left }).show();
+    }
 	
     function hide<#= queryItemName #>Pop() {
         <#= queryItemName #>Pop.css({ top: 200, left: -1300 }).hide();
     }
-
 	hide<#= queryItemName #>Pop();
-	<#}#>	   
+	<#}#>	
+	
+	<#foreach (KeyValuePair<string, string> item in quickPopDict)
+	{   
+		queryItemName = item.Key;
+		structName = item.Value;#>
+	var  <#= queryItemName #>DataList = new rock.JsonList();
+    <#= queryItemName #>QuickGrid = new dhtmlXGridObject("<#= queryItemName #>QuickGrid");
+    <#= queryItemName #>QuickGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
+    <#= queryItemName #>QuickGrid.setSkin("dhx_skyblue");
+	<#= queryItemName #>QuickGrid.setHeader(",,");
+	<#= queryItemName #>QuickGrid.setInitWidths("0,0,*");
+	<#= queryItemName #>QuickGrid.setColAlign("center,center,left");
+	<#= queryItemName #>QuickGrid.setColSorting("na,na,str");
+	<#= queryItemName #>QuickGrid.setColTypes("ro,ro,ro");
+    <#= queryItemName #>QuickGrid.enableDistributedParsing(true, 20);
+    <#= queryItemName #>QuickGrid.attachEvent("onRowDblClicked", function (rowID, cIndex) {			
+		$("#txt<#= queryItemName #>Search").val(<#= queryItemName #>QuickGrid.cells(rowID, 2).getValue());
+		hide<#= queryItemName #>Pop();
+    });   
+    <#= queryItemName #>QuickGrid.init(); 
+	<#= queryItemName #>QuickGrid.detachHeader(0); 
+	<#= queryItemName #>Pop = $("#<#= queryItemName #>Pop")	
+	$('#txt<#= queryItemName #>Search').focus(function (e) {
+		show<#= queryItemName #>Pop($("#txt<#= queryItemName #>Search").offset().top, $("#txt<#= queryItemName #>Search").offset().left);
+    });				
+
+	function show<#= queryItemName #>Pop(top, left) {
+        <#= queryItemName #>Pop.css({ top: top + 22, left: left }).show();
+		//判断记录条数如果少于10条就重新加载
+        if (<#= queryItemName #>DataList.rows.length < 10) {
+            <#= queryItemName #>Complete("");
+        }
+    }
+
+    function hide<#= queryItemName #>Pop() {
+        <#= queryItemName #>Pop.css({ top: 200, left: -1300 }).hide();
+    }
+	hide<#= queryItemName #>Pop();
+
+	$("#txt<#= queryItemName #>Search").keyup(function () {
+		<#= queryItemName #>Complete($("#txt<#= queryItemName #>Search").val());        
+    });
+
+	function <#= queryItemName #>Complete(searchCode) {
+        ISystemService.execQuery.sqlString = "select top 14 [<#= structName #>].[<#= structName #>ID], [<#= structName #>].[<#= structName #>Name] from [<#= structName #>] where [<#= structName #>Name] like  '%" + searchCode + "%' or [SearchCode] like  '%" + searchCode + "%'";
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {
+                rock.tableToListGrid(e, <#= queryItemName #>QuickGrid, <#= queryItemName #>DataList);
+            }(ISystemService.execQuery.resultValue));
+        }
+    }
+	<#}#>
+   
     <# if(hasQueryPop)
     { #>
-    $('#divMainPage').mousedown(function (e) {
+    $('#masterDiv').mousedown(function (e) {
 		<#for (var i = 0; i < queryItems.Count; i++)
 		{
 		    queryItemModel = queryItems[i] ;
@@ -743,140 +857,181 @@ $(function () {
             hide<#= queryItemName #>Pop();
         }
 		    <#}#>   
-		<#}#>          
+		<#}#>  
+		<#for (var i = 0; i < popQueryItemNameLists.Count; i++)
+		{
+		    queryItemName = popQueryItemNameLists[i];#>
+			if (e.srcElement.id != "txt<#= queryItemName #>Search") {
+				hide<#= queryItemName #>Pop();
+			}
+		<#}#>           
     }); 	
-    <#}#>	
-
-	//加载明细数据    
-	<# 
-        sql = "";
-        referClause = " join [" + detailMainReferType + "] on [" + detailType + "].[" + detailMainReferType + "ID] = [" + detailMainReferType + "].[" + detailMainReferType + "ID]";
-        //判断detailGridColumns.Count是否大于零
-		if(detailGridColumns.Count > 0)
-		{
-			for (var i = 0; i < detailMainReferGridColumns.Count; i++)
-			{
-				gridColumnModel = detailMainReferGridColumns[i] ;
-				gridColumnName = gridColumnModel["GridColumnName"] as string;
-				structName = gridColumnModel["StructName"] as string;	
-				
-				if (!string.IsNullOrEmpty(structName))
+    <#}#>
+	
+	//加载主表数据列表	
+	function getDataList() {
+		<#for (var i = 0; i < queryItems.Count; i++)
+        {
+            queryItemModel = queryItems[i] ;
+			queryItemName = queryItemModel["QueryItemName"] as string;
+			displayName = queryItemModel["DisplayName"] as string;
+			queryForm = queryItemModel["QueryForm"] as string;
+	        if(queryForm == "Date")
+	        {#>
+        if ($.trim(toolBar.getValue("begin<#= queryItemName #>")) == "") {
+            alert("起始<#= displayName #>不能为空！");
+            return;
+        }			    
+        if (!rock.chkdate(toolBar.getValue("begin<#= queryItemName #>"), "-")) {
+            alert("起始<#= displayName #>格式不正确,正确格式为 2010-10-10！");
+            return false;
+        }
+        if ($.trim(toolBar.getValue("end<#= queryItemName #>")) == "") {
+            alert("截止<#= displayName #>不能为空！");
+            return;
+        }
+        if (!rock.chkdate(toolBar.getValue("end<#= queryItemName #>"), "-")) {
+            alert("截止<#= displayName #>格式不正确,正确格式为 2010-10-10！");
+            return false;
+        }
+			<#}#>
+        <#}#>
+		sqlStr = "select [<#= masterType #>].[<#= masterType #>ID], <#= masterSql #>";
+		<#for (var i = 0; i < queryItems.Count; i++)
+        {
+            queryItemModel = queryItems[i] ;
+			queryItemName = queryItemModel["QueryItemName"] as string;
+			queryType = queryItemModel["QueryType"] as string;
+			structName = queryItemModel["StructName"] as string;
+			displayName = queryItemModel["DisplayName"] as string;
+			inputType = queryItemModel["InputType"] as string;
+			queryForm = queryItemModel["QueryForm"] as string;
+				switch (queryForm)
 				{
-					sql += "[" + structName + "].[" + structName + "Name], ";
-					referClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
-				}
-				else
-				{
-					if(gridColumnModel["DataType"] as string == "Date")
-					{
-						sql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
-					}
-					else
-					{
-						sql += "[" + detailMainReferType + "].[" + gridColumnName + "], ";
-					}
-				}
-			}
-			for (var i = 0; i < detailGridColumns.Count; i++)
-			{
-				gridColumnModel = detailGridColumns[i] ;
-				gridColumnName = gridColumnModel["GridColumnName"] as string;
-				structName = gridColumnModel["StructName"] as string;	
-
-				if (i < detailGridColumns.Count - 1)
-				{
-					if (!string.IsNullOrEmpty(structName))
-					{
-						sql += "[" + structName + "].[" + structName + "Name], ";
-						referClause += " join [" + structName + "] on [" + detailType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
-					}
-					else
-					{
-						if(gridColumnModel["DataType"] as string == "Date")
+					case "Date": 
+						if(i == 0)
+						{#>
+			sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] between '" + toolBar.getValue("begin<#= queryItemName #>") + " 0:0:0' AND '" + toolBar.getValue("end<#= queryItemName #>") + " 23:59:59' ";
+						<#}else
+						{#>
+			sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] between '" + toolBar.getValue("begin<#= queryItemName #>") + " 0:0:0' AND '" + toolBar.getValue("end<#= queryItemName #>") + " 23:59:59' ";
+						<#}#>
+					<# break;
+					case "Fuzzy":
+						if(i == 0)
+						{#>
+            if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] like '%" + toolBar.getValue("txt<#= queryItemName #>Search") + "%'";
+            }
+						<#}else
+						{#>
+            if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] like '%" + toolBar.getValue("txt<#= queryItemName #>Search") + "%'";
+            }
+						<#}#>
+					<# break;
+					case "Value": 
+						if(i == 0)
+						{ 
+							if(inputType == "CheckBox"){#>
+            if ($("#combo<#= queryItemName #>Search").val() != "-1") {
+				sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] = '" + $("#combo<#= queryItemName #>Search").val() + "'";
+            }
+							<#}else{#>
+            if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] = '" + toolBar.getValue("txt<#= queryItemName #>Search") + "'";
+            }				<#}#>
+							
+						<#}else
+						{ 
+							if(inputType == "CheckBox"){#>
+            if ($("#combo<#= queryItemName #>Search").val() != "-1") {
+				sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] = '" + $("#combo<#= queryItemName #>Search").val() + "'";
+            }				<#}else{#>
+			 if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] = '" + toolBar.getValue("txt<#= queryItemName #>Search") + "'";
+            }
+							<#}#>	
+						<#}#>
+					<# break;
+					case "Tree": 
+						if(i == 0)
 						{
-							sql +=  "convert(nvarchar(10)," + "[" + detailType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
-						}
+							if(queryType == "Struct"){#>
+            if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				sqlStr += " where [<#= masterType #>].[<#= queryItemName #>ID] = " + $("#txt<#= queryItemName #>ID").val() ;
+            }
+				                <#}else{#>
+            if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] = '" + $("#txt<#= queryItemName #>Search").val() + "'";
+            }
+				                <#}#>
+						<#}else
+						{
+							if(queryType == "Struct"){#>
+            if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				sqlStr += " and [<#= masterType #>].[<#= queryItemName #>ID] = " + $("#txt<#= queryItemName #>ID").val() ;
+            }
+				            <#}else{#>
+            if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] = '" + $("#txt<#= queryItemName #>Search").val() + "'";
+            }
+				            <#}#>
+						<#}#>
+					<# break;
+					case "Combox": 
+						if(i == 0)
+						{
+							    if(queryType == "Struct"){#>
+			if ($("#combo<#= queryItemName #>Search").val() != "-1") {
+				sqlStr += " where [<#= structName #>].[<#= structName #>Name] = " + $("#combo<#= queryItemName #>Search").val();
+            }
+							    <#}else{#>
+            if ($("#combo<#= queryItemName #>Search").val() != "-1") {
+				sqlStr += " where [<#= masterType #>].[<#= queryItemName #>] = '" + $("#combo<#= queryItemName #>Search").val() + "'";
+            }
+								<#}#>
+						<#}else
+						{
+							if(queryType == "Struct"){#>
+            if ($("#combo<#= queryItemName #>Search").val() != "-1") {
+				sqlStr += " and [<#= structName #>].[<#= structName #>Name] = " + $("#combo<#= queryItemName #>Search").val();
+            }
+				            <#}else{#>
+            if ($("#combo<#= queryItemName #>Search").val() != "-1") {
+				sqlStr += " and [<#= masterType #>].[<#= queryItemName #>] = '" + $("#combo<#= queryItemName #>Search").val() + "'";
+            }
+							<#}#>
+						<#}#>
+					<# break;
+					case "Quick": 
+						if(i == 0)
+						{#>
+			if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				sqlStr += " where [<#= structName #>].[<#= structName #>Name] like '%" + toolBar.getValue("txt<#= queryItemName #>Search") + "%'";
+			}							
+						<#}
 						else
-						{
-							sql += "[" + detailType + "].[" + gridColumnName + "], ";
-						}
-					}
-				}
-				else
-				{
-					if (!string.IsNullOrEmpty(structName))
-					{
-						sql += "[" + structName + "].[" + structName + "Name] from [" + detailType + "]";
-						referClause += " join [" + structName + "] on [" + detailType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
-					}
-					else
-					{
-						if(gridColumnModel["DataType"] as string == "Date")
-						{
-							sql +=  "convert(nvarchar(10)," + "[" + detailType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + detailType + "]";
-						}
-						else
-						{
-							sql += "[" + detailType + "].[" + gridColumnName + "] from [" + detailType + "]";
-						}
-					}
-					sql += referClause;
-				}
-			}			
-		}
-		else
-		{
-			for (var i = 0; i < detailMainReferGridColumns.Count; i++)
-			{
-				gridColumnModel = detailMainReferGridColumns[i] ;
-				gridColumnName = gridColumnModel["GridColumnName"] as string;
-				structName = gridColumnModel["StructName"] as string;	
+						{#>
+			if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+				sqlStr += " and [<#= structName #>].[<#= structName #>Name] like '%" + toolBar.getValue("txt<#= queryItemName #>Search") + "%'";
+			}							
+						<#}
+						break;
+				}#>	
+        <#}#>
+        ISystemService.execQuery.sqlString = sqlStr;
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {
+                rock.tableToBillGrid(e, masterGrid, masterDataList, <#= stateIndex #>, editImg, disEditImg);
+            }(ISystemService.execQuery.resultValue));
+        }
+	}	
 
-				if (i < detailMainReferGridColumns.Count - 1)
-				{
-					if (!string.IsNullOrEmpty(structName))
-					{
-						sql += "[" + structName + "].[" + structName + "Name], ";
-						referClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
-					}
-					else
-					{
-						if(gridColumnModel["DataType"] as string == "Date")
-						{
-							sql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
-						}
-						else
-						{
-							sql += "[" + detailMainReferType + "].[" + gridColumnName + "], ";
-						}
-					}
-				}
-				else
-				{
-					if (!string.IsNullOrEmpty(structName))
-					{
-						sql += "[" + structName + "].[" + structName + "Name] from [" + detailType + "]";
-						referClause += " join [" + structName + "] on [" + detailMainReferType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
-					}
-					else
-					{
-						if(gridColumnModel["DataType"] as string == "Date")
-						{
-							sql +=  "convert(nvarchar(10)," + "[" + detailMainReferType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + detailType + "]";
-						}
-						else
-						{
-							sql += "[" + detailMainReferType + "].[" + gridColumnName + "] from [" + detailType + "]";
-						}
-					}
-					sql += referClause;
-				}
-			}
-		}
-	#>
-
+	//加载明细数据	
     function getDetail(masterID) {
-        ISystemService.execQuery.sqlString = "select [<#= detailType #>].[<#= detailType #>ID], <#= sql #> and [<#= detailType #>].[<#= masterType #>ID] = " + masterID;
+        ISystemService.execQuery.sqlString = "select [<#= detailType #>].[<#= detailType #>ID], <#= detailSql #> and [<#= detailType #>].[<#= masterType #>ID] = " + masterID;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {
             (function (e) {
@@ -884,7 +1039,7 @@ $(function () {
             }(ISystemService.execQuery.resultValue));
         }
     }   
-    <#if(hasDate)
+    <#if(hasQueryDate)
     {#>	
 	//日期控件处理 
 	var dateboxArray = [];

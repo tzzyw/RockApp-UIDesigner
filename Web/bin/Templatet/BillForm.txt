@@ -53,92 +53,94 @@
  for (var i = 0; i < masterFormItems.Count; i++)
  {
     formItemModel = masterFormItems[i] ;
-	queryType = formItemModel["QueryType"] as string;
 	formItemName = formItemModel["FormItemName"] as string;
+	queryType = formItemModel["QueryType"] as string;
+	queryForm = formItemModel["QueryForm"] as string;
 	structName = formItemModel["StructName"] as string;
 	referType = formItemModel["ReferType"] as string;
 	inputType = formItemModel["InputType"] as string;
-	if(inputType == "TextBox")
-	{
-        switch (queryType)
-        {
-            case "Struct":
-				structPopDict.Add(formItemName, structName);
-				masterPopFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "Tree\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  formItemName + "Pop, " + formItemName + "Tree, ";
-				hasPop = true;
-                break;
-            case "Refer":
-				referPopDict.Add(formItemName, referType);
-				masterPopFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "Tree\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  formItemName + "Pop, " + formItemName + "Tree, ";
-				hasPop = true;
-                break;
-            case "Quick":
+    switch (queryForm)
+    {
+	        case "Quick":
 				quickPopDict.Add(formItemName, structName);
 				masterPopFormItemNameLists.Add(formItemName);
 				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  formItemName + "Pop, " + formItemName + "QuickGrid, ";
+				popVar +=  formItemName + "Pop, " + formItemName + "QuickGrid, ";
 				hasPop = true;
-                break;
-            default:
-                break;
-        }
+            break;
+	        case "Tree":
+				if(queryType == "Struct")
+				{
+					structPopDict.Add(formItemName, structName);
+					masterPopFormItemNameLists.Add(formItemName);
+					popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "Tree\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+					popVar +=  formItemName + "Pop, " + formItemName + "Tree, ";
+					hasPop = true;
+				}
+				if(queryType == "Refer")
+				{
+					referPopDict.Add(formItemName, referType);
+					masterPopFormItemNameLists.Add(formItemName);
+					popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "Tree\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+					popVar +=  formItemName + "Pop, " + formItemName + "Tree, ";
+					hasPop = true;
+				}
+            break;
+        case "Date":
+			dateControlLists.Add("\"txt" + formItemName + "\"");
+			hasDate = true;
+            break;        
+        default:
+            break;
     }
-	if(inputType == "Date")
-	{
-	    dateControlLists.Add("\"txt" + formItemName + "\"");
-	    hasDate = true;
-	}
  }
  for (var i = 0; i < detailFormItems.Count; i++)
  {
     formItemModel = detailFormItems[i] ;
-	queryType = formItemModel["QueryType"] as string;
 	formItemName = formItemModel["FormItemName"] as string;
+	queryType = formItemModel["QueryType"] as string;
+	queryForm = formItemModel["QueryForm"] as string;
 	structName = formItemModel["StructName"] as string;
 	referType = formItemModel["ReferType"] as string;
 	inputType = formItemModel["InputType"] as string;
-	if(inputType == "TextBox")
-	{
-        switch (queryType)
-        {
-            case "Struct":
+    switch (queryForm)
+    {
+        case "Quick":
+			quickPopDict.Add(formItemName, structName);
+			detailpopFormItemNameLists.Add(formItemName);
+			popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+		    popVar +=  formItemName + "Pop, " + formItemName + "QuickGrid ";
+			hasPop = true;
+            break;   
+        case "Tree":
+			if(queryType == "Struct")
+			{
 				structPopDict.Add(formItemName, structName);
 				detailpopFormItemNameLists.Add(formItemName);
 				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  formItemName + "Pop, ";
+				popVar +=  formItemName + "Pop, " + formItemName + "Tree ";
 				hasPop = true;
-                break;
-            case "Refer":
+			}
+			if(queryType == "Refer")
+			{
 				referPopDict.Add(formItemName, referType);
 				detailpopFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  formItemName + "Pop, ";
+				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+				popVar +=  formItemName + "Pop, " + formItemName + "Tree ";
 				hasPop = true;
-                break;
-            case "Quick":
-				quickPopDict.Add(formItemName, structName);
-				detailpopFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:50\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  formItemName + "Pop, ";
-				hasPop = true;
-                break;
-            default:
-                break;
-        }
+			}
+            break;
+	    case "Date":
+			dateControlLists.Add("\"txt" + formItemName + "\"");
+			hasDate = true;
+            break;        
+        default:
+            break;
     }
-	if(inputType == "Date")
-	{
-	    dateControlLists.Add("\"txt" + formItemName + "\"");
-	    hasDate = true;
-	}
  }#>
 $(function () {
     //初始化系统通用变量
-    var toolBar, dhxLayout, editState, detailEditState, detailForm, detailGrid,mainReferForm, mainReferGrid, billState, uIState,<#= detailMainReferObjeName #>Grid, <#= detailMainReferObjeName #>Form, serverDate, sqlStr,<#if (!string.IsNullOrEmpty(popVar)){ #><#= popVar #><# }#>
+    var toolBar, dhxLayout, editState, detailEditState, detailForm, detailGrid,mainReferForm, mainReferGrid, billState, uIState,<#= detailMainReferObjeName #>Grid, <#= detailMainReferObjeName #>Form, <#if (hasDate){ #>serverDate,<# }#>sqlStr,<#if (!string.IsNullOrEmpty(popVar)){ #><#= popVar #><# }#>
 	<#= masterObjeName #> = null,
 	<#= detailObjeName #> = null,
 	detailObjList = [],
@@ -153,20 +155,21 @@ $(function () {
     //加载动态脚本
     var jsTypes = "ISystemService,DataTable,DataRow,DataColumn,<#= masterType #>,<#= detailType #>,<#= detailMainReferType #><#if (!string.IsNullOrEmpty(referTypes)){ #>,<#= referTypes #><# }#><#if (!string.IsNullOrEmpty(bizService)){ #>,<#= bizService #><# }#>";
     $.getScript('/LoadDomainJS.ashx?JsTypes=' + jsTypes, function () {
-        //获取服务器当前日期
+	<#if(hasDate){#>
+		//获取服务器当前日期
         rock.AjaxRequest(ISystemService.getServerDate, rock.exceptionFun);
         if (ISystemService.getServerDate.success) {
             (function (e) {
                 serverDate = e.value;
             }(ISystemService.getServerDate.resultValue));
         }
-	
+	<#}#>
 	//初始化主表实体参照
 	<#for (var i = 0; i < masterFormItems.Count; i++)
     {
         formItemModel = masterFormItems[i];
-		queryType = formItemModel["QueryType"] as string;
 		formItemName = formItemModel["FormItemName"] as string;
+		queryType = formItemModel["QueryType"] as string;
 		inputType = formItemModel["InputType"] as string;
 		structName = formItemModel["StructName"] as string;
 	    if(queryType == "Struct" && inputType == "Combox")
@@ -193,8 +196,8 @@ $(function () {
 	<#for (var i = 0; i < detailFormItems.Count; i++)
     {
         formItemModel = detailFormItems[i];
-		queryType = formItemModel["QueryType"] as string;
 		formItemName = formItemModel["FormItemName"] as string;
+		queryType = formItemModel["QueryType"] as string;
 		inputType = formItemModel["InputType"] as string;
 		structName = formItemModel["StructName"] as string;
 	    if(queryType == "Struct" && inputType == "Combox")
@@ -221,8 +224,8 @@ $(function () {
 	<#for (var i = 0; i < masterFormItems.Count; i++)
     {
         formItemModel = masterFormItems[i] ;
-		queryType = formItemModel["QueryType"] as string;
 		formItemName = formItemModel["FormItemName"] as string;
+		queryType = formItemModel["QueryType"] as string;
 		inputType = formItemModel["InputType"] as string;
 		referType = formItemModel["ReferType"] as string;
 	    if(queryType == "Refer" && inputType == "Combox")
@@ -249,8 +252,8 @@ $(function () {
 	<#for (var i = 0; i < detailFormItems.Count; i++)
     {
         formItemModel = detailFormItems[i] ;
-		queryType = formItemModel["QueryType"] as string;
 		formItemName = formItemModel["FormItemName"] as string;
+		queryType = formItemModel["QueryType"] as string;
 		inputType = formItemModel["InputType"] as string;
 		referType = formItemModel["ReferType"] as string;
 	    if(queryType == "Refer" && inputType == "Combox")
@@ -328,10 +331,8 @@ $(function () {
 	    formItemName = item.Key;#>
        <#= formItemName #>Complete("");
 	<#}#>
-
 		//填充明细主参照快查表格
 		mainReferComplete("");
-
 	    //获取单据对象
         if (<#= masterObjeName #>ID != "null") {
             uIState = "Browsing";
@@ -355,7 +356,6 @@ $(function () {
         //页面按钮状态处理
         refreshToolBarState();		
     });
-
     //初始化工具条
     toolBar = new dhtmlXToolbarObject("toolBar");
     toolBar.setIconsPath("/resource/dhtmlx/codebase/imgs");
@@ -423,36 +423,32 @@ $(function () {
     <#for (var i = 0; i < masterFormItems.Count; i++)
 	{
 		formItemModel = masterFormItems[i] ;
-		inputType = formItemModel["InputType"] as string;
 		formItemName = formItemModel["FormItemName"] as string;
+		inputType = formItemModel["InputType"] as string;
+		queryType = formItemModel["QueryType"] as string;
 		displayName = formItemModel["DisplayName"] as string;
 		structName = formItemModel["StructName"] as string;
 		referType = formItemModel["ReferType"] as string;
 		if((bool)formItemModel["IsRequired"])
 		{
-			if(inputType != "CheckBox")
+			if(inputType != "CheckBox")		//不是CheckBox
 			{
-				if(string.IsNullOrWhiteSpace(referType))     //不是通用参照引用
+				if(inputType != "Combox")    //不是下拉选择框
 				{
-					if(string.IsNullOrWhiteSpace(structName))  //不是对象类型引用
-					{
-						if(inputType != "Combox") //不是下拉选择框
+					if(queryType == "Struct") //是对象引用类型
 						{#>			
-				if (!$("#txt<#= formItemName #>").validate("required", "<#= displayName #>")) {
-					return false;
-				}
+		if (!$("#txt<#= formItemName #>ID").validate("required", "<#= displayName #>")) {
+            return false;
+        }
 						<#}#>
-					<#}else     //是对象引用类型
+					<#} else  //不是对象引用类型
 					{
 						if(inputType == "TextBox"){#>
-				if (!$("#txt<#= formItemName #>ID").validate("required", "<#= displayName #>")) {
-					return false;
-				}		
-						<#}#>
+		if (!$("#txt<#= formItemName #>").validate("required", "<#= displayName #>")) {
+            return false;
+        }
 					<#}#>
-
-			  <#}#>
-	<#}}}#>
+	<#}}}}#>
 	<#for (var i = 0; i < masterFormItems.Count; i++)
 	{
 		formItemModel = masterFormItems[i] ;
@@ -508,7 +504,7 @@ $(function () {
 					case "TextBox": 
 						if((bool)formItemModel["IsRequired"])
 						{
-							if(queryType == "Struct" || queryType == "Quick"){#>
+							if(queryType == "Struct"){#>
 				<#= masterObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
 							<#}
 							else
@@ -518,7 +514,7 @@ $(function () {
 						<#}
 						else
 						{
-						   if(queryType == "Struct" || queryType == "Quick"){#>
+						   if(queryType == "Struct"){#>
 				if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
 					<#= masterObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
 				}
@@ -554,24 +550,10 @@ $(function () {
 					if(queryType == "Struct")
 					{#>	
 				<#= masterObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
-					<#}else
-						if(queryType == "Refer")
-						{
-							if((bool)formItemModel["IsRequired"])
-							{#>
+					<#}else {#>
 				<#= masterObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
-							<#}
-							else
-							{#>
-				if ($.trim($("#txt<#= formItemName #>").val()) != '') {
-					<#= masterObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
-				}
-				else {
-					<#= masterObjeName #>.<#= formItemName #> = null;
-				}
-							<#}#>	
-					 <#}#>
-					<# break;
+					<#}
+					   break;
 				}
 			} #>
                <#= masterObjeName #>.creater = decodeURIComponent($.cookie('userTrueName'));
@@ -653,7 +635,7 @@ $(function () {
 				switch (inputType)
 				{
 					case "TextBox":
-						if(queryType == "Struct" || queryType == "Quick"){#>						
+						if(queryType == "Struct"){#>						
 				$("#txt<#= formItemName #>").val("");
 				$("#txt<#= formItemName #>ID").val("");
 							<#}else{#>
@@ -2770,8 +2752,12 @@ $(function () {
 		inputType = formItemModel["InputType"] as string;
 		structName = formItemModel["StructName"] as string;
 		if (inputType == "Date")
-		{#>			
-		$("#txt<#= formItemName #>").val(serverDate);					
+		{
+			if ((bool)formItemModel["IsReadOnly"]){#>
+		$("#txt<#= formItemName #>").val(serverDate);
+			<#}else {#>			
+		$("#txt<#= formItemName #>").val();
+			<#}#>				
 		<#}
 	} #>        
         editState = "add";

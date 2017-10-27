@@ -32,68 +32,133 @@
  string sql = "";
  string dataType = "";
  string referClause = "";
- for (var i = 0; i < queryItems.Count; i++)
- {
-    queryItemModel = queryItems[i] ;
-	queryItemName = queryItemModel["QueryItemName"] as string;
-	queryForm = queryItemModel["QueryForm"] as string;
-	if(queryForm == "Date")
-	{   
-		beginDateLists.Add("\"begin" + queryItemName + "\"");
-		endDateLists.Add("\"end" + queryItemName + "\"");			
-		hasQueryDate = true;
-		hasQueryDate = true;		  
-	}
-	if(queryForm == "Tree")
-	{
-	    hasQueryPop = true;
-	}
- }
-
   for (var i = 0; i < queryItems.Count; i++)
   {
     queryItemModel = queryItems[i] ;
 	queryItemName = queryItemModel["QueryItemName"] as string;
 	queryType = queryItemModel["QueryType"] as string;
-	inputType = queryItemModel["InputType"] as string;
+	queryForm = queryItemModel["QueryForm"] as string;
 	structName = queryItemModel["StructName"] as string;
-	if(inputType == "TextBox")
-	{
-        switch (queryType)
-        {
-            case "Struct":
-				structPopDict.Add(queryItemName, structName);
-				popQueryItemNameLists.Add(queryItemName);
-				popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  queryItemName + "Pop, " + queryItemName + "Tree ";
-				hasQueryPop = true;
-                break;
-            case "Refer":
-				referPopDict.Add(queryItemName, referType);
-				popQueryItemNameLists.Add(queryItemName);
-				popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  queryItemName + "Pop, " + queryItemName + "Tree ";
-				hasQueryPop = true;
-                break;
-            case "Quick":
-				quickPopDict.Add(queryItemName, structName);
-				popQueryItemNameLists.Add(queryItemName);
-				popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "QuickGrid\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  queryItemName + "Pop, " + queryItemName + "QuickGrid ";
-				hasQueryPop = true;
-                break;
-            default:
-                break;
-        }		
-	}
+    switch (queryForm)
+    {
+        case "Quick":
+			quickPopDict.Add(queryItemName, structName);
+			popQueryItemNameLists.Add(queryItemName);
+			popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "QuickGrid\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+		    popVar +=  queryItemName + "Pop, " + queryItemName + "QuickGrid ";
+			hasQueryPop = true;
+            break;
+        case "Tree":
+				if(queryType == "Struct")
+				{
+					structPopDict.Add(queryItemName, structName);
+					popQueryItemNameLists.Add(queryItemName);
+					popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+					popVar +=  queryItemName + "Pop, " + queryItemName + "Tree ";
+					hasQueryPop = true;
+				}
+				if(queryType == "Refer")
+				{
+					referPopDict.Add(queryItemName, referType);
+					popQueryItemNameLists.Add(queryItemName);
+					popDivLists.Add("<div id=\"" + queryItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + queryItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+					popVar +=  queryItemName + "Pop, " + queryItemName + "Tree ";
+					hasQueryPop = true;
+				}
+            break;  
+        case "Date":
+			dateControlLists.Add("toolBar.getInput(\"begin" + queryItemName + "\")");
+			dateControlLists.Add("toolBar.getInput(\"end" + queryItemName + "\")");
+			beginDateLists.Add("\"begin" + queryItemName + "\"");
+			endDateLists.Add("\"end" + queryItemName + "\"");			
+			hasQueryDate = true;
+            break;
+        default:
+            break;
+    }		
  }
-for (var i = 0; i < gridColumns.Count; i++) {
-	gridColumnModel = gridColumns[i];
-	columnTotalWidth += (int)(gridColumnModel["GridWidth"]);	
+ for (var i = 0; i < gridColumns.Count; i++) {
+	 gridColumnModel = gridColumns[i];
+	 columnTotalWidth += (int)(gridColumnModel["GridWidth"]);	
+ }
+ for (var i = 0; i < gridColumns.Count; i++)
+ {
+	gridColumnModel = gridColumns[i] ;
+	gridColumnName = gridColumnModel["GridColumnName"] as string;
+	structName = gridColumnModel["StructName"] as string;
+	dataType = gridColumnModel["DataType"] as string; 
+	if (i < gridColumns.Count - 1)
+	{
+		if (!string.IsNullOrEmpty(structName))
+		{
+			if (structName.Trim() == "")
+			{
+				sql += "[" + modelType + "].[" + gridColumnName + "], ";
+			}
+			else
+			{
+				sql += "[" + structName + "].[" + structName + "Name], ";
+				referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
+			}
+		}
+		else
+		{   
+			if(dataType == "Date")
+			{
+				sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
+			}
+			else if(dataType == "Bool")
+			{
+				sql += "CASE [" + modelType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END, "; 
+			}
+			else
+			{
+				sql += "[" + modelType + "].[" + gridColumnName + "], ";
+			}
+		}
+	 }
+	 else
+	 {
+     if (!string.IsNullOrEmpty(structName))
+     {
+        if (structName.Trim() == "")
+        {
+            sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
+        }
+        else
+        {
+            sql += "[" + structName + "].[" + structName + "Name] from [" + modelType + "]";
+            referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
+        }
+     }
+     else
+     {                  
+		if(dataType == "Date")
+		{
+			sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + modelType + "]";
+		}
+		else if(dataType == "Bool")
+		{
+			sql += "CASE [" + modelType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END from [" + modelType + "]";
+		}
+		else
+		{
+			sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
+		}
+     }
+	 if(referClause == "")
+	 {
+		sql += " where 1=1 ";
+	 }
+	 else
+	 {
+		sql += referClause ;
+	 }           
+  }			
 }#>
 $(function () {
     //初始化系统通用变量
-    var toolBar, listGrid, editState, editForm, dictDataList, sqlStr,serverDate,
+    var toolBar, listGrid, editState, editForm, dictDataList, sqlStr,<#if (hasQueryDate){ #>serverDate,<# }#><#if (!string.IsNullOrEmpty(popVar)){ #><#= popVar #>,<# }#>
       <#= modelObjeName #> = null,
 	  editItem = $("#editItem"),
       dictDataList = new rock.JsonList();
@@ -131,7 +196,7 @@ $(function () {
 		structName = queryItemModel["StructName"] as string;
 	    if(queryType == "Struct")
 	    {#>
-		$("#combo<#= queryItemName #>Search").append("<option value='-1'>请选择<#= queryDisplayName #></option>");			
+		$("#combo<#= queryItemName #>Search").append("<option value='-1'>请选择<#= queryDisplayName #></option>");
         sqlStr = "SELECT [<#= structName #>ID],[<#= structName #>Name] FROM [<#= structName #>] order by <#= structName #>Name";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
@@ -142,7 +207,7 @@ $(function () {
                     var rowLength = rows.length;
                     for (var i = 0; i < rowLength; i++) {
                         var rowResult = rows[i].values;
-                        $("#combo<#= queryItemName #>Search").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>");						
+                        $("#combo<#= queryItemName #>Search").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>");
                     }
                 }
             }(ISystemService.execQuery.resultValue));
@@ -159,7 +224,7 @@ $(function () {
 		queryDisplayName = queryItemModel["DisplayName"] as string;
 	    if(queryType == "Refer")
 	    {#>
-		$("#combo<#= queryItemName #>Search").append("<option value='-1'>请选择<#= queryDisplayName #></option>");			
+		$("#combo<#= queryItemName #>Search").append("<option value='-1'>请选择<#= queryDisplayName #></option>");
         sqlStr = "SELECT [ReferName] FROM [Refer] where [ReferType] = '<#= referType #>'";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
@@ -181,7 +246,6 @@ $(function () {
     {
         queryItemName = item.Key;
         structName = item.Value;#>
-
         sqlStr = "select [<#= structName #>ID], [<#= structName #>Name] from [<#= structName #>] where ParentID is null";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
@@ -205,7 +269,6 @@ $(function () {
     {
         queryItemName = item.Key;
         referType = item.Value;#>
-
         sqlStr = "select [ReferID], [ReferName] from [Refer] where [ParentID] is null and [ReferType] = '<#= referType #>'";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
@@ -234,86 +297,8 @@ $(function () {
 	{#>
 		getDataList();
 	<#}else 
-	{
-		sql="";
-		referClause ="";
-		for (var i = 0; i < gridColumns.Count; i++)
-		{
-			 gridColumnModel = gridColumns[i] ;
-			gridColumnName = gridColumnModel["GridColumnName"] as string;
-			structName = gridColumnModel["StructName"] as string;
-			dataType = gridColumnModel["DataType"] as string; 
-			if (i < gridColumns.Count - 1)
-			{
-				if (!string.IsNullOrEmpty(structName))
-				{
-					if (structName.Trim() == "")
-					{
-						sql += "[" + modelType + "].[" + gridColumnName + "], ";
-					}
-					else
-					{
-						sql += "[" + structName + "].[" + structName + "Name], ";
-						referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
-					}
-				}
-				else
-				{   
-					if(dataType == "Date")
-					{
-						sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
-					}
-					else if(dataType == "Bool")
-					{
-						sql += "CASE [" + modelType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END, "; 
-					}
-					else
-					{
-						sql += "[" + modelType + "].[" + gridColumnName + "], ";
-					}
-				}
-			}
-			else
-			{
-            if (!string.IsNullOrEmpty(structName))
-            {
-                if (structName.Trim() == "")
-                {
-                    sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
-                }
-                else
-                {
-                    sql += "[" + structName + "].[" + structName + "Name] from [" + modelType + "]";
-                    referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
-                }
-            }
-            else
-            {                  
-				if(dataType == "Date")
-				{
-					sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + modelType + "]";
-				}
-				else if(dataType == "Bool")
-				{
-					sql += "CASE [" + modelType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END from [" + modelType + "]";
-				}
-				else
-				{
-					sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
-				}
-            }
-			if(referClause == "")
-			{
-			    sql += " where 1=1 ";
-			}
-			else
-			{
-			    sql += referClause ;
-			}           
-		}
-			
-	} #>	
-		sqlStr = "select top 50 [<#= modelType #>].[<#= modelType #>ID], <#= sql #> ";
+	{#>	
+		sqlStr = "select top 20 [<#= modelType #>].[<#= modelType #>ID], <#= sql #> ";
 		ISystemService.execQuery.sqlString = sqlStr;
 		rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
 		if (ISystemService.execQuery.success) {
@@ -334,13 +319,7 @@ $(function () {
 		queryForm = queryItemModel["QueryForm"] as string;
 		switch (queryForm)
 		{
-			case "Date": 
-		        dateControlLists.Add("toolBar.getInput(\"begin" + queryItemName + "\")");
-			    dateControlLists.Add("toolBar.getInput(\"end" + queryItemName + "\")");
-		        beginDateLists.Add("\"begin" + queryItemName + "\"");
-			    endDateLists.Add("\"end" + queryItemName + "\"");			
-			    hasQueryDate = true;
-		        hasQueryDate = true;#>
+			case "Date":#> 
 	toolBar.addText("<#= queryItemName#>Begin", null, "<#= displayName #>");
     toolBar.addInput("begin<#= queryItemName#>", null, "", 75);
     toolBar.addText("<#= displayName #>End", null, "-");
@@ -371,31 +350,26 @@ $(function () {
 	toolBar.attachEvent("onClick", function (id) {
 	    getDataList();
     });
-
 	<#for (var i = 0; i < queryItems.Count; i++)
     {
         queryItemModel = queryItems[i] ;
 		queryItemName = queryItemModel["QueryItemName"] as string;
 		displayName = queryItemModel["DisplayName"] as string;
 		queryForm = queryItemModel["QueryForm"] as string;
+		inputType = queryItemModel["InputType"] as string;
 		if(queryForm == "Combox"){#>
 	toolBar.getInput("txt<#= queryItemName #>Search").id = "txt<#= queryItemName #>Search";
     $("#txt<#= queryItemName #>Search").css("display", "none");
     $("#txt<#= queryItemName #>Search").after("<select id='combo<#= queryItemName #>Search' style=\"width:100px\"></select>");
-		<#}#>
-    <#}#>
-
-	<#for (var i = 0; i < queryItems.Count; i++)
-    {
-        queryItemModel = queryItems[i] ;
-		queryItemName = queryItemModel["QueryItemName"] as string;
-		displayName = queryItemModel["DisplayName"] as string;
-		queryForm = queryItemModel["QueryForm"] as string;
+		<#} if (inputType == "CheckBox"){#>
+	toolBar.getInput("txt<#= queryItemName #>Search").id = "txt<#= queryItemName #>Search";
+    $("#txt<#= queryItemName #>Search").css("display", "none");
+    $("#txt<#= queryItemName #>Search").after("<select id='combo<#= queryItemName #>Search' style=\"width:100px\"><option value='-1'>请选择</option><option value='1'>是</option><option value='0'>否</option></select>");		
+		<#}
 		if(queryForm == "Tree" || queryForm == "Quick"){#>
     toolBar.getInput("txt<#= queryItemName #>Search").id = "txt<#= queryItemName #>Search";
 		<#}#>
     <#}#>
-
     //初始化<#= modelTypeName #>列表
     listGrid = new dhtmlXGridObject("listGrid");
     listGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
@@ -448,12 +422,10 @@ $(function () {
     {
 	     for (int i = 0; i < popDivLists.Count; i++)
          {
-		     popStr = popDivLists[i];
-		 #>
+		     popStr = popDivLists[i];#>		 
     $(document.body).append('<#= popStr #>');  
          <#}		
-     }#> 
-   
+     }#>    
 	<#foreach (KeyValuePair<string, string> item in structPopDict)
 	{
 		queryItemName = item.Key;
@@ -468,7 +440,6 @@ $(function () {
 		$("#txt<#= queryItemName #>Search").val(<#= queryItemName #>Tree.getSelectedItemText());    
 		hide<#= queryItemName #>Pop()
 	});
-
 	function <#= queryItemName #>TreeSelect(itemid) {
 		if (!<#= queryItemName #>Tree.hasChildren(itemid)) {
 			ISystemService.execQuery.sqlString = "select [<#= structName #>ID],[<#= structName #>Name] from [<#= structName #>] where ParentID = " + itemid;
@@ -484,7 +455,6 @@ $(function () {
 			}
 		}
 	}
-
 	<#= queryItemName #>Pop = $("#<#= queryItemName #>Pop")	
 	$('#txt<#= queryItemName #>').focus(function (e) {
 		show<#= queryItemName #>Pop();
@@ -504,8 +474,7 @@ $(function () {
 		<#= queryItemName #>Pop.css({ top: top + 22, left: left }).show();    
 	}
 			<#}#>
-		<#}#>	
-
+		<#}#>
 	function show<#= queryItemName #>Pop() {
 		var top = $("#txt<#= queryItemName #>").offset().top;
 		var left = $("#txt<#= queryItemName #>").offset().left;
@@ -517,8 +486,7 @@ $(function () {
 	}
 
 	hide<#= queryItemName #>Pop();
-	<#}#>    
-
+	<#}#>
 	<#foreach (KeyValuePair<string, string> item in referPopDict)
 	{
 		queryItemName = item.Key;
@@ -532,7 +500,6 @@ $(function () {
 		$("#txt<#= queryItemName #>Search").val(<#= queryItemName #>Tree.getSelectedItemText());    
         hide<#= queryItemName #>Pop()
     });
-
     function <#= queryItemName #>TreeSelect(itemid) {
         if (!<#= queryItemName #>Tree.hasChildren(itemid)) {
             ISystemService.execQuery.sqlString = "select [ReferID],[ReferName] from [Refer] where [ReferType] = '<#= referType #>' and [ParentID] = " + itemid;
@@ -548,12 +515,10 @@ $(function () {
             }
         }
     }
-
 	<#= queryItemName #>Pop = $("#<#= queryItemName #>Pop")	
     $('#txt<#= queryItemName #>').focus(function (e) {
         show<#= queryItemName #>Pop();
     });
-
 	 $('#txt<#= queryItemName #>Search').focus(function (e) {
         show<#= queryItemName #>SearchPop();
     });
@@ -574,7 +539,6 @@ $(function () {
     }
 	hide<#= queryItemName #>Pop();
 	<#}#>
-
 	<#foreach (KeyValuePair<string, string> item in quickPopDict)
 	{   
 		queryItemName = item.Key;
@@ -598,7 +562,7 @@ $(function () {
 	<#= queryItemName #>Pop = $("#<#= queryItemName #>Pop")	
 	$('#txt<#= queryItemName #>Search').focus(function (e) {
 		show<#= queryItemName #>Pop($("#txt<#= queryItemName #>Search").offset().top, $("#txt<#= queryItemName #>Search").offset().left);
-    });				
+    });			
 
 	function show<#= queryItemName #>Pop(top, left) {
         <#= queryItemName #>Pop.css({ top: top + 22, left: left }).show();
@@ -627,7 +591,6 @@ $(function () {
         }
     }
 	<#}#>
-
     <# if(hasQueryPop)
     { #>
     $('#mainPage').mousedown(function (e) {
@@ -651,83 +614,6 @@ $(function () {
 		<#}#>           
     }); 	
     <#}#>
-	<# sql=""; 
-	referClause ="";
-	for (var i = 0; i < gridColumns.Count; i++)
-    {
-        gridColumnModel = gridColumns[i] ;
-		gridColumnName = gridColumnModel["GridColumnName"] as string;
-		structName = gridColumnModel["StructName"] as string;
-		dataType = gridColumnModel["DataType"] as string; 
-        if (i < gridColumns.Count - 1)
-        {
-            if (!string.IsNullOrEmpty(structName))
-            {
-                if (structName.Trim() == "")
-                {
-                    sql += "[" + modelType + "].[" + gridColumnName + "], ";
-                }
-                else
-                {
-                    sql += "[" + structName + "].[" + structName + "Name], ";
-                    referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
-                }
-            }
-            else
-            {   
-				if(dataType == "Date")
-				{
-					sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
-				}
-				else if(dataType == "Bool")
-				{
-					sql += "CASE [" + modelType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END, "; 
-				}
-				else
-				{
-					sql += "[" + modelType + "].[" + gridColumnName + "], ";
-				}
-            }
-        }
-        else
-        {
-            if (!string.IsNullOrEmpty(structName))
-            {
-                if (structName.Trim() == "")
-                {
-                    sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
-                }
-                else
-                {
-                    sql += "[" + structName + "].[" + structName + "Name] from [" + modelType + "]";
-                    referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
-                }
-            }
-            else
-            {                  
-				if(dataType == "Date")
-				{
-					sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + modelType + "]";
-				}
-				else if(dataType == "Bool")
-				{
-					sql += "CASE [" + modelType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END from [" + modelType + "]";
-				}
-				else
-				{
-					sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
-				}
-            }
-			if(referClause == "")
-			{
-			    sql += " where 1=1 ";
-			}
-			else
-			{
-			    sql += referClause ;
-			}            
-        }
-    }#>
 	function getDataList() {
 		<#for (var i = 0; i < queryItems.Count; i++)
         {
@@ -780,10 +666,14 @@ $(function () {
             }
 						<#}#>
 					<# break;
-					case "Value": #>							
-            if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+					case "Value": 
+						if(inputType == "CheckBox"){#>
+            if ($("#combo<#= queryItemName #>Search").val() != "-1") {
+				sqlStr += " and [<#= modelType #>].[<#= queryItemName #>] = '" + $("#combo<#= queryItemName #>Search").val() + "'";
+            }			<#}else{#>	
+			if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
 				sqlStr += " and [<#= modelType #>].[<#= queryItemName #>] = '" + toolBar.getValue("txt<#= queryItemName #>Search") + "'";
-            }							
+            }			<#}#>
 					<# break;
 					case "Tree":							
 						if(queryType == "Struct"){#>
@@ -807,7 +697,7 @@ $(function () {
             }
 						<#}#>
 					<# break;
-					case "Quick":#>							
+					case "Quick":#>
             if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
 				sqlStr += " and [<#= structName #>].[<#= structName #>Name] like '%" + toolBar.getValue("txt<#= queryItemName #>Search") + "%'";
             }							
@@ -822,7 +712,6 @@ $(function () {
             }(ISystemService.execQuery.resultValue));
         }
     }
-
     <#if(hasQueryDate)
     {#>	
 	//日期控件处理 

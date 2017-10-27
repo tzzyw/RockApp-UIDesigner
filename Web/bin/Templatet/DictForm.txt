@@ -13,7 +13,7 @@
  Dictionary<string, string> structPopDict = new Dictionary<string, string>();
  Dictionary<string, string> referPopDict = new Dictionary<string, string>();
  Dictionary<string, string> quickPopDict = new Dictionary<string, string>();
- bool hasDate = false;
+ bool hasFormDate = false;
  bool hasQueryDate = false;
  bool hasReferPop = false;
  bool hasQueryPop = false;
@@ -50,13 +50,13 @@
     queryItemModel = queryItems[i] ;
 	queryItemName = queryItemModel["QueryItemName"] as string;
 	queryForm = queryItemModel["QueryForm"] as string;
-	string queryItemQueryType = queryItemModel["QueryType"] as string;
 	if(queryForm == "Date")
-	{   
+	{ 
+		dateControlLists.Add("toolBar.getInput(\"begin" + queryItemName + "\")");
+		dateControlLists.Add("toolBar.getInput(\"end" + queryItemName + "\")");
 		beginDateLists.Add("\"begin" + queryItemName + "\"");
-		endDateLists.Add("\"end" + queryItemName + "\"");			
+		endDateLists.Add("\"end" + queryItemName + "\"");
 		hasQueryDate = true;
-		hasDate = true;		  
 	}
 	if(queryForm == "Tree")
 	{
@@ -70,15 +70,15 @@
 
 	for (var j = 0; j < formItems.Count; j++)
 	{
-		if(queryItemQueryType == "Quick")
+		if(queryForm == "Quick")
 		{
 			formItemModel = formItems[j] ;
 			formItemName = formItemModel["FormItemName"] as string;
 			string formItemQueryType = queryItemModel["QueryType"] as string;
 			if(queryItemName == formItemName)
 			{
-			hasSameQuick = true;
-			popTarget = formItemName + "PopTarget";
+				hasSameQuick = true;
+				popTarget = formItemName + "PopTarget";
 			}
 		}
 	}
@@ -87,40 +87,45 @@
  for (var i = 0; i < formItems.Count; i++)
  {
     formItemModel = formItems[i] ;
-	queryType = formItemModel["QueryType"] as string;
 	formItemName = formItemModel["FormItemName"] as string;
+	queryType = formItemModel["QueryType"] as string;
+	queryForm = formItemModel["QueryForm"] as string;
 	structName = formItemModel["StructName"] as string;
 	referType = formItemModel["ReferType"] as string;
-	inputType = formItemModel["InputType"] as string;
-	if(inputType == "TextBox")
-	{
-        switch (queryType)
-        {
-            case "Struct":
-				structPopDict.Add(formItemName, structName);
-				popFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  formItemName + "Pop, " + formItemName + "Tree ";
-				hasPop = true;
-                break;
-            case "Refer":
-				referPopDict.Add(formItemName, referType);
-				popFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  formItemName + "Pop, " + formItemName + "Tree ";
-				hasPop = true;
-                break;
-            case "Quick":
-				quickPopDict.Add(formItemName, structName);
-				popFormItemNameLists.Add(formItemName);
-				popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
-		        popVar +=  formItemName + "Pop, " + formItemName + "QuickGrid ";
-				hasPop = true;
-                break;
-            default:
-                break;
-        }		
-	}
+    switch (queryForm)
+    {
+        case "Quick":
+			quickPopDict.Add(formItemName, structName);
+			popFormItemNameLists.Add(formItemName);
+			popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 260px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "QuickGrid\" style=\"width: 260px; height: 400px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+		    popVar +=  formItemName + "Pop, " + formItemName + "QuickGrid ";
+			hasPop = true;
+            break;
+        case "Tree":
+				if(queryType == "Struct")
+				{
+					structPopDict.Add(formItemName, structName);
+					popFormItemNameLists.Add(formItemName);
+					popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+					popVar +=  formItemName + "Pop, " + formItemName + "Tree ";
+					hasPop = true;
+				}
+				if(queryType == "Refer")
+				{
+					referPopDict.Add(formItemName, referType);
+					popFormItemNameLists.Add(formItemName);
+					popDivLists.Add("<div id=\"" + formItemName + "Pop\" style=\"width: 168px; height: 400px; position: absolute; background-color: White;display: none;z-index:9\"><div id=\"" + formItemName + "Tree\" style=\"width: 168px; height: 300px; float: left; border: 1px solid #E3E3E3;\"></div></div>");
+					popVar +=  formItemName + "Pop, " + formItemName + "Tree ";
+					hasPop = true;
+				}
+            break;
+		case "Date":
+			dateControlLists.Add("\"txt" + formItemName + "\"");
+			hasFormDate = true;
+			break;
+        default:
+            break;
+    }		
  }
 
 for (var i = 0; i < gridColumns.Count; i++) {
@@ -128,10 +133,85 @@ for (var i = 0; i < gridColumns.Count; i++) {
 	columnTotalWidth += (int)(gridColumnModel["GridWidth"]);	
 }	
 
+for (var i = 0; i < gridColumns.Count; i++)
+{
+    gridColumnModel = gridColumns[i] ;
+	gridColumnName = gridColumnModel["GridColumnName"] as string;
+	structName = gridColumnModel["StructName"] as string;
+	dataType = gridColumnModel["DataType"] as string; 
+    if (i < gridColumns.Count - 1)
+    {
+        if (!string.IsNullOrEmpty(structName))
+        {
+            if (structName.Trim() == "")
+            {
+                sql += "[" + modelType + "].[" + gridColumnName + "], ";
+            }
+            else
+            {
+                sql += "[" + structName + "].[" + structName + "Name], ";
+                referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
+            }
+        }
+        else
+        {   
+			if(dataType == "Date")
+			{
+				sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
+			}
+			else if(dataType == "Bool")
+			{
+				sql += "CASE [" + modelType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END, "; 
+			}
+			else
+			{
+				sql += "[" + modelType + "].[" + gridColumnName + "], ";
+			}
+        }
+    }
+    else
+    {
+        if (!string.IsNullOrEmpty(structName))
+        {
+            if (structName.Trim() == "")
+            {
+                sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
+            }
+            else
+            {
+                sql += "[" + structName + "].[" + structName + "Name] from [" + modelType + "]";
+                referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
+            }
+        }
+        else
+        {                  
+			if(dataType == "Date")
+			{
+				sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + modelType + "]";
+			}
+			else if(dataType == "Bool")
+			{
+				sql += "CASE [" + modelType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END from [" + modelType + "]";
+			}
+			else
+			{
+				sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
+			}
+        }
+		if(referClause == "")
+		{
+			sql += " where 1=1 ";
+		}
+		else
+		{
+			sql += referClause ;
+		}            
+    }
+}
  #>
 $(function () {
     //初始化系统通用变量
-    var toolBar, listGrid, editState, editForm, dictDataList, sqlStr,serverDate,<#if (!string.IsNullOrEmpty(popVar)){ #><#= popVar #>,<# }#><#if (hasSameQuick){ #><#= popTarget #>,<# }#>
+    var toolBar, listGrid, editState, editForm, dictDataList, sqlStr,<#if (hasQueryDate){ #>serverDate,<# }#><#if (!string.IsNullOrEmpty(popVar)){ #><#= popVar #>,<# }#><#if (hasSameQuick){ #><#= popTarget #>,<# }#>
       <#= modelObjeName #> = null,
 	  editItem = $("#editItem"),
       dictDataList = new rock.JsonList();
@@ -158,16 +238,17 @@ $(function () {
 					<#}#>
 			}(ISystemService.getServerDate.resultValue));
 		}
-	<#}#>	
+	<#}#>
 	//初始化实体参照及查询项	
 	<#for (var i = 0; i < formItems.Count; i++)
     {
         formItemModel = formItems[i];		
-		queryType = formItemModel["QueryType"] as string;		
 		formItemName = formItemModel["FormItemName"] as string;
+		queryType = formItemModel["QueryType"] as string;
+		queryForm = formItemModel["QueryForm"] as string;
 		displayName = formItemModel["DisplayName"] as string;
 		structName = formItemModel["StructName"] as string;
-	    if(queryType == "Struct")
+	    if(queryType == "Struct" && queryForm == "Combox")
 	    {#>
 		$("#combo<#= formItemName #>").empty();			
 			<#for (var j = 0; j < queryItems.Count; j++)
@@ -211,10 +292,11 @@ $(function () {
 	<#for (var i = 0; i < formItems.Count; i++)
     {
         formItemModel = formItems[i] ;
-		queryType = formItemModel["QueryType"] as string;
 		formItemName = formItemModel["FormItemName"] as string;
+		queryType = formItemModel["QueryType"] as string;
+		queryForm = formItemModel["QueryForm"] as string;
 		referType = formItemModel["ReferType"] as string;
-	    if(queryType == "Refer")
+	    if(queryType == "Refer" && queryForm == "Combox")
 	    {#>
 		$("#combo<#= formItemName #>").empty();			
 			<#for (var j = 0; j < queryItems.Count; j++)
@@ -254,12 +336,10 @@ $(function () {
         }
 		<#}#>
     <#}#>
-
 	<#foreach (KeyValuePair<string, string> item in structPopDict)
     {
         formItemName = item.Key;
         structName = item.Value;#>
-
         sqlStr = "select [<#= structName #>ID], [<#= structName #>Name] from [<#= structName #>] where ParentID is null";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
@@ -278,13 +358,11 @@ $(function () {
                 <#= formItemName #>Tree.selectItem(rootID, true, false);
             }(ISystemService.execQuery.resultValue));
         }
-	<#}#>    
-
+	<#}#>
     <#foreach (KeyValuePair<string, string> item in referPopDict)
     {
         formItemName = item.Key;
         referType = item.Value;#>
-
         sqlStr = "select [ReferID], [ReferName] from [Refer] where [ParentID] is null and [ReferType] = '<#= referType #>'";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
@@ -304,16 +382,26 @@ $(function () {
             }(ISystemService.execQuery.resultValue));
         }
 
-	<#}#>
-	
+	<#}#>	
 	<#foreach (KeyValuePair<string, string> item in quickPopDict)
     {  
 		formItemName = item.Key;#>
 		<#= formItemName #>Complete("");
-	<#}#> 
-	
+	<#}#> 	
 		//处理初始化加载数据
+	<#if(hasQueryDate){#>	
 		getDataList();
+	<#}else 
+	{#>
+		sqlStr = "select top 50 [<#= modelType #>].[<#= modelType #>ID], <#= sql #> ";	
+        ISystemService.execQuery.sqlString = sqlStr;
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {
+                rock.tableToListGrid(e, listGrid, dictDataList)
+            }(ISystemService.execQuery.resultValue));
+        }
+	<#}#>		
 		//绑定控件失去焦点验证方法
 		//<#= modelType #>Class.validateBind();
 		//初始化工具栏状态
@@ -331,13 +419,7 @@ $(function () {
 		queryForm = queryItemModel["QueryForm"] as string;
 		switch (queryForm)
 		{
-			case "Date": 
-		        dateControlLists.Add("toolBar.getInput(\"begin" + queryItemName + "\")");
-			    dateControlLists.Add("toolBar.getInput(\"end" + queryItemName + "\")");
-		        beginDateLists.Add("\"begin" + queryItemName + "\"");
-			    endDateLists.Add("\"end" + queryItemName + "\"");			
-			    hasQueryDate = true;
-		        hasDate = true;#>
+			case "Date": #>		        
 	toolBar.addText("<#= queryItemName#>Begin", null, "<#= displayName #>");
     toolBar.addInput("begin<#= queryItemName#>", null, "", 75);
     toolBar.addText("<#= displayName #>End", null, "-");
@@ -381,24 +463,27 @@ $(function () {
             editState = "add";
             $("#formTitle").text("添加<#= modelTypeName #>");
 		  <#for (var i = 0; i < formItems.Count; i++)
-            {
-                formItemModel = formItems[i] ;
+           {
+                formItemModel = formItems[i];
 				formItemName = formItemModel["FormItemName"] as string;
 				queryType = formItemModel["QueryType"] as string;
-				switch ( formItemModel["InputType"] as string)
+				inputType = formItemModel["InputType"] as string;
+				switch (inputType)
 				{
 					case "TextBox": 
-						if(queryType == "Struct" || queryType == "Quick"){#>						
+						if(queryType == "Struct"){#>
 			$("#txt<#= formItemName #>").val("");
             $("#txt<#= formItemName #>ID").val("");
 						<#}else{#>
 			$("#txt<#= formItemName #>").val("");
 						<#}#>			
 					<# break;
-					case "Date": 
-					    dateControlLists.Add("\"txt" + formItemName + "\"");
-                        hasDate = true;#>
+					case "Date":
+						if ((bool)formItemModel["IsReadOnly"]){#>
 			$("#txt<#= formItemName #>").val(serverDate);
+						<#}else {#>
+			$("#txt<#= formItemName #>").val();
+						<#}#>
 					<# break;
 					case "CheckBox": #>
 			$("#chk<#= formItemName #>").prop("checked", false);
@@ -429,18 +514,17 @@ $(function () {
                         else {
                             return;
                         }
-
 					<#for (var i = 0; i < formItems.Count; i++)
 					{
 						formItemModel = formItems[i] ;
-						inputType = formItemModel["InputType"] as string;
-						formItemName = formItemModel["FormItemName"] as string;
+						formItemName = formItemModel["FormItemName"] as string;												
 						queryType = formItemModel["QueryType"] as string;
+						inputType = formItemModel["InputType"] as string;
 						structName = formItemModel["StructName"] as string;
 						switch (inputType)
 						{
 							case "TextBox":
-							if(queryType == "Struct" || queryType == "Quick")
+							if(queryType == "Struct")
 							{#>
 						$("#txt<#= formItemName #>ID").val(<#= modelObjeName #>.<#= formItemName #>ID);
                         ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + <#= modelObjeName #>.<#= formItemName #>ID;
@@ -519,21 +603,24 @@ $(function () {
                     formItemModel = formItems[i] ;
 					formItemName = formItemModel["FormItemName"] as string;
 					queryType = formItemModel["QueryType"] as string;
-				    switch ( formItemModel["InputType"] as string)
+					inputType = formItemModel["InputType"] as string;
+				    switch (inputType)
 				    {
 					    case "TextBox": 
-						if(queryType == "Struct" || queryType == "Quick"){#>						
+						if(queryType == "Struct"){#>						
 			$("#txt<#= formItemName #>").val("");
             $("#txt<#= formItemName #>ID").val("");
 						<#}else{#>
 			$("#txt<#= formItemName #>").val("");
 						<#}#>			
 					        <# break;
-					    case "Date": 
-						    dateControlLists.Add("\"txt" + formItemName + "\"");
-		                    hasDate = true;#>
-				$("#txt<#= formItemName #>").val("");
-					        <# break;
+						case "Date":
+							if ((bool)formItemModel["IsReadOnly"]){#>
+			$("#txt<#= formItemName #>").val(serverDate);
+							<#}else {#>
+			$("#txt<#= formItemName #>").val();
+							<#}#>
+							<# break;
 					    case "CheckBox": #>
 				$("#chk<#= formItemName #>").prop("checked", false);
 					        <# break;
@@ -570,12 +657,11 @@ $(function () {
 						inputType = formItemModel["InputType"] as string;
 						formItemName = formItemModel["FormItemName"] as string;
 						queryType = formItemModel["QueryType"] as string;
-						structName = formItemModel["StructName"] as string;#>
-						<#= inputType #>
-						<#switch (inputType)
+						structName = formItemModel["StructName"] as string;
+						switch (inputType)
 						{
 							case "TextBox": 
-							if(queryType == "Struct" || queryType == "Quick")
+							if(queryType == "Struct")
 							{#>
 						$("#txt<#= formItemName #>ID").val(<#= modelObjeName #>.<#= formItemName #>ID);
                         ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + <#= modelObjeName #>.<#= formItemName #>ID;
@@ -648,29 +734,26 @@ $(function () {
         <#}#>     
         }
     });
-
 	<#for (var i = 0; i < queryItems.Count; i++)
     {
         queryItemModel = queryItems[i] ;
 		queryItemName = queryItemModel["QueryItemName"] as string;
 		displayName = queryItemModel["DisplayName"] as string;
 		queryForm = queryItemModel["QueryForm"] as string;
+		inputType = queryItemModel["InputType"] as string;
 		if(queryForm == "Combox"){#>
 	toolBar.getInput("txt<#= queryItemName #>Search").id = "txt<#= queryItemName #>Search";
     $("#txt<#= queryItemName #>Search").css("display", "none");
     $("#txt<#= queryItemName #>Search").after("<select id='combo<#= queryItemName #>Search' style=\"width:100px\"></select>");
-		<#}#>
-    <#}#>
-	<#for (var i = 0; i < queryItems.Count; i++)
-    {
-        queryItemModel = queryItems[i] ;
-		queryItemName = queryItemModel["QueryItemName"] as string;
-		displayName = queryItemModel["DisplayName"] as string;
-		queryForm = queryItemModel["QueryForm"] as string;
+		<#} if (inputType == "CheckBox"){#>
+	toolBar.getInput("txt<#= queryItemName #>Search").id = "txt<#= queryItemName #>Search";
+    $("#txt<#= queryItemName #>Search").css("display", "none");
+    $("#txt<#= queryItemName #>Search").after("<select id='combo<#= queryItemName #>Search' style=\"width:100px\"><option value='-1'>请选择</option><option value='1'>是</option><option value='0'>否</option></select>");		
+		<#}
 		if(queryForm == "Tree" || queryForm == "Quick"){#>
     toolBar.getInput("txt<#= queryItemName #>Search").id = "txt<#= queryItemName #>Search";
 		<#}#>
-    <#}#>
+    <#}#>	
     //初始化<#= modelTypeName #>列表
     listGrid = new dhtmlXGridObject("listGrid");
     listGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
@@ -733,11 +816,10 @@ $(function () {
 		queryType = formItemModel["QueryType"] as string;
 		structName = formItemModel["StructName"] as string;
 		inputType = formItemModel["InputType"] as string;
-				
 		switch ( inputType)
 		{
 			case "TextBox": 
-			if(queryType == "Struct" || queryType == "Quick")
+			if(queryType == "Struct")
 			{#>
 		$("#txt<#= formItemName #>ID").val(<#= modelObjeName #>.<#= formItemName #>ID);
         ISystemService.executeScalar.sqlString = "select [<#= structName #>Name] from [<#= structName #>] where [<#= structName #>ID] = " + <#= modelObjeName #>.<#= formItemName #>ID;
@@ -839,20 +921,20 @@ $(function () {
 							formItemModel = formItems[i];
 							formItemName = formItemModel["FormItemName"] as string;
 							queryType = formItemModel["QueryType"] as string;
+							inputType = formItemModel["InputType"] as string;
 							//构造html文本
 							tableString += "<tr> ";
 							tableString += "<td class=\"label\">";
 							tableString += (formItemModel["DisplayName"] as string);
 							tableString += "</td>";#>
 							<#= formItemModel["InputType"] #>
-
-							<#switch (formItemModel["InputType"] as string)
+							<#switch (inputType)
 							{
 								case "TextBox":
 									tableString += "<td class=\"inputtd\">";
 									if ((bool)formItemModel["IsReadOnly"])
 									{
-										if(queryType == "Struct" || queryType == "Quick")
+										if(queryType == "Struct")
 										{
 										    tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
 										}
@@ -863,7 +945,7 @@ $(function () {
 									}
 									else
 									{
-									    if(queryType == "Struct" || queryType == "Quick")
+									    if(queryType == "Struct")
 										{
 										    tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
 										}
@@ -905,18 +987,19 @@ $(function () {
 							formItemModel = formItems[2 * i];
 							formItemName = formItemModel["FormItemName"] as string;
 							queryType = formItemModel["QueryType"] as string;
+							inputType = formItemModel["InputType"] as string;
 							//构造html文本
 							tableString += "<tr> ";
 							tableString += "<td class=\"label2\">";
 							tableString += (formItemModel["DisplayName"] as string);
 							tableString += "</td>";
-							switch (formItemModel["InputType"] as string)
+							switch (inputType)
 							{
 								case "TextBox":
 									tableString += "<td class=\"inputtd2\">";
 									if ((bool)formItemModel["IsReadOnly"])
 									{
-										if(queryType == "Struct" || queryType == "Quick")
+										if(queryType == "Struct")
 										{
 										    tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
 										}
@@ -927,7 +1010,7 @@ $(function () {
 									}
 									else
 									{
-									    if(queryType == "Struct" || queryType == "Quick")
+									    if(queryType == "Struct")
 										{
 										    tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
 										}
@@ -964,16 +1047,17 @@ $(function () {
 							    formItemModel = formItems[2 * i + 1];
 								formItemName = formItemModel["FormItemName"] as string;
 								queryType = formItemModel["QueryType"] as string;
+								inputType = formItemModel["InputType"] as string;
 								tableString += "<td class=\"label2\">";
 								tableString += (formItemModel["DisplayName"] as string);
 								tableString += "</td>";	
-								switch (formItemModel["InputType"] as string)
+								switch (inputType)
 								{								    
 									case "TextBox":
 										tableString += "<td class=\"inputtd2\">";
 										if ((bool)formItemModel["IsReadOnly"])
 										{
-											if(queryType == "Struct" || queryType == "Quick")
+											if(queryType == "Struct")
 											{
 												tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" readonly=\"readonly\"/><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
 											}
@@ -984,7 +1068,7 @@ $(function () {
 										}
 										else
 										{
-											if(queryType == "Struct" || queryType == "Quick")
+											if(queryType == "Struct")
 											{
 												tableString += "<input id=\"txt" + formItemName + "\" class=\"smallInput\" type=\"text\" /><input id=\"txt" + formItemName + "ID\" type=\"hidden\" />";
 											}
@@ -1031,33 +1115,31 @@ $(function () {
     <#for (var i = 0; i < formItems.Count; i++)
 	{
 		formItemModel = formItems[i] ;
-		inputType = formItemModel["InputType"] as string;
 		formItemName = formItemModel["FormItemName"] as string;
+		inputType = formItemModel["InputType"] as string;
+		queryType = formItemModel["QueryType"] as string;
 		displayName = formItemModel["DisplayName"] as string;
 		structName = formItemModel["StructName"] as string;
 		referType = formItemModel["ReferType"] as string;
 		if((bool)formItemModel["IsRequired"])
 		{
-			if(inputType != "CheckBox")
+			if(inputType != "CheckBox")		//不是CheckBox
 			{
-				if(string.IsNullOrWhiteSpace(referType))     //不是通用参照引用
+				if(inputType != "Combox")    //不是下拉选择框
 				{
-					if(string.IsNullOrWhiteSpace(structName))  //不是对象类型引用
-					{
-						if(inputType != "Combox") //不是下拉选择框
+					if(queryType == "Struct") //是对象引用类型
 						{#>			
-		if (!$("#txt<#= formItemName #>").validate("required", "<#= displayName #>")) {
+		if (!$("#txt<#= formItemName #>ID").validate("required", "<#= displayName #>")) {
             return false;
         }
 						<#}#>
-					<#} else  //是对象引用类型
+					<#} else  //不是对象引用类型
 					{
 						if(inputType == "TextBox"){#>
 		if (!$("#txt<#= formItemName #>").validate("required", "<#= displayName #>")) {
             return false;
         }
 					<#}#>
-				<#}#>
 	<#}}}}#>
 	<#for (var i = 0; i < formItems.Count; i++)
 	{
@@ -1084,18 +1166,18 @@ $(function () {
 				<#}		
 			break;
 			case "date": 
-			if((bool)formItemModel["IsRequired"])
-			{#>
+				if((bool)formItemModel["IsRequired"])
+				{#>
 		if (!$("#txt<#= formItemName #>").validate("date", "<#= displayName #>")) {
             return false;
         }
-			<#}else {#>
+				<#}else {#>
 		if ($.trim($("#txt<#= formItemName #>").val()) != "") {
             if (!$("#txt<#= formItemName #>").validate("date", "<#= displayName #>")) {
 				return false;
 			}	
         }
-			<#}	
+				<#}	
 			 break;			
 		}
 	} #>
@@ -1124,7 +1206,7 @@ $(function () {
 			case "TextBox": 
 			    if((bool)formItemModel["IsRequired"])
 			    {
-				    if(queryType == "Struct" || queryType == "Quick"){#>
+				    if(queryType == "Struct"){#>
 		<#= modelObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val(); 
 		            <#}
 					else
@@ -1134,7 +1216,7 @@ $(function () {
 			    <#}
 			    else
 			    {
-				   if(queryType == "Struct" || queryType == "Quick"){#>
+				   if(queryType == "Struct"){#>
         if ($.trim($("#txt<#= formItemName #>ID").val()) != '') {
             <#= modelObjeName #>.<#= formItemName #>ID = $("#txt<#= formItemName #>ID").val();
         }
@@ -1151,28 +1233,27 @@ $(function () {
             <#= modelObjeName #>.<#= formItemName #> = null;
         }
 		            <#}#>
-			<#} break;
+				<#} break;
 			case "Date": 
 			    if((bool)formItemModel["IsRequired"]){#>
 		<#= modelObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
-			<#}else{#>
+				<#}else{#>
         if ($.trim($("#txt<#= formItemName #>").val()) != '') {
             <#= modelObjeName #>.<#= formItemName #> = $("#txt<#= formItemName #>").val();
         }
         else {
             <#= modelObjeName #>.<#= formItemName #> = null;
         }
-			<#} break;
+				<#} break;
 			case "CheckBox": #>
 	    <#= modelObjeName #>.<#= formItemName #> = $("#chk<#= formItemName #>").prop("checked");	
 			<# break;
 			case "Combox": 
-			if(queryType == "Struct")
-			{#>	
+				if(queryType == "Struct"){#>				
 		<#= modelObjeName #>.<#= formItemName #>ID = $("#combo<#= formItemName #>").val();
-		    <#}else {#>
+				<#}else {#>
 		<#= modelObjeName #>.<#= formItemName #> = $("#combo<#= formItemName #>").val();
-			<#}
+				<#}
 				 break;
 		}
 	} #>     
@@ -1190,13 +1271,12 @@ $(function () {
 				    gridColumnName = gridColumnModel["GridColumnName"] as string;
 					dataType = gridColumnModel["DataType"] as string;
 					queryForm = gridColumnModel["QueryForm"] as string;					
-					  if (queryForm == "Combox")
-					  {#> 
-					 dictData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());    
+					  if (queryForm == "Combox"){#>					   
+					dictData.data.push($("#combo<#= gridColumnName #>").find("option:selected").text());    
 					  <#}else if (dataType == "Bool") {#>
-					  dictData.data.push(($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否");
+					 dictData.data.push(($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否");
 					  <#}else {#>
-					  dictData.data.push($("#txt<#= gridColumnName #>").val());						  				  			  					  				
+					 dictData.data.push($("#txt<#= gridColumnName #>").val());						  				  			  					  				
 				<#}}#> 
                     dictDataList.rows.push(dictData);
                     listGrid.clearAll();
@@ -1219,17 +1299,16 @@ $(function () {
 						gridColumnName = gridColumnModel["GridColumnName"] as string;
 						dataType = gridColumnModel["DataType"] as string;
 						queryForm = gridColumnModel["QueryForm"] as string;
-							if (queryForm == "Combox")
-							{#>
-							dictDataList.rows[i].data[<#= i + 2 #>] =$("#combo<#= gridColumnName #>").find("option:selected").text();
+							if (queryForm == "Combox"){#>							
+						dictDataList.rows[i].data[<#= i + 2 #>] =$("#combo<#= gridColumnName #>").find("option:selected").text();
 							<#}else if (dataType == "Bool") {#>
-							dictDataList.rows[i].data[<#= i + 2 #>] =($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否";
+						dictDataList.rows[i].data[<#= i + 2 #>] =($("#chk<#= gridColumnName #>").prop("checked")) ? "是" :  "否";
 							<#}else {#>
-							dictDataList.rows[i].data[<#= i + 2 #>] =$("#txt<#= gridColumnName #>").val();
+						dictDataList.rows[i].data[<#= i + 2 #>] =$("#txt<#= gridColumnName #>").val();
 							<#}					
 					} #>                            
-                        }
-                    }
+                       }
+                   }
                 }(ISystemService.modifyDynObject.resultValue));
             }
             listGrid.clearAll();
@@ -1533,83 +1612,8 @@ $(function () {
         }
 		<#}#>           
     }); 	
-    <#}#>
-	    
-    <#for (var i = 0; i < gridColumns.Count; i++)
-    {
-        gridColumnModel = gridColumns[i] ;
-		gridColumnName = gridColumnModel["GridColumnName"] as string;
-		structName = gridColumnModel["StructName"] as string;
-		dataType = gridColumnModel["DataType"] as string; 
-        if (i < gridColumns.Count - 1)
-        {
-            if (!string.IsNullOrEmpty(structName))
-            {
-                if (structName.Trim() == "")
-                {
-                    sql += "[" + modelType + "].[" + gridColumnName + "], ";
-                }
-                else
-                {
-                    sql += "[" + structName + "].[" + structName + "Name], ";
-                    referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID]";
-                }
-            }
-            else
-            {   
-				if(gridColumnModel["DataType"] as string == "Date")
-				{
-					sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as " + gridColumnName + ", ";
-				}
-				else if(gridColumnModel["DataType"] as string == "Bool")
-				{
-					sql += "CASE [" + modelType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END, "; 
-				}
-				else
-				{
-					sql += "[" + modelType + "].[" + gridColumnName + "], ";
-				}
-            }
-        }
-        else
-        {
-            if (!string.IsNullOrEmpty(structName))
-            {
-                if (structName.Trim() == "")
-                {
-                    sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
-                }
-                else
-                {
-                    sql += "[" + structName + "].[" + structName + "Name] from [" + modelType + "]";
-                    referClause += " join [" + structName + "] on [" + modelType + "].[" + gridColumnName + "ID] = [" + structName + "].[" + gridColumnName + "ID] ";
-                }
-            }
-            else
-            {                  
-				if(gridColumnModel["DataType"] as string == "Date")
-				{
-					sql +=  "convert(nvarchar(10)," + "[" + modelType + "].[" + gridColumnName + "],120) as" + gridColumnName + " from [" + modelType + "]";
-				}
-				else if(gridColumnModel["DataType"] as string == "Bool")
-				{
-					sql += "CASE [" + modelType + "].[" + gridColumnName + "] WHEN '1' THEN '是' WHEN '0' THEN '否' END from [" + modelType + "]";
-				}
-				else
-				{
-					sql += "[" + modelType + "].[" + gridColumnName + "] from [" + modelType + "]";
-				}
-            }
-			if(referClause == "")
-			{
-			    sql += " where 1=1 ";
-			}
-			else
-			{
-			    sql += referClause ;
-			}            
-        }
-    }#>
+    <#}#>    
+
     function getDataList() {
 		  <#for (var i = 0; i < queryItems.Count; i++)
             {
@@ -1638,7 +1642,6 @@ $(function () {
 				<#}#>
            <#}#>
 		sqlStr = "select [<#= modelType #>].[<#= modelType #>ID], <#= sql #> ";
-      
 		<#for (var i = 0; i < queryItems.Count; i++)
         {
             queryItemModel = queryItems[i] ;
@@ -1646,6 +1649,7 @@ $(function () {
 			queryType = queryItemModel["QueryType"] as string;
 			structName = queryItemModel["StructName"] as string;
 			displayName = queryItemModel["DisplayName"] as string;
+			inputType = queryItemModel["InputType"] as string;
 			queryForm = queryItemModel["QueryForm"] as string;
 				switch (queryForm)
 				{
@@ -1663,10 +1667,14 @@ $(function () {
             }
 						<#}#>
 					<# break;
-					case "Value": #>							
-            if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
+					case "Value":
+						if(inputType == "CheckBox"){#>
+            if ($("#combo<#= queryItemName #>Search").val() != "-1") {
+				sqlStr += " and [<#= modelType #>].[<#= queryItemName #>] = '" +  $("#combo<#= queryItemName #>Search").val() + "'";
+            }			<#}else{#>
+			if (toolBar.getValue("txt<#= queryItemName #>Search") != "") {
 				sqlStr += " and [<#= modelType #>].[<#= queryItemName #>] = '" + toolBar.getValue("txt<#= queryItemName #>Search") + "'";
-            }							
+            }			 <#}#>
 					<# break;
 					case "Tree":							
 						if(queryType == "Struct"){#>
@@ -1723,7 +1731,7 @@ $(function () {
             toolBar.enableItem("delete");
         }
     }
-    <#if(hasDate)
+    <#if(hasQueryDate || hasFormDate)
     {#>	
 	//日期控件处理 
 	var dateboxArray = [];
