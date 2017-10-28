@@ -7,7 +7,7 @@ $(function () {
       planSale = null,
       customerPlanQuantity = null,
       ladeBillID = $.getUrlParam("ID")
-      dictDataList = new rock.JsonList();
+    dictDataList = new rock.JsonList();
 
     window.dhx_globalImgPath = "/resource/dhtmlx/codebase/imgs/";
     //加载动态脚本
@@ -29,24 +29,45 @@ $(function () {
             }(ISystemService.getServerDate.resultValue));
         }
 
-        $("#combomaterial").empty();
+        //$("#combomaterial").empty();
+        //sqlStr = "SELECT [MaterialID],[MaterialName] FROM [Material] where [Available] = '1' and [ForSale] = '1' and [PersonName] = '" + decodeURIComponent($.cookie('userTrueName')) + "'";
+        //ISystemService.execQuery.sqlString = sqlStr;
+        //rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        //if (ISystemService.execQuery.success) {
+        //    (function (e) {
+        //        toolBar.addListOption("combomaterialSearch", "产品", 1, "button", "产品")
+        //        if (e != null) {
+        //            var rows = e.rows;
+        //            var rowLength = rows.length;
+        //            for (var i = 0; i < rowLength; i++) {
+        //                var rowResult = rows[i].values;
+        //                $("#combomaterial").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>")
+        //                toolBar.addListOption("combomaterialSearch", rowResult[0].value, i + 2, "button", rowResult[1].value)
+        //            }
+        //        }
+        //    }(ISystemService.execQuery.resultValue));
+        //}
+
+        $("#combomaterialSearch").empty();
+        $("#combomaterialSearch").append("<option value='-1'>请选择产品</option>");
         sqlStr = "SELECT [MaterialID],[MaterialName] FROM [Material] join [ProductMarketing] on [MaterialID] = [ProductID] and [Available] = '1' and [ForSale] = '1' and [PersonName] = '" + decodeURIComponent($.cookie('userTrueName')) + "'";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {
             (function (e) {
-                toolBar.addListOption("combomaterialSearch", "产品", 1, "button", "产品")
                 if (e != null) {
                     var rows = e.rows;
                     var rowLength = rows.length;
                     for (var i = 0; i < rowLength; i++) {
                         var rowResult = rows[i].values;
                         $("#combomaterial").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>")
-                        toolBar.addListOption("combomaterialSearch", rowResult[0].value, i + 2, "button", rowResult[1].value)
+                        $("#combomaterialSearch").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>")
                     }
                 }
             }(ISystemService.execQuery.resultValue));
         }
+
+
         //初始化通用参照
         $("#comboladenPlace").empty();
         sqlStr = "SELECT [ReferName] FROM [Refer] where [ReferType] = '提货地点'";
@@ -101,7 +122,9 @@ $(function () {
     toolBar.addInput("endbillingTime", null, "", 60);
     toolBar.addText("customer", null, "客户");
     toolBar.addInput("txtcustomerSearch", null, "", 80);
-    toolBar.addButtonSelect("combomaterialSearch", null, "产品", [], null, null, true, true, 15, "select")
+    //toolBar.addButtonSelect("combomaterialSearch", null, "产品", [], null, null, true, true, 15, "select")
+    toolBar.addText("customer", null, "产品");
+    toolBar.addInput("txtmateriaSearch", null);
     toolBar.addButton("query", null, "查询");
     toolBar.addSeparator("sepQuery", null);
     toolBar.addButton("add", null, "添加");
@@ -133,7 +156,7 @@ $(function () {
                 $("#txtcustomer").val("");
                 $("#txtcustomerID").val("");
                 $("#combomaterial").get(0).selectedIndex = 0;
-                $("#combomaterialGrade").get(0).selectedIndex = 0;                
+                $("#combomaterialGrade").get(0).selectedIndex = 0;
                 $("#txtpicker").val("");
                 $("#txtplanQuantity").val("");
                 $("#txtactualQuantity").val("");
@@ -148,7 +171,7 @@ $(function () {
                 $("#txtdestination").val("");
                 $("#txtpacking").val("");
                 //$("#txtplateNumber").val("");
-                $("#chkweight").attr("checked", false);
+                $("#chkweight").attr("checked", true);
                 $("#txtagent").val(decodeURIComponent($.cookie('userTrueName')));
                 $("#txtcomment").val("");
                 $("#txtsettleTotal").val("");
@@ -263,7 +286,7 @@ $(function () {
                                     }
                                 }
                             }(IBusinessService.deleteLadeBill.resultValue))
-                        }                       
+                        }
                     }
                     refreshToolBarState();
                 }
@@ -328,6 +351,10 @@ $(function () {
                 break;
         }
     });
+
+    toolBar.getInput("txtmateriaSearch").id = "txtmateriaSearch";
+    $("#txtmateriaSearch").css("display", "none");
+    $("#txtmateriaSearch").after("<select id='combomaterialSearch' style=\"width:120px\"></select>");
 
     //初始化提货单列表
     listGrid = new dhtmlXGridObject("listGrid");
@@ -419,7 +446,7 @@ $(function () {
             }
             showEditForm();
         }
-       
+
     });
     listGrid.attachEvent("onCheck", function (rowID, cIndex) {
         refreshToolBarState();
@@ -504,7 +531,7 @@ $(function () {
         if (!$("#txtplanQuantity").validate("number", "计划提货数量")) {
             return false;
         }
-      
+
         if (!$("#txtplanTotal").validate("number", "计划量总金额")) {
             return false;
         }
@@ -557,7 +584,7 @@ $(function () {
         }
         else {
             IBusinessService.getCurrentBalance.customerID = ladeBill.customerID;
-            IBusinessService.getCurrentBalance.customerID = ladeBill.ladeBillID;
+            IBusinessService.getCurrentBalance.ladeBillID = ladeBill.ladeBillID;
             rock.AjaxRequest(IBusinessService.getCurrentBalance, rock.exceptionFun);
             if (IBusinessService.getCurrentBalance.success) {
                 (function (e) {
@@ -588,7 +615,7 @@ $(function () {
             alert(customerQualified);
             return;
         }
-       
+
         //检验产品库存计划
         IBusinessService.getPlanSaleByMaterialID.materialID = $("#combomaterial").val();
         rock.AjaxRequest(IBusinessService.getPlanSaleByMaterialID, rock.exceptionFun);
@@ -687,7 +714,7 @@ $(function () {
             return;
         }
 
-        
+
         // 保存数据
         if (ladeBill == null) {
             ladeBill = LadeBillClass.createInstance();
@@ -701,7 +728,7 @@ $(function () {
                 }(ISystemService.getNextID.resultValue))
             }
         }
-       
+
         ladeBill.ladeBillNum = $("#txtladeBillNum").val();
         ladeBill.customerID = $("#txtcustomerID").val();
         ladeBill.materialID = $("#combomaterial").val();
@@ -784,7 +811,7 @@ $(function () {
         else {
             ladeBill.comment = null;
         }
-       
+
         if (editState == "add") {
             IBusinessService.addLadeBill.ladeBill = ladeBill;
             IBusinessService.addLadeBill.shiper = $("#txtcarrier").val();
@@ -857,7 +884,7 @@ $(function () {
                 hideEditForm();
                 alert("提货单修改成功!");
             }
-        }        
+        }
         refreshToolBarState();
     });
 
@@ -1079,11 +1106,15 @@ $(function () {
                 sqlStr += " and [Customer].[CustomerName] like '%" + toolBar.getValue("txtcustomerSearch") + "%'";
             }
 
-            if (toolBar.getItemText("combomaterialSearch") != "产品") {
-                sqlStr += " and [Material].[MaterialName] = '" + toolBar.getItemText("combomaterialSearch") + "'";
+            //if (toolBar.getItemText("combomaterialSearch") != "产品") {
+            //    sqlStr += " and [Material].[MaterialName] = '" + toolBar.getItemText("combomaterialSearch") + "'";
+            //}
+
+            if ($("#combomaterialSearch").val() != "-1") {
+                sqlStr += " and [Material].[MaterialID] = " + $("#combomaterialSearch").val();
             }
         }
-        
+
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {

@@ -269,17 +269,17 @@
         //明细表格 
         var dataGrid = DataGridClass.createInstance();
         dataGrid.dataGridID = 1;
-        dataGrid.dataGridName = "明细表格";
+        dataGrid.dataGridName = "明细部分明细表列";
         dataGrid.gridColumns = new rock.RockList();
         billForm.detailGrid = dataGrid;
 
         //明细表格主参照列集合        
         billForm.detailGridMainReferColumns = new rock.RockList();
 
-        //明细主参照表格
+        //明细主参照选择表格
         dataGrid = DataGridClass.createInstance();
         dataGrid.dataGridID = 1;
-        dataGrid.dataGridName = "明细主参照表格";
+        dataGrid.dataGridName = "明细主参照选择表格";
         dataGrid.gridColumns = new rock.RockList();
         billForm.detailMainReferGrid = dataGrid;
 

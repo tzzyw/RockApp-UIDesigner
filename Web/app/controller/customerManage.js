@@ -464,6 +464,7 @@ $(function () {
         customer.forSale = $("#chkforSale").prop("checked");
         customer.forPurchase = $("#chkforPurchase").prop("checked");
         customer.available = $("#chkavailable").prop("checked");
+        ($("#chkforSale").prop("checked")) ? "是" :  "否";
         customer.contractUser = $("#chkcontractUser").prop("checked");
         customer.keepPromises = $("#chkkeepPromises").prop("checked");
 

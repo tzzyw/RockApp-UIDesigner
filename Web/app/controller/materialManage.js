@@ -297,7 +297,7 @@ $(function () {
                     dictData.data.push($("#comboforSale").find("option:selected").text());
 
                     dictData.data.push($("#comboforPurchase").find("option:selected").text());
-
+                   
                     dictDataList.rows.push(dictData);
                     listGrid.clearAll();
                     listGrid.parse(dictDataList, "json");

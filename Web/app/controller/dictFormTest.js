@@ -1,54 +1,47 @@
 ﻿
 $(function () {
     //初始化系统通用变量
-    var toolBar, listGrid, editState, editForm, dictDataList, sqlStr, serverDate, customerPop, customerQuickGrid,
-      ladeBill = null,
+    var toolBar, listGrid, editState, editForm, dictDataList, sqlStr, serverDate, customerPop, customerQuickGrid, customerPopTarget,
+      purchasePlan = null,
 	  editItem = $("#editItem"),
       dictDataList = new rock.JsonList();
     window.dhx_globalImgPath = "/resource/dhtmlx/codebase/imgs/";
     //加载动态脚本
-    var jsTypes = "ISystemService,DataTable,DataRow,DataColumn,LadeBill,Customer,Material,Contract,Measure,CustomerPlanApply,PlanSale";
+    var jsTypes = "ISystemService,DataTable,DataRow,DataColumn,PurchasePlan,Carrier,Customer";
     $.getScript('/LoadDomainJS.ashx?JsTypes=' + jsTypes, function () {
-        //处理初始化加载数据
 
-        sqlStr = "select top 100 [LadeBill].[LadeBillID], [LadeBill].[ladeBillNum], [Material].[MaterialName], [LadeBill].[materialLevel], [Customer].[CustomerName], convert(nvarchar(10),[LadeBill].[billingTime],120) as billingTime, convert(nvarchar(10),[LadeBill].[ladeDate],120) as ladeDate, [LadeBill].[ladenPlace], [LadeBill].[plateNumber], [LadeBill].[destination], [LadeBill].[packing], [LadeBill].[shipType], [LadeBill].[planQuantity], [LadeBill].[actualQuantity], [LadeBill].[quotedPrice], [LadeBill].[contractPrice], [LadeBill].[pipePrice], [LadeBill].[planTotal], [LadeBill].[actualTotal], [LadeBill].[settleTotal], [LadeBill].[measure], [LadeBill].[agent], [LadeBill].[picker] from [LadeBill] join [Material] on [LadeBill].[materialID] = [Material].[materialID] join [Customer] on [LadeBill].[customerID] = [Customer].[customerID] ";
-        ISystemService.execQuery.sqlString = sqlStr;
-        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
-        if (ISystemService.execQuery.success) {
+        //查询日期赋初值
+        rock.AjaxRequest(ISystemService.getServerDate, rock.exceptionFun);
+        if (ISystemService.getServerDate.success) {
             (function (e) {
-                rock.tableToListGrid(e, listGrid, dictDataList);
-            }(ISystemService.execQuery.resultValue));
-        }
-        //初始化实体参照及查询项
+                serverDate = e.value;
+                var date = new Date(serverDate.replace('-', '/'));
+                var beginDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-1';
+
+                toolBar.setValue("begincreateDate", beginDate);
 
 
+                toolBar.setValue("endcreateDate", serverDate);
 
-        $("#combomaterial").empty();
-        sqlStr = "SELECT [MaterialID],[MaterialName] FROM [Material] order by MaterialName";
-        ISystemService.execQuery.sqlString = sqlStr;
-        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
-        if (ISystemService.execQuery.success) {
-            (function (e) {
-
-
-
-                if (e != null) {
-                    var rows = e.rows;
-                    var rowLength = rows.length;
-                    for (var i = 0; i < rowLength; i++) {
-                        var rowResult = rows[i].values;
-                        $("#combomaterial").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>")
-
-
-
-                    }
-                }
-            }(ISystemService.execQuery.resultValue));
+            }(ISystemService.getServerDate.resultValue));
         }
 
+        //初始化实体参照及查询项	
 
 
-        sqlStr = "SELECT [CustomerID],[CustomerName] FROM [Customer] order by CustomerName";
+
+
+        $("#combocarrier").empty();
+
+
+
+
+        $("#combocarrierSearch").append("<option value='-1'>请选择运输单位</option>");
+
+
+
+
+        sqlStr = "SELECT [CarrierID],[CarrierName] FROM [Carrier] order by CarrierName";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {
@@ -58,10 +51,21 @@ $(function () {
                     var rowLength = rows.length;
                     for (var i = 0; i < rowLength; i++) {
                         var rowResult = rows[i].values;
+                        $("#combocarrier").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>");
+
+
+
+
+                        $("#combocarrierSearch").append("<option value='" + rowResult[0].value + "'>" + rowResult[1].value + "</option>");
+
+
+
+
                     }
                 }
             }(ISystemService.execQuery.resultValue));
         }
+
 
 
 
@@ -72,26 +76,33 @@ $(function () {
 
 
 
+        $("#comboladePlace").empty();
+
+
+
+        $("#comboladePlaceSearch").append("<option value='-1'>请选择提货地点</option>");
 
 
 
 
 
-        $("#comboladenPlace").empty();
         sqlStr = "SELECT [ReferName] FROM [Refer] where [ReferType] = '提货地点'";
         ISystemService.execQuery.sqlString = sqlStr;
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {
             (function (e) {
-
-
-
                 if (e != null) {
                     var rows = e.rows;
                     var rowLength = rows.length;
                     for (var i = 0; i < rowLength; i++) {
                         var rowResult = rows[i].values;
-                        $("#comboladenPlace").append("<option value='" + rowResult[0].value + "'>" + rowResult[0].value + "</option>")
+                        $("#comboladePlace").append("<option value='" + rowResult[0].value + "'>" + rowResult[0].value + "</option>");
+
+
+
+                        $("#comboladePlaceSearch").append("<option value='" + rowResult[0].value + "'>" + rowResult[0].value + "</option>");
+
+
 
 
 
@@ -107,27 +118,17 @@ $(function () {
 
 
 
+
+
+
         customerComplete("");
 
+        //处理初始化加载数据
 
-        //查询日期赋初值
-        rock.AjaxRequest(ISystemService.getServerDate, rock.exceptionFun);
-        if (ISystemService.getServerDate.success) {
-            (function (e) {
-                serverDate = e.value;
-                var date = new Date(serverDate.replace('-', '/'));
-                var beginDate = date.getFullYear() + '-' + (date.getMonth() + 1) + '-1';
-
-                toolBar.setValue("beginbillingTime", beginDate);
-
-
-                toolBar.setValue("endbillingTime", serverDate);
-
-            }(ISystemService.getServerDate.resultValue));
-        }
+        getDataList();
 
         //绑定控件失去焦点验证方法
-        //LadeBillClass.validateBind();
+        //PurchasePlanClass.validateBind();
         //初始化工具栏状态
         refreshToolBarState();
     });
@@ -136,14 +137,28 @@ $(function () {
     toolBar = new dhtmlXToolbarObject("toolBar", 'dhx_skyblue');
     toolBar.setIconsPath("/resource/dhtmlx/codebase/imgs");
 
-    toolBar.addText("billingTimeBegin", null, "开票日期");
-    toolBar.addInput("beginbillingTime", null, "", 75);
-    toolBar.addText("开票日期End", null, "-");
-    toolBar.addInput("endbillingTime", null, "", 75);
+    toolBar.addText("purchasePlanName", null, "采购计划名称");
+    toolBar.addInput("txtpurchasePlanNameSearch", null, "", 100);
+
+
+    toolBar.addText("createDateBegin", null, "创建日期");
+    toolBar.addInput("begincreateDate", null, "", 75);
+    toolBar.addText("创建日期End", null, "-");
+    toolBar.addInput("endcreateDate", null, "", 75);
+
+
+    toolBar.addInput("txtladePlaceSearch", null);
+
+
+    toolBar.addInput("txtcarrierSearch", null);
 
 
     toolBar.addText("customer", null, "客户");
     toolBar.addInput("txtcustomerSearch", null, "", 100);
+
+
+    toolBar.addText("forLeader", null, "领导特供");
+    toolBar.addInput("txtforLeaderSearch", null, "", 100);
 
 
     toolBar.addButton("query", null, "查询");
@@ -157,105 +172,73 @@ $(function () {
         switch (id) {
 
             case "query":
-
-                if ($.trim(toolBar.getValue("beginbillingTime")) == "") {
-                    alert("起始开票日期不能为空！");
-                    return;
-                }
-                if (!rock.chkdate(toolBar.getValue("beginbillingTime"), "-")) {
-                    alert("起始开票日期格式不正确,正确格式为 2010-10-10！");
-                    return false;
-                }
-                if ($.trim(toolBar.getValue("endbillingTime")) == "") {
-                    alert("截止开票日期不能为空！");
-                    return;
-                }
-                if (!rock.chkdate(toolBar.getValue("endbillingTime"), "-")) {
-                    alert("截止开票日期格式不正确,正确格式为 2010-10-10！");
-                    return false;
-                }
-
-
-
-                sqlStr = "select [LadeBill].[LadeBillID], [LadeBill].[ladeBillNum], [Material].[MaterialName], [LadeBill].[materialLevel], [Customer].[CustomerName], convert(nvarchar(10),[LadeBill].[billingTime],120) as billingTime, convert(nvarchar(10),[LadeBill].[ladeDate],120) as ladeDate, [LadeBill].[ladenPlace], [LadeBill].[plateNumber], [LadeBill].[destination], [LadeBill].[packing], [LadeBill].[shipType], [LadeBill].[planQuantity], [LadeBill].[actualQuantity], [LadeBill].[quotedPrice], [LadeBill].[contractPrice], [LadeBill].[pipePrice], [LadeBill].[planTotal], [LadeBill].[actualTotal], [LadeBill].[settleTotal], [LadeBill].[measure], [LadeBill].[agent], [LadeBill].[picker] from [LadeBill] join [Material] on [LadeBill].[materialID] = [Material].[materialID] join [Customer] on [LadeBill].[customerID] = [Customer].[customerID]";
-
-                sqlStr += " and [LadeBill].[billingTime] between '" + toolBar.getValue("beginbillingTime") + " 0:0:0' AND '" + toolBar.getValue("endbillingTime") + " 23:59:59' ";
-
-
-                if (toolBar.getValue("txtcustomerSearch") != "") {
-                    sqlStr += " and [Customer].[CustomerName] like '%" + toolBar.getValue("txtcustomerSearch") + "%'";
-                }
-
-
-                ISystemService.execQuery.sqlString = sqlStr;
-                rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
-                if (ISystemService.execQuery.success) {
-                    (function (e) {
-                        rock.tableToListGrid(e, listGrid, dictDataList)
-                    }(ISystemService.execQuery.resultValue));
-                }
+                getDataList();
                 break;
             case "add":
                 editState = "add";
-                $("#formTitle").text("添加提货单");
+                $("#formTitle").text("添加采购计划");
 
-                $("#txtladeBillNum").val("");
+                $("#txtpurchasePlanName").val("");
 
 
-                $("#combomaterial").get(0).selectedIndex = 0;
+                $("#txtcreateDate").val();
 
-                $("#txtmaterialLevel").val("");
 
+                $("#comboladePlace").get(0).selectedIndex = 0;
+
+                $("#combocarrier").get(0).selectedIndex = 0;
 
                 $("#txtcustomer").val("");
                 $("#txtcustomerID").val("");
 
 
-                $("#txtcontractID").val("");
+                $("#txtagent").val("");
 
 
-                $("#txtcontractNum").val("");
+                $("#txtmanager").val("");
 
 
-                $("#txtbillingTime").val(serverDate);
+                $("#chkforLeader").prop("checked", false);
 
-                $("#comboladenPlace").get(0).selectedIndex = 0;
+                $("#txtcomment").val("");
 
 
-                ladeBill = null;
+                purchasePlan = null;
                 showEditForm();
                 break;
             case "modify":
                 editState = "modify";
-                $("#formTitle").text("编辑提货单");
+                $("#formTitle").text("编辑采购计划");
                 var checked = listGrid.getCheckedRows(0);
                 if (checked != "") {
                     if (checked.indexOf(',') == -1) {
                         var dictDataID = listGrid.cells(checked, 1).getValue();
                         ISystemService.getDynObjectByID.dynObjectID = dictDataID;
-                        ISystemService.getDynObjectByID.structName = "LadeBill";
+                        ISystemService.getDynObjectByID.structName = "PurchasePlan";
                         rock.AjaxRequest(ISystemService.getDynObjectByID, rock.exceptionFun);
                         if (ISystemService.getDynObjectByID.success) {
                             (function (e) {
-                                ladeBill = e;
+                                purchasePlan = e;
                             }(ISystemService.getDynObjectByID.resultValue));
                         }
                         else {
                             return;
                         }
 
-
-                        $("#txtladeBillNum").val(ladeBill.ladeBillNum);
-
-
-                        rock.setSelectItem("combomaterial", ladeBill.materialID, "value");
+                        $("#txtpurchasePlanName").val(purchasePlan.purchasePlanName);
 
 
-                        $("#txtmaterialLevel").val(ladeBill.materialLevel);
+                        $("#txtcreateDate").val(purchasePlan.createDate.split(' ')[0]);
 
 
-                        $("#txtcustomerID").val(ladeBill.customerID);
-                        ISystemService.executeScalar.sqlString = "select [CustomerName] from [Customer] where [CustomerID] = " + ladeBill.customerID;
+                        rock.setSelectItem("comboladePlace", purchasePlan.ladePlace, "text");
+
+
+                        rock.setSelectItem("combocarrier", purchasePlan.carrierID, "value");
+
+
+                        $("#txtcustomerID").val(purchasePlan.customerID);
+                        ISystemService.executeScalar.sqlString = "select [CustomerName] from [Customer] where [CustomerID] = " + purchasePlan.customerID;
                         rock.AjaxRequest(ISystemService.executeScalar, rock.exceptionFun);
                         var warehouseName = null;
                         if (ISystemService.executeScalar.success) {
@@ -265,15 +248,15 @@ $(function () {
                         }
 
 
-                        $("#txtcontractID").val(ladeBill.contractID);
+                        $("#txtagent").val(purchasePlan.agent);
 
 
-                        $("#txtcontractNum").val(ladeBill.contractNum);
+                        $("#txtmanager").val(purchasePlan.manager);
 
 
-                        $("#txtbillingTime").val(ladeBill.billingTime.split(' ')[0]);
+                        $("#chkforLeader").prop("checked", purchasePlan.forLeader);
 
-                        rock.setSelectItem("comboladenPlace", ladeBill.ladenPlace, "text");
+                        $("#txtcomment").val(purchasePlan.comment);
 
 
                         showEditForm();
@@ -292,7 +275,7 @@ $(function () {
                     var rowids = checked.split(',');
                     for (var i = 0; i < rowids.length; i++) {
                         ISystemService.deleteDynObjectByID.dynObjectID = rowids[i];
-                        ISystemService.deleteDynObjectByID.structName = "LadeBill";
+                        ISystemService.deleteDynObjectByID.structName = "PurchasePlan";
                         rock.AjaxRequest(ISystemService.deleteDynObjectByID, rock.exceptionFun);
                         if (ISystemService.deleteDynObjectByID.success) {
                             (function (e) {
@@ -316,44 +299,71 @@ $(function () {
 
 
 
-    //初始化提货单列表
+    toolBar.getInput("txtladePlaceSearch").id = "txtladePlaceSearch";
+    $("#txtladePlaceSearch").css("display", "none");
+    $("#txtladePlaceSearch").after("<select id='comboladePlaceSearch' style=\"width:100px\"></select>");
+
+
+    toolBar.getInput("txtcarrierSearch").id = "txtcarrierSearch";
+    $("#txtcarrierSearch").css("display", "none");
+    $("#txtcarrierSearch").after("<select id='combocarrierSearch' style=\"width:100px\"></select>");
+
+
+
+    toolBar.getInput("txtforLeaderSearch").id = "txtforLeaderSearch";
+    $("#txtforLeaderSearch").css("display", "none");
+    $("#txtforLeaderSearch").after("<select id='comboforLeaderSearch' style=\"width:100px\"><option value='-1'>请选择</option><option value='1'>是</option><option value='0'>否</option></select>");
+
+
+
+
+
+
+
+    toolBar.getInput("txtcustomerSearch").id = "txtcustomerSearch";
+
+
+
+    //初始化采购计划列表
     listGrid = new dhtmlXGridObject("listGrid");
     listGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
     listGrid.setSkin("dhx_skyblue");
 
-
-    listGrid.setHeader("选择,,销售提货编号,产品名称,产品等级,客户名称,开票日期,提货日期,提货地点,车船号,到站名称,包装方式,运输方式,计划提货数量,实际提货数量,挂牌单价,合同单价,管输单价,计划量总金额,实际量总金额,结算总金额,计量单位,经办人,提货人");
-    listGrid.setInitWidths("40,0,100,100,80,100,80,80,100,100,80,80,80,100,100,80,80,80,100,100,100,80,60,60");
-    listGrid.setColAlign("center,left,left,left,left,left,left,left,left,left,left,left,left,left,left,left,left,left,left,left,left,left,left,left");
-    listGrid.setColSorting("na,na,str,str,str,str,str,str,str,str,str,str,str,str,str,str,str,str,str,str,str,str,str,str");
-    listGrid.setColTypes("ch,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
+    listGrid.setHeader("选择,,采购计划名称,创建日期,提货地点,运输单位,客户,提报人,领导特供,状态,备注");
+    listGrid.setInitWidths("40,0,100,80,80,120,120,50,60,60,*");
+    listGrid.setColAlign("center,left,left,left,left,left,left,left,left,left,left");
+    listGrid.setColSorting("na,na,str,str,str,str,str,str,str,str,str");
+    listGrid.setColTypes("ch,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
     listGrid.enableDistributedParsing(true, 20);
     listGrid.attachEvent("onRowDblClicked", function (rowID, cIndex) {
         editState = "modify";
-        $("#formTitle").text("编辑提货单");
+        $("#formTitle").text("编辑采购计划");
         ISystemService.getDynObjectByID.dynObjectID = rowID;
-        ISystemService.getDynObjectByID.structName = "LadeBill";
+        ISystemService.getDynObjectByID.structName = "PurchasePlan";
         rock.AjaxRequest(ISystemService.getDynObjectByID, rock.exceptionFun);
         if (ISystemService.getDynObjectByID.success) {
             (function (e) {
-                ladeBill = e;
+                purchasePlan = e;
             }(ISystemService.getDynObjectByID.resultValue));
         }
         else {
             return;
         }
 
-        $("#txtladeBillNum").val(ladeBill.ladeBillNum);
+        $("#txtpurchasePlanName").val(purchasePlan.purchasePlanName);
 
 
-        rock.setSelectItem("combomaterial", ladeBill.materialID, "value");
+        $("#txtcreateDate").val(purchasePlan.createDate.split(' ')[0]);
 
 
-        $("#txtmaterialLevel").val(ladeBill.materialLevel);
+        rock.setSelectItem("comboladePlace", purchasePlan.ladePlace, "text");
 
 
-        $("#txtcustomerID").val(ladeBill.customerID);
-        ISystemService.executeScalar.sqlString = "select [CustomerName] from [Customer] where [CustomerID] = " + ladeBill.customerID;
+        rock.setSelectItem("combocarrier", purchasePlan.carrierID, "value");
+
+
+        $("#txtcustomerID").val(purchasePlan.customerID);
+        ISystemService.executeScalar.sqlString = "select [CustomerName] from [Customer] where [CustomerID] = " + purchasePlan.customerID;
         rock.AjaxRequest(ISystemService.executeScalar, rock.exceptionFun);
         var warehouseName = null;
         if (ISystemService.executeScalar.success) {
@@ -363,15 +373,15 @@ $(function () {
         }
 
 
-        $("#txtcontractID").val(ladeBill.contractID);
+        $("#txtagent").val(purchasePlan.agent);
 
 
-        $("#txtcontractNum").val(ladeBill.contractNum);
+        $("#txtmanager").val(purchasePlan.manager);
 
 
-        $("#txtbillingTime").val(ladeBill.billingTime.split(' ')[0]);
+        $("#chkforLeader").prop("checked", purchasePlan.forLeader);
 
-        rock.setSelectItem("comboladenPlace", ladeBill.ladenPlace, "text");
+        $("#txtcomment").val(purchasePlan.comment);
 
 
         showEditForm();
@@ -385,7 +395,7 @@ $(function () {
     //初始化编辑弹窗
     editForm = $("#editForm");
 
-    editForm.height(225);
+    editForm.height(250);
     editForm.width(650);
     editForm.mousedown(function (e) {
         iDiffX = e.pageX - $(this).offset().left;
@@ -419,132 +429,106 @@ $(function () {
 
     //处理编辑项
 
-    tableString = '<table style="width: 98%"><tr> <td class="label2">销售提货编号</td><td class="inputtd2"><input id="txtladeBillNum" class="smallInput" type="text" /></td><td class="label2">产品</td><td class="inputtd2"><select id="combomaterial" class="combo" /></td></tr><tr> <td class="label2">产品等级</td><td class="inputtd2"><input id="txtmaterialLevel" class="smallInput" type="text" /></td><td class="label2">客户</td><td class="inputtd2"><input id="txtcustomer" class="smallInput" type="text" /><input id="txtcustomerID" type="hidden" /></td></tr><tr> <td class="label2">销售合同ID</td><td class="inputtd2"><input id="txtcontractID" class="smallInput" type="text" /></td><td class="label2">合同号</td><td class="inputtd2"><input id="txtcontractNum" class="smallInput" type="text" /></td></tr><tr> <td class="label2">开票日期</td><td class="inputtd2"><input id="txtbillingTime" class="smallInput" type="text" /></td><td class="label2">提货地点</td><td class="inputtd2"><select id="comboladenPlace" class="combo" /></td></tr></table>';
+    tableString = '<table style="width: 98%"><tr> <td class="label2">采购计划名称</td><td class="inputtd2"><input id="txtpurchasePlanName" class="smallInput" type="text" /></td><td class="label2">创建日期</td><td class="inputtd2"><input id="txtcreateDate" class="smallInput" type="text" /></td></tr><tr> <td class="label2">提货地点</td><td class="inputtd2"><select id="comboladePlace" class="combo" /></td><td class="label2">运输单位</td><td class="inputtd2"><select id="combocarrier" class="combo" /></td></tr><tr> <td class="label2">客户</td><td class="inputtd2"><input id="txtcustomer" class="smallInput" type="text" /><input id="txtcustomerID" type="hidden" /></td><td class="label2">提报人</td><td class="inputtd2"><input id="txtagent" class="smallInput" type="text" /></td></tr><tr> <td class="label2">负责人</td><td class="inputtd2"><input id="txtmanager" class="smallInput" type="text" /></td><td class="label2">领导特供</td><td class="inputtd2" style="text-align:left"><input id="chkforLeader" style="margin-left:25px" type="checkbox" /></td></tr><tr> <td class="label2">备注</td><td class="inputtd2"><input id="txtcomment" class="smallInput" type="text" /></td><td class="label2"></td><td class="inputtd2"></td></tr></table>';
     editItem.html(tableString);
 
 
     //保存
     $("#btn_Save").click(function () {
-        if (ladeBill == null) {
-            ladeBill = LadeBillClass.createInstance();
-            ISystemService.getNextID.typeName = "LadeBill";
+        //处理数据验证
+
+
+
+
+
+        if (!$("#txtcustomerID").validate("required", "客户")) {
+            return false;
+        }
+
+
+
+        if (!$("#txtcreateDate").validate("date", "创建日期")) {
+            return false;
+        }
+
+        if (purchasePlan == null) {
+            purchasePlan = PurchasePlanClass.createInstance();
+            ISystemService.getNextID.typeName = "PurchasePlan";
             rock.AjaxRequest(ISystemService.getNextID, rock.exceptionFun);
             if (ISystemService.getNextID.success) {
                 (function (e) {
-                    ladeBill.ladeBillID = e.value;
+                    purchasePlan.purchasePlanID = e.value;
                 }(ISystemService.getNextID.resultValue))
             }
         }
-        if (!ladeBill.ValidateValue()) {
-            return;
-        }
+        //if (!purchasePlan.ValidateValue()) {
+        //    return;
+        //}       
 
-        ladeBill.ladeBillNum = $("#txtladeBillNum").val();
-
-
-        ladeBill.materialID = $("#combomaterial").val();
+        purchasePlan.purchasePlanName = $("#txtpurchasePlanName").val();
 
 
-        if ($.trim($("#txtmaterialLevel").val()) != '') {
-            ladeBill.materialLevel = $("#txtmaterialLevel").val();
-        }
-        else {
-            ladeBill.materialLevel = null;
-        }
+        purchasePlan.createDate = $("#txtcreateDate").val();
+
+        purchasePlan.ladePlace = $("#comboladePlace").val();
+
+        purchasePlan.carrierID = $("#combocarrier").val();
+
+        purchasePlan.customerID = $("#txtcustomerID").val();
 
 
-        if ($.trim($("#txtcustomerID").val()) != '') {
-            ladeBill.customerID = $("#txtcustomerID").val();
+        if ($.trim($("#txtagent").val()) != '') {
+            purchasePlan.agent = $("#txtagent").val();
         }
         else {
-            ladeBill.customerID = null;
+            purchasePlan.agent = null;
         }
 
 
-        if ($.trim($("#txtcontractID").val()) != '') {
-            ladeBill.contractID = $("#txtcontractID").val();
+        if ($.trim($("#txtmanager").val()) != '') {
+            purchasePlan.manager = $("#txtmanager").val();
         }
         else {
-            ladeBill.contractID = null;
+            purchasePlan.manager = null;
         }
 
 
-        if ($.trim($("#txtcontractNum").val()) != '') {
-            ladeBill.contractNum = $("#txtcontractNum").val();
+        purchasePlan.forLeader = $("#chkforLeader").prop("checked");
+
+        if ($.trim($("#txtcomment").val()) != '') {
+            purchasePlan.comment = $("#txtcomment").val();
         }
         else {
-            ladeBill.contractNum = null;
+            purchasePlan.comment = null;
         }
-
-
-        if ($.trim($("#txtbillingTime").val()) != '') {
-            ladeBill.billingTime = $("#txtbillingTime").val();
-        }
-        else {
-            ladeBill.billingTime = null;
-        }
-
-        if ($.trim($("#txtladenPlace").val()) != '') {
-            ladeBill.ladenPlace = $("#txtladenPlace").val();
-        }
-        else {
-            ladeBill.ladenPlace = null;
-        }
-
 
 
         if (editState == "add") {
-            ISystemService.addDynObject.dynObject = ladeBill;
+            ISystemService.addDynObject.dynObject = purchasePlan;
             rock.AjaxRequest(ISystemService.addDynObject, rock.exceptionFun);
             if (ISystemService.addDynObject.success) {
                 (function (e) {
-                    var dictData = new rock.JsonData(ladeBill.ladeBillID);
+                    var dictData = new rock.JsonData(purchasePlan.purchasePlanID);
                     dictData.data.push(0);
-                    dictData.data.push(ladeBill.ladeBillID);
+                    dictData.data.push(purchasePlan.purchasePlanID);
 
-                    dictData.data.push($("#txtladeBillNum").val());
+                    dictData.data.push($("#txtpurchasePlanName").val());
 
-                    dictData.data.push($("#combomaterial").find("option:selected").text());
+                    dictData.data.push($("#txtcreateDate").val());
 
-                    dictData.data.push($("#txtmaterialLevel").val());
+                    dictData.data.push($("#comboladePlace").find("option:selected").text());
+
+                    dictData.data.push($("#combocarrier").find("option:selected").text());
 
                     dictData.data.push($("#txtcustomer").val());
 
-                    dictData.data.push($("#txtbillingTime").val());
-
-                    dictData.data.push($("#txtladeDate").val());
-
-                    dictData.data.push($("#comboladenPlace").find("option:selected").text());
-
-                    dictData.data.push($("#txtplateNumber").val());
-
-                    dictData.data.push($("#txtdestination").val());
-
-                    dictData.data.push($("#txtpacking").val());
-
-                    dictData.data.push($("#comboshipType").find("option:selected").text());
-
-                    dictData.data.push($("#txtplanQuantity").val());
-
-                    dictData.data.push($("#txtactualQuantity").val());
-
-                    dictData.data.push($("#txtquotedPrice").val());
-
-                    dictData.data.push($("#txtcontractPrice").val());
-
-                    dictData.data.push($("#txtpipePrice").val());
-
-                    dictData.data.push($("#txtplanTotal").val());
-
-                    dictData.data.push($("#txtactualTotal").val());
-
-                    dictData.data.push($("#txtsettleTotal").val());
-
-                    dictData.data.push($("#txtmeasure").val());
-
                     dictData.data.push($("#txtagent").val());
 
-                    dictData.data.push($("#txtpicker").val());
+                    dictData.data.push(($("#chkforLeader").prop("checked")) ? "是" : "否");
+
+                    dictData.data.push($("#txtstate").val());
+
+                    dictData.data.push($("#txtcomment").val());
 
                     dictDataList.rows.push(dictData);
                     listGrid.clearAll();
@@ -554,57 +538,31 @@ $(function () {
             }
         }
         else {
-            ISystemService.modifyDynObject.dynObject = ladeBill;
+            ISystemService.modifyDynObject.dynObject = purchasePlan;
             rock.AjaxRequest(ISystemService.modifyDynObject, rock.exceptionFun);
             if (ISystemService.modifyDynObject.success) {
                 (function (e) {
                     for (var i = 0; i < dictDataList.rows.length; i++) {
-                        if (dictDataList.rows[i].id == ladeBill.ladeBillID) {
+                        if (dictDataList.rows[i].id == purchasePlan.purchasePlanID) {
                             dictDataList.rows[i].data[0] = 0;
 
-                            dictDataList.rows[i].data[2] = $("#txtladeBillNum").val();
+                            dictDataList.rows[i].data[2] = $("#txtpurchasePlanName").val();
 
-                            dictDataList.rows[i].data[3] = $("#combomaterial").find("option:selected").text();
+                            dictDataList.rows[i].data[3] = $("#txtcreateDate").val();
 
-                            dictDataList.rows[i].data[4] = $("#txtmaterialLevel").val();
+                            dictDataList.rows[i].data[4] = $("#comboladePlace").find("option:selected").text();
 
-                            dictDataList.rows[i].data[5] = $("#txtcustomer").val();
+                            dictDataList.rows[i].data[5] = $("#combocarrier").find("option:selected").text();
 
-                            dictDataList.rows[i].data[6] = $("#txtbillingTime").val();
+                            dictDataList.rows[i].data[6] = $("#txtcustomer").val();
 
-                            dictDataList.rows[i].data[7] = $("#txtladeDate").val();
+                            dictDataList.rows[i].data[7] = $("#txtagent").val();
 
-                            dictDataList.rows[i].data[8] = $("#comboladenPlace").find("option:selected").text();
+                            dictDataList.rows[i].data[8] = ($("#chkforLeader").prop("checked")) ? "是" : "否";
 
-                            dictDataList.rows[i].data[9] = $("#txtplateNumber").val();
+                            dictDataList.rows[i].data[9] = $("#txtstate").val();
 
-                            dictDataList.rows[i].data[10] = $("#txtdestination").val();
-
-                            dictDataList.rows[i].data[11] = $("#txtpacking").val();
-
-                            dictDataList.rows[i].data[12] = $("#comboshipType").find("option:selected").text();
-
-                            dictDataList.rows[i].data[13] = $("#txtplanQuantity").val();
-
-                            dictDataList.rows[i].data[14] = $("#txtactualQuantity").val();
-
-                            dictDataList.rows[i].data[15] = $("#txtquotedPrice").val();
-
-                            dictDataList.rows[i].data[16] = $("#txtcontractPrice").val();
-
-                            dictDataList.rows[i].data[17] = $("#txtpipePrice").val();
-
-                            dictDataList.rows[i].data[18] = $("#txtplanTotal").val();
-
-                            dictDataList.rows[i].data[19] = $("#txtactualTotal").val();
-
-                            dictDataList.rows[i].data[20] = $("#txtsettleTotal").val();
-
-                            dictDataList.rows[i].data[21] = $("#txtmeasure").val();
-
-                            dictDataList.rows[i].data[22] = $("#txtagent").val();
-
-                            dictDataList.rows[i].data[23] = $("#txtpicker").val();
+                            dictDataList.rows[i].data[10] = $("#txtcomment").val();
 
                         }
                     }
@@ -613,8 +571,12 @@ $(function () {
             listGrid.clearAll();
             listGrid.parse(dictDataList, "json");
             hideEditForm();
-            alert("提货单修改成功!");
+            alert("采购计划修改成功!");
         }
+
+
+
+
 
 
 
@@ -631,6 +593,7 @@ $(function () {
 
 
 
+    var customerDataList = new rock.JsonList();
     customerQuickGrid = new dhtmlXGridObject("customerQuickGrid");
     customerQuickGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
     customerQuickGrid.setSkin("dhx_skyblue");
@@ -641,21 +604,39 @@ $(function () {
     customerQuickGrid.setColTypes("ro,ro,ro");
     customerQuickGrid.enableDistributedParsing(true, 20);
     customerQuickGrid.attachEvent("onRowDblClicked", function (rowID, cIndex) {
-        $("#txtcustomerID").val(rowID)
-        $("#txtcustomer").val(customerQuickGrid.cells(rowID, 2).getValue())
+
+        //判定在什么位置上面
+        if (customerPopTarget == "txtcustomer") {
+            $("#txtcustomerID").val(rowID)
+            $("#txtcustomer").val(customerQuickGrid.cells(rowID, 2).getValue())
+        }
+        else {
+            $("#txtcustomerSearch").val(customerQuickGrid.cells(rowID, 2).getValue());
+        }
+
         hidecustomerPop();
     });
     customerQuickGrid.init();
     customerQuickGrid.detachHeader(0);
     customerPop = $("#customerPop")
+
     $('#txtcustomer').focus(function (e) {
-        showcustomerPop();
+        customerPopTarget = "txtcustomer";
+        showcustomerPop($("#txtcustomer").offset().top, $("#txtcustomer").offset().left);
     });
 
-    function showcustomerPop() {
-        var top = $("#txtcustomer").offset().top;
-        var left = $("#txtcustomer").offset().left;
+    $('#txtcustomerSearch').focus(function (e) {
+        customerPopTarget = "txtcustomerSearch";
+        showcustomerPop($("#txtcustomerSearch").offset().top, $("#txtcustomerSearch").offset().left);
+    });
+
+
+    function showcustomerPop(top, left) {
         customerPop.css({ top: top + 22, left: left }).show();
+        //判断记录条数如果少于10条就重新加载
+        if (customerDataList.rows.length < 10) {
+            customerComplete("");
+        }
     }
 
     function hidecustomerPop() {
@@ -663,12 +644,18 @@ $(function () {
     }
     hidecustomerPop();
 
+
+
+    $("#txtcustomerSearch").keyup(function () {
+        customerComplete($("#txtcustomerSearch").val());
+    });
+
     $("#txtcustomer").keyup(function () {
         customerComplete($("#txtcustomer").val());
     });
-    var customerDataList = new rock.JsonList();
+
     function customerComplete(searchCode) {
-        ISystemService.execQuery.sqlString = "select top 20 [Customer].[CustomerID], [Customer].[CustomerName] from [Customer] where [CustomerName] like  '%" + $("#txtcustomer").val() + "%' or [SearchCode] like  '%" + $("#txtcustomer").val() + "%'";
+        ISystemService.execQuery.sqlString = "select top 14 [Customer].[CustomerID], [Customer].[CustomerName] from [Customer] where [CustomerName] like  '%" + searchCode + "%' or [SearchCode] like  '%" + searchCode + "%'";
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {
             (function (e) {
@@ -687,6 +674,88 @@ $(function () {
     });
 
 
+    $('#mainPage').mousedown(function (e) {
+
+
+
+
+
+
+
+
+        if (e.srcElement.id != "txtcustomer") {
+            hidecustomerPop();
+        }
+
+    });
+
+
+    function getDataList() {
+
+
+        if ($.trim(toolBar.getValue("begincreateDate")) == "") {
+            alert("起始创建日期不能为空！");
+            return;
+        }
+        if (!rock.chkdate(toolBar.getValue("begincreateDate"), "-")) {
+            alert("起始创建日期格式不正确,正确格式为 2010-10-10！");
+            return false;
+        }
+        if ($.trim(toolBar.getValue("endcreateDate")) == "") {
+            alert("截止创建日期不能为空！");
+            return;
+        }
+        if (!rock.chkdate(toolBar.getValue("endcreateDate"), "-")) {
+            alert("截止创建日期格式不正确,正确格式为 2010-10-10！");
+            return false;
+        }
+
+
+
+
+
+
+        sqlStr = "select [PurchasePlan].[PurchasePlanID], [PurchasePlan].[purchasePlanName], convert(nvarchar(10),[PurchasePlan].[createDate],120) as createDate, [PurchasePlan].[ladePlace], [Carrier].[CarrierName], [Customer].[CustomerName], [PurchasePlan].[agent], CASE [PurchasePlan].[forLeader] WHEN '1' THEN '是' WHEN '0' THEN '否' END, [PurchasePlan].[state], [PurchasePlan].[comment] from [PurchasePlan] join [Carrier] on [PurchasePlan].[carrierID] = [Carrier].[carrierID] join [Customer] on [PurchasePlan].[customerID] = [Customer].[customerID] ";
+
+        if (toolBar.getValue("txtpurchasePlanNameSearch") != "") {
+            sqlStr += " and [PurchasePlan].[purchasePlanName] like '%" + toolBar.getValue("txtpurchasePlanNameSearch") + "%'";
+        }
+
+
+
+        sqlStr += " and [PurchasePlan].[createDate] between '" + toolBar.getValue("begincreateDate") + " 0:0:0' AND '" + toolBar.getValue("endcreateDate") + " 23:59:59' ";
+
+
+        if ($("#comboladePlaceSearch").val() != "-1") {
+            sqlStr += " and [PurchasePlan].[ladePlace] = '" + $("#comboladePlaceSearch").val() + "'";
+        }
+
+
+
+        if ($("#combocarrierSearch").val() != "-1") {
+            sqlStr += " and [Carrier].[CarrierID] = " + $("#combocarrierSearch").val();
+        }
+
+
+
+        if (toolBar.getValue("txtcustomerSearch") != "") {
+            sqlStr += " and [Customer].[CustomerName] like '%" + toolBar.getValue("txtcustomerSearch") + "%'";
+        }
+
+
+        if ($("#comboforLeaderSearch").val() != "-1") {
+            sqlStr += " and [PurchasePlan].[forLeader] = '" + $("#comboforLeaderSearch").val() + "'";
+        }
+
+
+        ISystemService.execQuery.sqlString = sqlStr;
+        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        if (ISystemService.execQuery.success) {
+            (function (e) {
+                rock.tableToListGrid(e, listGrid, dictDataList)
+            }(ISystemService.execQuery.resultValue));
+        }
+    }
     //工具栏按钮状态控制
     function refreshToolBarState() {
         var checked = listGrid.getCheckedRows(0);
@@ -709,11 +778,11 @@ $(function () {
     //日期控件处理 
     var dateboxArray = [];
 
-    dateboxArray.push(toolBar.getInput("beginbillingTime"));
+    dateboxArray.push(toolBar.getInput("begincreateDate"));
 
-    dateboxArray.push(toolBar.getInput("endbillingTime"));
+    dateboxArray.push(toolBar.getInput("endcreateDate"));
 
-    dateboxArray.push("txtbillingTime");
+    dateboxArray.push("txtcreateDate");
 
     myCalendar = new dhtmlXCalendarObject(dateboxArray);
     myCalendar.loadUserLanguage('cn');

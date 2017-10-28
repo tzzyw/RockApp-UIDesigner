@@ -2,7 +2,7 @@
 $(function () {
     //初始化系统通用变量
     var toolBar, listGrid, editState, editForm, dictDataList, sqlStr, serverDate, dhxLayout, divUploadLayout, uploadFile, documentToolBar,
-        documentGrid, customerPop, customerQuickGrid, auditHistoryGrid, ladeBillDiv, ladeBillGrid,
+        documentGrid, customerPop, customerQuickGrid, customerPopTarget, auditHistoryGrid, ladeBillDiv, ladeBillGrid,
       contract = null,
 	  editItem = $("#editItem"),
 	  pictureDataList = [],
@@ -26,23 +26,22 @@ $(function () {
             }(ISystemService.getServerDate.resultValue));
         }
 
-       
-        //初始化实体参照及查询项
 
-        sqlStr = "SELECT [CustomerID],[CustomerName] FROM [Customer] where [Available] = '1' and [ForSale] = '1' order by CustomerName";
-        ISystemService.execQuery.sqlString = sqlStr;
-        rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
-        if (ISystemService.execQuery.success) {
-            (function (e) {
-                if (e != null) {
-                    var rows = e.rows;
-                    var rowLength = rows.length;
-                    for (var i = 0; i < rowLength; i++) {
-                        var rowResult = rows[i].values;
-                    }
-                }
-            }(ISystemService.execQuery.resultValue));
-        }
+        ////初始化实体参照及查询项
+        //sqlStr = "SELECT [CustomerID],[CustomerName] FROM [Customer] where [Available] = '1' and [ForSale] = '1' order by CustomerName";
+        //ISystemService.execQuery.sqlString = sqlStr;
+        //rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
+        //if (ISystemService.execQuery.success) {
+        //    (function (e) {
+        //        if (e != null) {
+        //            var rows = e.rows;
+        //            var rowLength = rows.length;
+        //            for (var i = 0; i < rowLength; i++) {
+        //                var rowResult = rows[i].values;
+        //            }
+        //        }
+        //    }(ISystemService.execQuery.resultValue));
+        //}
 
         $("#combomaterial").empty();
         sqlStr = "SELECT [MaterialID],[MaterialName] FROM [Material] join [ProductMarketing] on [Material].[MaterialID] = [ProductMarketing].[ProductID] and [Material].[ForSale] = '1' and [Material].[Available] = '1' and [ProductMarketing].[PersonName] = '" + decodeURIComponent($.cookie('userTrueName')) + "'";
@@ -115,9 +114,9 @@ $(function () {
 
         customerComplete("");
 
-      
-        
-        $("#txtquantity").blur(CalcJE); 
+
+
+        $("#txtquantity").blur(CalcJE);
         $("#txtprice").blur(CalcJE);
         $("#txtpipePrice").blur(CalcJE);
         $('#combomaterial').change(getMaterialGrade)
@@ -312,7 +311,7 @@ $(function () {
                                 if (ISystemService.modifyDynObject.success) {
                                     (function (e) {
                                         for (var i = 0; i < dictDataList.rows.length; i++) {
-                                            if (dictDataList.rows[i].id == contract.contractID) {                                               
+                                            if (dictDataList.rows[i].id == contract.contractID) {
 
                                                 dictDataList.rows[i].data[8] = "已提交";
                                             }
@@ -320,6 +319,7 @@ $(function () {
                                     }(ISystemService.modifyDynObject.resultValue));
                                     listGrid.clearAll();
                                     listGrid.parse(dictDataList, "json");
+                                    refreshToolBarState();
                                 }
                             }
                             else {
@@ -330,7 +330,7 @@ $(function () {
                         else {
                             alert("合同状态不正确无法提交,请联系管理员处理!");
                             return;
-                        }        
+                        }
                     }
                     else {
                         alert("请仅选择一条要提交的行!");
@@ -374,6 +374,7 @@ $(function () {
                                     }(ISystemService.modifyDynObject.resultValue));
                                     listGrid.clearAll();
                                     listGrid.parse(dictDataList, "json");
+                                    refreshToolBarState();
                                 }
                             }
                             else {
@@ -384,7 +385,7 @@ $(function () {
                         else {
                             alert("合同状态不正确无法撤销,请联系管理员处理!");
                             return;
-                        }                      
+                        }
                     }
                     else {
                         alert("请仅选择一条要撤销的行!");
@@ -394,8 +395,108 @@ $(function () {
                     alert("请选择要撤销的行!");
                 }
                 break;
+            case "close":
+                var checked = listGrid.getCheckedRows(0);
+                if (checked != "") {
+                    if (checked.indexOf(',') == -1) {
+                        var dictDataID = listGrid.cells(checked, 1).getValue();
+                        ISystemService.getDynObjectByID.dynObjectID = dictDataID;
+                        ISystemService.getDynObjectByID.structName = "Contract";
+                        rock.AjaxRequest(ISystemService.getDynObjectByID, rock.exceptionFun);
+                        if (ISystemService.getDynObjectByID.success) {
+                            (function (e) {
+                                contract = e;
+                            }(ISystemService.getDynObjectByID.resultValue));
+                        }
+                        else {
+                            return;
+                        }
+                        if (!contract.closed) {
+                            contract.closed = true;
+
+                            ISystemService.modifyDynObject.dynObject = contract;
+                            rock.AjaxRequest(ISystemService.modifyDynObject, rock.exceptionFun);
+                            if (ISystemService.modifyDynObject.success) {
+                                (function (e) {
+                                    for (var i = 0; i < dictDataList.rows.length; i++) {
+                                        if (dictDataList.rows[i].id == contract.contractID) {
+
+                                            dictDataList.rows[i].data[9] = "是";
+                                        }
+                                    }
+                                }(ISystemService.modifyDynObject.resultValue));
+                                listGrid.clearAll();
+                                listGrid.parse(dictDataList, "json");
+                                refreshToolBarState();
+                            }
+                        }
+                        else {
+                            alert("合同已经关闭无法再次关闭!");
+                            return;
+                        }
+
+                    }
+                    else {
+                        alert("请仅选择一条要关闭的行!");
+                    }
+                }
+                else {
+                    alert("请选择要关闭的行!");
+                }
+                break;
+            case "open":
+                var checked = listGrid.getCheckedRows(0);
+                if (checked != "") {
+                    if (checked.indexOf(',') == -1) {
+                        var dictDataID = listGrid.cells(checked, 1).getValue();
+                        ISystemService.getDynObjectByID.dynObjectID = dictDataID;
+                        ISystemService.getDynObjectByID.structName = "Contract";
+                        rock.AjaxRequest(ISystemService.getDynObjectByID, rock.exceptionFun);
+                        if (ISystemService.getDynObjectByID.success) {
+                            (function (e) {
+                                contract = e;
+                            }(ISystemService.getDynObjectByID.resultValue));
+                        }
+                        else {
+                            return;
+                        }
+                        if (contract.closed) {
+                            contract.closed = false;
+
+                            ISystemService.modifyDynObject.dynObject = contract;
+                            rock.AjaxRequest(ISystemService.modifyDynObject, rock.exceptionFun);
+                            if (ISystemService.modifyDynObject.success) {
+                                (function (e) {
+                                    for (var i = 0; i < dictDataList.rows.length; i++) {
+                                        if (dictDataList.rows[i].id == contract.contractID) {
+
+                                            dictDataList.rows[i].data[9] = "否";
+                                        }
+                                    }
+                                }(ISystemService.modifyDynObject.resultValue));
+                                listGrid.clearAll();
+                                listGrid.parse(dictDataList, "json");
+                                refreshToolBarState();
+                            }
+                        }
+                        else {
+                            alert("合同已经打开无法再次打开!");
+                            return;
+                        }
+
+                    }
+                    else {
+                        alert("请仅选择一条要打开的行!");
+                    }
+                }
+                else {
+                    alert("请选择要打开的行!");
+                }
+                break;
         }
     });
+
+    toolBar.getInput("txtcustomerSearch").id = "txtcustomerSearch";
 
 
 
@@ -541,7 +642,7 @@ $(function () {
         return true;
     });
     documentGrid.init();
-   
+
     refreshDocumentToolBarState();
 
     //初始化编辑弹窗
@@ -644,18 +745,18 @@ $(function () {
         if (!$("#txtcustomer").validate("required", "客户")) {
             return false;
         }
-        
+
         if (!$("#txtcustomerID").validate("required", "客户")) {
             return false;
         }
-     
+
         if (!$("#txtquantity").validate("number", "合同数量")) {
             return false;
         }
 
         if ($("#combopriceType").val() == '现价') {
 
-            if ($("#txtprice").val() == '') {               
+            if ($("#txtprice").val() == '') {
                 $("#txtprice").focus();
                 alert('货品单价不允许为空！');
                 return false;
@@ -680,8 +781,8 @@ $(function () {
                 return false;
             }
         }
-        
-        
+
+
         if (!$("#txteffectiveDate").validate("required", "有效日期")) {
             return false;
         }
@@ -692,7 +793,7 @@ $(function () {
         if (!$("#txtagent").validate("required", "经办人")) {
             return false;
         }
-     
+
         if (!$("#txtcreateDate").validate("required", "创建日期")) {
             return false;
         }
@@ -745,7 +846,7 @@ $(function () {
         else {
             contract.priceType = null;
         }
-        
+
 
         if ($.trim($("#combopayment").val()) != '') {
             contract.payment = $("#combopayment").val();
@@ -906,7 +1007,7 @@ $(function () {
                 listGrid.parse(dictDataList, "json");
                 hideEditForm();
                 alert("销售合同修改成功!");
-            }           
+            }
         }
 
         refreshToolBarState();
@@ -915,7 +1016,7 @@ $(function () {
     //加载弹窗Div
 
     //$(document.body).append('');
-
+    var customerDataList = new rock.JsonList();
     customerQuickGrid = new dhtmlXGridObject("customerQuickGrid");
     customerQuickGrid.setImagePath("/resource/dhtmlx/codebase/imgs/");
     customerQuickGrid.setSkin("dhx_skyblue");
@@ -926,21 +1027,38 @@ $(function () {
     customerQuickGrid.setColTypes("ro,ro,ro");
     customerQuickGrid.enableDistributedParsing(true, 20);
     customerQuickGrid.attachEvent("onRowDblClicked", function (rowID, cIndex) {
-        $("#txtcustomerID").val(rowID)
-        $("#txtcustomer").val(customerQuickGrid.cells(rowID, 2).getValue())
+        //判定是在什么位置上面
+        if (customerPopTarget == "txtcustomer") {
+            $("#txtcustomerID").val(rowID);
+            $("#txtcustomer").val(customerQuickGrid.cells(rowID, 2).getValue());
+
+        }
+        else {
+            $("#txtcustomerSearch").val(customerQuickGrid.cells(rowID, 2).getValue());
+            //toolBar.setValue("txtcustomerSearch", customerQuickGrid.cells(rowID, 2).getValue());
+        }
+
         hidecustomerPop();
     });
     customerQuickGrid.init();
     customerQuickGrid.detachHeader(0);
     customerPop = $("#customerPop")
     $('#txtcustomer').focus(function (e) {
-        showcustomerPop();
+        customerPopTarget = "txtcustomer";
+        showcustomerPop($("#txtcustomer").offset().top, $("#txtcustomer").offset().left);
     });
 
-    function showcustomerPop() {
-        var top = $("#txtcustomer").offset().top;
-        var left = $("#txtcustomer").offset().left;
+    $('#txtcustomerSearch').focus(function (e) {
+        customerPopTarget = "txtcustomerSearch";
+        showcustomerPop($("#txtcustomerSearch").offset().top, $("#txtcustomerSearch").offset().left);
+    });
+
+    function showcustomerPop(top, left) {
         customerPop.css({ top: top + 22, left: left }).show();
+        //判断记录条数如果少于10条就重新加载
+        if (customerDataList.rows.length < 10) {
+            customerComplete("");
+        }
     }
 
     function hidecustomerPop() {
@@ -948,12 +1066,16 @@ $(function () {
     }
     hidecustomerPop();
 
+    $("#txtcustomerSearch").keyup(function () {
+        customerComplete($("#txtcustomerSearch").val());
+    });
+
     $("#txtcustomer").keyup(function () {
         customerComplete($("#txtcustomer").val());
     });
-    var customerDataList = new rock.JsonList();
+    
     function customerComplete(searchCode) {
-        ISystemService.execQuery.sqlString = "select top 14 [Customer].[CustomerID], [Customer].[CustomerName] from [Customer] where [CustomerName] like  '%" + $("#txtcustomer").val() + "%' or [SearchCode] like  '%" + $("#txtcustomer").val() + "%'";
+        ISystemService.execQuery.sqlString = "select top 14 [Customer].[CustomerID], [Customer].[CustomerName] from [Customer] where [CustomerName] like  '%" + searchCode + "%' or [SearchCode] like  '%" + searchCode + "%'";
         rock.AjaxRequest(ISystemService.execQuery, rock.exceptionFun);
         if (ISystemService.execQuery.success) {
             (function (e) {
@@ -962,6 +1084,14 @@ $(function () {
         }
     }
 
+
+    $('#mainbody').mousedown(function (e) {
+
+        if (e.srcElement.id != "txtcustomer" || e.srcElement.id != "txtcustomerSearch") {
+            hidecustomerPop();
+        }
+
+    });
 
     $('#editForm').mousedown(function (e) {
 
@@ -997,11 +1127,11 @@ $(function () {
     }
 
     //文档上传界面关闭按钮
-    $("#uploadFile_Close").click(function () {       
+    $("#uploadFile_Close").click(function () {
         getUploadDocument(listGrid.getCheckedRows(0));
         hideUploadFile();
     });
-   
+
     function getUploadDocument(rowID) {
         documentGrid.clearAll();
         documentDataList.rows = [];
@@ -1028,7 +1158,7 @@ $(function () {
                     }
                 }(ISystemService.execQuery.resultValue));
             }
-        }        
+        }
     }
 
     closeUpload = function () {
@@ -1053,7 +1183,7 @@ $(function () {
             toolBar.disableItem("repeal");
             toolBar.disableItem("close");
             toolBar.disableItem("open");
-            
+
         }
         else {
             if (rowids.length != 1) {
@@ -1071,7 +1201,7 @@ $(function () {
                     case "已创建":
                         toolBar.enableItem("modify");
                         toolBar.enableItem("delete");
-                        toolBar.enableItem("commit"); 
+                        toolBar.enableItem("commit");
                         toolBar.disableItem("repeal");
                         toolBar.disableItem("close");
                         toolBar.disableItem("open");
@@ -1098,7 +1228,7 @@ $(function () {
                             toolBar.disableItem("open");
 
                         }
-                }            
+                }
             }
         }
     }
@@ -1129,7 +1259,7 @@ $(function () {
                     documentToolBar.disableItem("upload");
                 }
             }
-            else { 
+            else {
                 documentToolBar.disableItem("upload");
                 documentToolBar.disableItem("delete");
             }
@@ -1169,8 +1299,8 @@ $(function () {
         金额 = 单价 * 数量;
         txt货款合计 = Number(金额).toFixed(2).toString();
         $("#txttotal").val(txt货款合计);
-    }   
-  
+    }
+
     function getMaterialGrade() {
         sqlStr = "Select [ProductGradeName] from [ProductGrade] where [ProductID] = " + $("#combomaterial").val();
         ISystemService.execQuery.sqlString = sqlStr;

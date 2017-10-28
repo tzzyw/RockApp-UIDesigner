@@ -21,6 +21,55 @@
         //初始化当前表单页面
         if (billForm) {
             (function (e) {
+                //填充属性表格
+                masterProperties = eval(billForm.masterType + "Class").getProperties().values();
+                (function (e) {
+                    var propertyData = null;
+                    for (var i = 0; i < masterProperties.length; i++) {
+                        if (masterProperties[i].designInfo.gridHeader) {
+                            propertyData = new rock.JsonData(masterProperties[i].name);
+
+                            propertyData.data.push(0);
+                            propertyData.data.push(masterProperties[i].id);
+                            propertyData.data.push(masterProperties[i].name);
+                            propertyData.data.push(masterProperties[i].displayName);
+                            masterPropertyDataList.rows.push(propertyData);
+                        }
+                    }
+                    propertyGrid.clearAll();
+                    propertyGrid.parse(masterPropertyDataList, "json");
+                }());
+
+                detailProperties = eval(billForm.detailType + "Class").getProperties().values();
+                (function (e) {
+                    var propertyData = null;
+                    for (var i = 0; i < detailProperties.length; i++) {
+                        if (detailProperties[i].designInfo.gridHeader) {
+                            propertyData = new rock.JsonData(detailProperties[i].name);
+                            propertyData.data.push(0);
+                            propertyData.data.push(detailProperties[i].id);
+                            propertyData.data.push(detailProperties[i].name);
+                            propertyData.data.push(detailProperties[i].displayName);
+                            detailPropertyDataList.rows.push(propertyData);
+                        }
+                    }
+                }());
+
+                detailMainReferProperties = eval(billForm.detailMainReferType + "Class").getProperties().values();
+                (function (e) {
+                    var propertyData = null;
+                    for (var i = 0; i < detailMainReferProperties.length; i++) {
+                        if (detailMainReferProperties[i].designInfo.gridHeader) {
+                            propertyData = new rock.JsonData(detailMainReferProperties[i].name);
+                            propertyData.data.push(0);
+                            propertyData.data.push(detailMainReferProperties[i].id);
+                            propertyData.data.push(detailMainReferProperties[i].name);
+                            propertyData.data.push(detailMainReferProperties[i].displayName);
+                            detailMainReferPropertyDataList.rows.push(propertyData);
+                        }
+                    }
+                }());
+
                 //初始化当前页面元素到页面结构树   
                 formLayoutList.add("BillForm_" + billForm.billFormID, billForm);
                 formLayoutTree.insertNewChild(0, "BillForm_" + billForm.billFormID, billForm.billFormName);
@@ -31,8 +80,13 @@
                     if (billForm.masterFormItems.length > 0) {
                         for (var i = 0; i < masterFormItems.length; i++) {
                             var formItem = masterFormItems.item(i);
-                            formLayoutList.add("MasterFormItem_" + formItem.formItemID, formItem);
-                            formLayoutTree.insertNewChild("MasterFormItems", "MasterFormItem_" + formItem.formItemID, formItem.displayName);
+                            //判断表单项是否在属性表格中存在
+                            for (var j = 0; j < masterPropertyDataList.rows.length; j++) {
+                                if (formItem.formItemID == masterPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("MasterFormItem_" + formItem.formItemID, formItem);
+                                    formLayoutTree.insertNewChild("MasterFormItems", "MasterFormItem_" + formItem.formItemID, formItem.displayName);
+                                }
+                            }
                         }
                     }
                 }
@@ -43,11 +97,16 @@
                     if (billForm.detailFormItems.length > 0) {
                         for (var i = 0; i < detailFormItems.length; i++) {
                             var formItem = detailFormItems.item(i);
-                            formLayoutList.add("DetailFormItem_" + formItem.formItemID, formItem);
-                            formLayoutTree.insertNewChild("DetailFormItems", "DetailFormItem_" + formItem.formItemID, formItem.displayName);
+                            //判断表单项是否在属性表格中存在
+                            for (var j = 0; j < detailPropertyDataList.rows.length; j++) {
+                                if (formItem.formItemID == detailPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("DetailFormItem_" + formItem.formItemID, formItem);
+                                    formLayoutTree.insertNewChild("DetailFormItems", "DetailFormItem_" + formItem.formItemID, formItem.displayName);
+                                }
+                            }
                         }
                     }
-                }                
+                }
 
                 //明细表格
                 if (billForm.detailGrid) {
@@ -57,23 +116,33 @@
                     if (detailDataGrid.gridColumns.length > 0) {
                         for (var i = 0; i < detailDataGrid.gridColumns.length; i++) {
                             var gridColumn = detailDataGrid.gridColumns.item(i);
-                            formLayoutList.add("DetailGridColumn_" + gridColumn.gridColumnID, gridColumn);
-                            formLayoutTree.insertNewChild("DetailGrid_" + detailDataGrid.dataGridID, "DetailGridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                            //判断明细表格列是否在属性表格中存在
+                            for (var j = 0; j < detailPropertyDataList.rows.length; j++) {
+                                if (gridColumn.gridColumnID == detailPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("DetailGridColumn_" + gridColumn.gridColumnID, gridColumn);
+                                    formLayoutTree.insertNewChild("DetailGrid_" + detailDataGrid.dataGridID, "DetailGridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                                }
+                            }
                         }
                     }
                 }
                 //明细表格主参照列 指的是:明细列表中需要显示的主参照字段
                 if (billForm.detailGridMainReferColumns) {
                     detailGridMainReferColumns = billForm.detailGridMainReferColumns;
-                    formLayoutTree.insertNewChild("BillForm_" + billForm.billFormID, "DetailGridMainReferColumns", "明细主参照列");
+                    formLayoutTree.insertNewChild("BillForm_" + billForm.billFormID, "DetailGridMainReferColumns", "明细部分主参照列");
                     if (billForm.detailGridMainReferColumns.length > 0) {
                         for (var i = 0; i < detailGridMainReferColumns.length; i++) {
                             var detailGridMainReferColumn = detailGridMainReferColumns.item(i);
-                            formLayoutList.add("DetailGridMainReferColumn_" + detailGridMainReferColumn.gridColumnID, detailGridMainReferColumn);
-                            formLayoutTree.insertNewChild("DetailGridMainReferColumns", + "DetailGridMainReferColumn_" + detailGridMainReferColumn.gridColumnID, detailGridMainReferColumn.gridHeader);
+                            //判断明细表格主参照列是否在参照对象属性表格中存在
+                            for (var j = 0; j < detailMainReferPropertyDataList.rows.length; j++) {
+                                if (detailGridMainReferColumn.gridColumnID == detailMainReferPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("DetailGridMainReferColumn_" + detailGridMainReferColumn.gridColumnID, detailGridMainReferColumn);
+                                    formLayoutTree.insertNewChild("DetailGridMainReferColumns", + "DetailGridMainReferColumn_" + detailGridMainReferColumn.gridColumnID, detailGridMainReferColumn.gridHeader);
+                                }
+                            }
                         }
                     }
-                } 
+                }
                 //明细主参照表格 指的是:明细弹窗中明细项快查列表中的列
                 if (billForm.detailMainReferGrid) {
                     detailMainReferDataGrid = billForm.detailMainReferGrid;
@@ -82,20 +151,30 @@
                     if (detailMainReferDataGrid.gridColumns.length > 0) {
                         for (var i = 0; i < detailMainReferDataGrid.gridColumns.length; i++) {
                             var gridColumn = detailMainReferDataGrid.gridColumns.item(i);
-                            formLayoutList.add("DetailMainReferGridColumn_" + gridColumn.gridColumnID, gridColumn);
-                            formLayoutTree.insertNewChild("DetailMainReferGrid_" + detailMainReferDataGrid.dataGridID, "DetailMainReferGridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                            //判断明细主参照表格列是否在参照对象属性表格中存在
+                            for (var j = 0; j < detailMainReferPropertyDataList.rows.length; j++) {
+                                if (detailGridMainReferColumn.gridColumnID == detailMainReferPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("DetailMainReferGridColumn_" + gridColumn.gridColumnID, gridColumn);
+                                    formLayoutTree.insertNewChild("DetailMainReferGrid_" + detailMainReferDataGrid.dataGridID, "DetailMainReferGridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                                }
+                            }
                         }
                     }
                 }
                 //明细主参照表单项集合 指的是:明细表如果有参照表,需要现实的对应参照表的字段
                 if (billForm.detailMainReferFormItems) {
                     detailMainReferFormItems = billForm.detailMainReferFormItems;
-                    formLayoutTree.insertNewChild("BillForm_" + billForm.billFormID, "DetailMainReferFormItems", "明细主参照表单项");
+                    formLayoutTree.insertNewChild("BillForm_" + billForm.billFormID, "DetailMainReferFormItems", "明细部分主参照表单项");
                     if (billForm.detailMainReferFormItems.length > 0) {
                         for (var i = 0; i < detailMainReferFormItems.length; i++) {
                             var formItem = detailMainReferFormItems.item(i);
-                            formLayoutList.add("DetailMainReferFormItem_" + formItem.formItemID, formItem);
-                            formLayoutTree.insertNewChild("DetailMainReferFormItems", "DetailMainReferFormItem_" + formItem.formItemID, formItem.displayName);
+                            //明细主参照表单项是否在参照对象属性表格中存在
+                            for (var j = 0; j < detailMainReferPropertyDataList.rows.length; j++) {
+                                if (formItem.formItemID == detailMainReferPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("DetailMainReferFormItem_" + formItem.formItemID, formItem);
+                                    formLayoutTree.insertNewChild("DetailMainReferFormItems", "DetailMainReferFormItem_" + formItem.formItemID, formItem.displayName);
+                                }
+                            }
                         }
                     }
                 }
@@ -106,60 +185,18 @@
                     if (billForm.detailMainReferFuzzyColumns.length > 0) {
                         for (var i = 0; i < detailMainReferFuzzyColumns.length; i++) {
                             var detailMainReferFuzzyColumn = detailMainReferFuzzyColumns.item(i);
-                            formLayoutList.add("DetailMainReferFuzzyColumn_" + detailMainReferFuzzyColumn.gridColumnID, detailMainReferFuzzyColumn);
-                            formLayoutTree.insertNewChild("DetailMainReferFuzzyColumns", + "DetailMainReferFuzzyColumn_" + detailMainReferFuzzyColumn.gridColumnID, detailMainReferFuzzyColumn.gridHeader);
+                            //判断明细主参照快查匹配列是否在参照对象属性表格中存在
+                            for (var j = 0; j < detailMainReferPropertyDataList.rows.length; j++) {
+                                if (detailMainReferFuzzyColumn.gridColumnID == detailMainReferPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("DetailMainReferFuzzyColumn_" + detailMainReferFuzzyColumn.gridColumnID, detailMainReferFuzzyColumn);
+                                    formLayoutTree.insertNewChild("DetailMainReferFuzzyColumns", + "DetailMainReferFuzzyColumn_" + detailMainReferFuzzyColumn.gridColumnID, detailMainReferFuzzyColumn.gridHeader);
+                                }
+                            }
                         }
                     }
-                }               
-            }());
-
-            masterProperties = eval(billForm.masterType + "Class").getProperties().values();
-            (function (e) {
-                var propertyData = null;
-                for (var i = 0; i < masterProperties.length; i++) {
-                    if (masterProperties[i].designInfo.gridHeader) {
-                        propertyData = new rock.JsonData(masterProperties[i].name);
-
-                        propertyData.data.push(0);
-                        propertyData.data.push(masterProperties[i].id);
-                        propertyData.data.push(masterProperties[i].name);
-                        propertyData.data.push(masterProperties[i].displayName);
-                        masterPropertyDataList.rows.push(propertyData);
-                    }
-                }
-                propertyGrid.clearAll();
-                propertyGrid.parse(masterPropertyDataList, "json");
-            }());
-
-            detailProperties = eval(billForm.detailType + "Class").getProperties().values();
-            (function (e) {
-                var propertyData = null;
-                for (var i = 0; i < detailProperties.length; i++) {
-                    if (detailProperties[i].designInfo.gridHeader) {
-                        propertyData = new rock.JsonData(detailProperties[i].name);
-                        propertyData.data.push(0);
-                        propertyData.data.push(detailProperties[i].id);
-                        propertyData.data.push(detailProperties[i].name);
-                        propertyData.data.push(detailProperties[i].displayName);
-                        detailPropertyDataList.rows.push(propertyData);
-                    }                   
                 }
             }());
 
-            detailMainReferProperties = eval(billForm.detailMainReferType + "Class").getProperties().values();
-            (function (e) {
-                var propertyData = null;
-                for (var i = 0; i < detailMainReferProperties.length; i++) {
-                    if (detailMainReferProperties[i].designInfo.gridHeader) {
-                        propertyData = new rock.JsonData(detailMainReferProperties[i].name);
-                        propertyData.data.push(0);
-                        propertyData.data.push(detailMainReferProperties[i].id);
-                        propertyData.data.push(detailMainReferProperties[i].name);
-                        propertyData.data.push(detailMainReferProperties[i].displayName);
-                        detailMainReferPropertyDataList.rows.push(propertyData);
-                    }                   
-                }
-            }());
 
             formLayoutTree.selectItem("QueryItems", true, false);
             isChanged = false;
@@ -263,7 +300,7 @@
                 }
                 propertyGrid.clearAll();
                 propertyGrid.parse(detailPropertyDataList, "json");
-                break;           
+                break;
             case "DetailGrid":
                 for (var i = 0; i < detailPropertyDataList.rows.length; i++) {
                     detailPropertyDataList.rows[i].data[0] = 0;
@@ -328,26 +365,26 @@
                 propertyGrid.parse(detailMainReferPropertyDataList, "json");
                 break;
             case "DetailMainReferFuzzyColumns":
-                    for (var i = 0; i < detailMainReferPropertyDataList.rows.length; i++) {
-                        detailMainReferPropertyDataList.rows[i].data[0] = 0;
-                    }
-                    if (billForm.detailMainReferFuzzyColumns) {
-                        detailMainReferFuzzyColumns = billForm.detailMainReferFuzzyColumns;
-                        if (detailMainReferFuzzyColumns.length > 0) {
-                            for (var i = 0; i < detailMainReferFuzzyColumns.length; i++) {
-                                var gridColumn = detailMainReferFuzzyColumns.item(i);
-                                for (var j = 0; j < detailMainReferPropertyDataList.rows.length; j++) {
-                                    if (detailMainReferPropertyDataList.rows[j].data[1] == gridColumn.gridColumnID) {
-                                        detailMainReferPropertyDataList.rows[j].data[0] = 1;
-                                        break;
-                                    }
+                for (var i = 0; i < detailMainReferPropertyDataList.rows.length; i++) {
+                    detailMainReferPropertyDataList.rows[i].data[0] = 0;
+                }
+                if (billForm.detailMainReferFuzzyColumns) {
+                    detailMainReferFuzzyColumns = billForm.detailMainReferFuzzyColumns;
+                    if (detailMainReferFuzzyColumns.length > 0) {
+                        for (var i = 0; i < detailMainReferFuzzyColumns.length; i++) {
+                            var gridColumn = detailMainReferFuzzyColumns.item(i);
+                            for (var j = 0; j < detailMainReferPropertyDataList.rows.length; j++) {
+                                if (detailMainReferPropertyDataList.rows[j].data[1] == gridColumn.gridColumnID) {
+                                    detailMainReferPropertyDataList.rows[j].data[0] = 1;
+                                    break;
                                 }
                             }
                         }
                     }
-                    propertyGrid.clearAll();
-                    propertyGrid.parse(detailMainReferPropertyDataList, "json");
-                    break;
+                }
+                propertyGrid.clearAll();
+                propertyGrid.parse(detailMainReferPropertyDataList, "json");
+                break;
             case "DetailMainReferFormItems":
                 for (var i = 0; i < detailMainReferPropertyDataList.rows.length; i++) {
                     detailMainReferPropertyDataList.rows[i].data[0] = 0;
@@ -399,6 +436,7 @@
                         masterFormItem.isRequired = property.designInfo.isRequired;
                         masterFormItem.validateType = property.designInfo.validateType;
                         masterFormItem.referType = property.designInfo.referType;
+                        masterFormItem.queryForm = property.designInfo.queryForm;
                         switch (property.designInfo.queryForm) {
                             case "Combox":
                                 if (property.structName && property.designInfo.referType == "") {
@@ -411,7 +449,7 @@
                                     }
                                     else {
                                         masterFormItem.queryType = "None";
-                                    }                                    
+                                    }
                                 }
                                 break;
                             case "Tree":
@@ -422,20 +460,20 @@
                                 else {
                                     if (property.structName == "" && property.designInfo.referType) {
                                         masterFormItem.queryType = "Refer";
-                                    }                                    
+                                    }
                                 }
                                 break;
                             case "Quick":
                                 if (property.structName) {
                                     masterFormItem.queryType = "Quick";
                                     masterFormItem.structName = property.structName;
-                                }                               
+                                }
                                 break;
                             default:
                                 masterFormItem.queryType = "None";
                                 break;
 
-                        }                       
+                        }
                     }
                     else {
                         alert("未设计界面信息的属性不能作为编辑成员成员!");
@@ -466,6 +504,7 @@
                         detailFormItem.isRequired = property.designInfo.isRequired;
                         detailFormItem.validateType = property.designInfo.validateType;
                         detailFormItem.referType = property.designInfo.referType;
+                        detailFormItem.queryForm = property.designInfo.queryForm;
                         switch (property.designInfo.queryForm) {
                             case "Combox":
                                 if (property.structName && property.designInfo.referType == "") {
@@ -518,7 +557,7 @@
                     formLayoutList.remove("DetailFormItem_" + property.id);
                     billForm.detailFormItems.remove(detailFormItem);
                 }
-                break;            
+                break;
             case "DetailGrid":
                 var property = eval(billForm.detailType + "Class").getPropertyByID(propertyID);
                 if (property.designInfo.gridHeader) {
@@ -538,6 +577,9 @@
                         }
                         if (property.dynType == 18) {
                             gridColumn.dataType = "Date";
+                        }
+                        else if (property.dynType == 2) {
+                            gridColumn.dataType = "Bool";
                         }
                         else {
                             gridColumn.dataType = "NotDate";
@@ -596,6 +638,9 @@
                         if (property.dynType == 18) {
                             gridColumn.dataType = "Date";
                         }
+                        else if (property.dynType == 2) {
+                            gridColumn.dataType = "Bool";
+                        }
                         else {
                             gridColumn.dataType = "NotDate";
                         }
@@ -633,7 +678,7 @@
                     propertyGrid.parse(detailMainReferPropertyDataList, "json");
                 }
                 break;
-            case "DetailMainReferGrid": 
+            case "DetailMainReferGrid":
                 var property = eval(billForm.detailMainReferType + "Class").getPropertyByID(propertyID);
                 if (property.designInfo.gridHeader) {
                     var gridColumn = null;
@@ -652,6 +697,9 @@
                         }
                         if (property.dynType == 18) {
                             gridColumn.dataType = "Date";
+                        }
+                        else if (property.dynType == 2) {
+                            gridColumn.dataType = "Bool";
                         }
                         else {
                             gridColumn.dataType = "NotDate";
@@ -710,6 +758,9 @@
                         if (property.dynType == 18) {
                             gridColumn.dataType = "Date";
                         }
+                        else if (property.dynType == 2) {
+                            gridColumn.dataType = "Bool";
+                        }
                         else {
                             gridColumn.dataType = "NotDate";
                         }
@@ -761,6 +812,7 @@
                         detailMainReferFormItem.isRequired = property.designInfo.isRequired;
                         detailMainReferFormItem.validateType = property.designInfo.validateType;
                         detailMainReferFormItem.referType = property.designInfo.referType;
+                        detailMainReferFormItem.queryForm = property.designInfo.queryForm;
                         switch (property.designInfo.queryForm) {
                             case "Combox":
                                 if (property.structName && property.designInfo.referType == "") {

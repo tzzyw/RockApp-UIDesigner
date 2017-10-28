@@ -21,6 +21,54 @@
         //初始化当前表单页面
         if (billListForm) {
             (function (e) {
+                //填充属性表格
+                masterProperties = eval(billListForm.masterType + "Class").getProperties().values();
+                (function (e) {
+                    var propertyData = null;
+                    for (var i = 0; i < masterProperties.length; i++) {
+                        propertyData = new rock.JsonData(masterProperties[i].name);
+
+                        propertyData.data.push(0);
+                        propertyData.data.push(masterProperties[i].id);
+                        propertyData.data.push(masterProperties[i].name);
+                        propertyData.data.push(masterProperties[i].displayName);
+
+                        masterPropertyDataList.rows.push(propertyData);
+                    }
+                    propertyGrid.clearAll();
+                    propertyGrid.parse(masterPropertyDataList, "json");
+                }());
+
+                detailProperties = eval(billListForm.detailType + "Class").getProperties().values();
+                (function (e) {
+                    var propertyData = null;
+                    for (var i = 0; i < detailProperties.length; i++) {
+                        propertyData = new rock.JsonData(detailProperties[i].name);
+
+                        propertyData.data.push(0);
+                        propertyData.data.push(detailProperties[i].id);
+                        propertyData.data.push(detailProperties[i].name);
+                        propertyData.data.push(detailProperties[i].displayName);
+
+                        detailPropertyDataList.rows.push(propertyData);
+                    }
+                }());
+
+                detailMainReferProperties = eval(billListForm.detailMainReferType + "Class").getProperties().values();
+                (function (e) {
+                    var propertyData = null;
+                    for (var i = 0; i < detailMainReferProperties.length; i++) {
+                        propertyData = new rock.JsonData(detailMainReferProperties[i].name);
+
+                        propertyData.data.push(0);
+                        propertyData.data.push(detailMainReferProperties[i].id);
+                        propertyData.data.push(detailMainReferProperties[i].name);
+                        propertyData.data.push(detailMainReferProperties[i].displayName);
+
+                        detailMainReferPropertyDataList.rows.push(propertyData);
+                    }
+                }());
+
                 //初始化当前页面元素到页面结构树   
                 formLayoutList.add("BillListForm_" + billListForm.billListFormID, billListForm);
                 formLayoutTree.insertNewChild(0, "BillListForm_" + billListForm.billListFormID, billListForm.billListFormName);               
@@ -31,8 +79,13 @@
                     if (billListForm.queryItems.length > 0) {
                         for (var i = 0; i < queryItems.length; i++) {
                             var queryItem = queryItems.item(i);
-                            formLayoutList.add("QueryItem_" + queryItem.queryItemID, queryItem);
-                            formLayoutTree.insertNewChild("QueryItems", "QueryItem_" + queryItem.queryItemID, queryItem.displayName);
+                            //判断查询项是否在属性表格中存在
+                            for (var j = 0; j < masterPropertyDataList.rows.length; j++) {
+                                if (queryItem.queryItemID == masterPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("QueryItem_" + queryItem.queryItemID, queryItem);
+                                    formLayoutTree.insertNewChild("QueryItems", "QueryItem_" + queryItem.queryItemID, queryItem.displayName);
+                                }
+                            }
                         }
                     }
                 }               
@@ -45,8 +98,13 @@
                     if (masterDataGrid.gridColumns.length > 0) {
                         for (var i = 0; i < masterDataGrid.gridColumns.length; i++) {
                             var gridColumn = masterDataGrid.gridColumns.item(i);
-                            formLayoutList.add("MasterGridColumn_" + gridColumn.gridColumnID, gridColumn);
-                            formLayoutTree.insertNewChild("MasterGrid_" + masterDataGrid.dataGridID, "MasterGridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                            //判断主表格项是否在属性表格中存在
+                            for (var j = 0; j < masterPropertyDataList.rows.length; j++) {
+                                if (gridColumn.gridColumnID == masterPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("MasterGridColumn_" + gridColumn.gridColumnID, gridColumn);
+                                    formLayoutTree.insertNewChild("MasterGrid_" + masterDataGrid.dataGridID, "MasterGridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                                }
+                            }
                         }
                     }
                 }
@@ -59,8 +117,13 @@
                     if (detailDataGrid.gridColumns.length > 0) {
                         for (var i = 0; i < detailDataGrid.gridColumns.length; i++) {
                             var gridColumn = detailDataGrid.gridColumns.item(i);
-                            formLayoutList.add("DetailGridColumn_" + gridColumn.gridColumnID, gridColumn);
-                            formLayoutTree.insertNewChild("DetailGrid_" + detailDataGrid.dataGridID, "DetailGridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                            //判断明细表格列是否在属性表格中存在
+                            for (var j = 0; j < detailPropertyDataList.rows.length; j++) {
+                                if (gridColumn.gridColumnID == detailPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("DetailGridColumn_" + gridColumn.gridColumnID, gridColumn);
+                                    formLayoutTree.insertNewChild("DetailGrid_" + detailDataGrid.dataGridID, "DetailGridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                                }
+                            }
                         }
                     }
                 }
@@ -72,59 +135,17 @@
                     if (detailMainReferDataGrid.gridColumns.length > 0) {
                         for (var i = 0; i < detailMainReferDataGrid.gridColumns.length; i++) {
                             var gridColumn = detailMainReferDataGrid.gridColumns.item(i);
-                            formLayoutList.add("DetailMainReferGridColumn_" + gridColumn.gridColumnID, gridColumn);
-                            formLayoutTree.insertNewChild("DetailMainReferGrid_" + detailMainReferDataGrid.dataGridID, "DetailMainReferGridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                            //判断明细主参照表格列是否在参照对象属性表格中存在
+                            for (var j = 0; j < detailMainReferPropertyDataList.rows.length; j++) {
+                                if (gridColumn.gridColumnID == detailMainReferPropertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("DetailMainReferGridColumn_" + gridColumn.gridColumnID, gridColumn);
+                                    formLayoutTree.insertNewChild("DetailMainReferGrid_" + detailMainReferDataGrid.dataGridID, "DetailMainReferGridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                                }
+                            }
                         }
                     }
                 }
                
-            }());
-
-            masterProperties = eval(billListForm.masterType + "Class").getProperties().values();
-            (function (e) {
-                var propertyData = null;
-                for (var i = 0; i < masterProperties.length; i++) {
-                    propertyData = new rock.JsonData(masterProperties[i].name);
-
-                    propertyData.data.push(0);
-                    propertyData.data.push(masterProperties[i].id);
-                    propertyData.data.push(masterProperties[i].name);
-                    propertyData.data.push(masterProperties[i].displayName);
-
-                    masterPropertyDataList.rows.push(propertyData);                 
-                }
-                propertyGrid.clearAll();
-                propertyGrid.parse(masterPropertyDataList, "json");
-            }());
-
-            detailProperties = eval(billListForm.detailType + "Class").getProperties().values();
-            (function (e) {
-                var propertyData = null;
-                for (var i = 0; i < detailProperties.length; i++) {
-                    propertyData = new rock.JsonData(detailProperties[i].name);
-
-                    propertyData.data.push(0);
-                    propertyData.data.push(detailProperties[i].id);
-                    propertyData.data.push(detailProperties[i].name);
-                    propertyData.data.push(detailProperties[i].displayName);
-
-                    detailPropertyDataList.rows.push(propertyData);
-                }
-            }());
-
-            detailMainReferProperties = eval(billListForm.detailMainReferType + "Class").getProperties().values();
-            (function (e) {
-                var propertyData = null;
-                for (var i = 0; i < detailMainReferProperties.length; i++) {
-                    propertyData = new rock.JsonData(detailMainReferProperties[i].name);
-
-                    propertyData.data.push(0);
-                    propertyData.data.push(detailMainReferProperties[i].id);
-                    propertyData.data.push(detailMainReferProperties[i].name);
-                    propertyData.data.push(detailMainReferProperties[i].displayName);
-
-                    detailMainReferPropertyDataList.rows.push(propertyData);
-                }
             }());
 
             formLayoutTree.selectItem("QueryItems", true, false);
@@ -379,6 +400,7 @@
                         queryItem.referType = property.designInfo.referType;
                         queryItem.queryForm = property.designInfo.queryForm;
                         queryItem.isRequired = property.designInfo.isRequired;
+                        queryItem.inputType = property.designInfo.inputType;
                         switch (property.designInfo.queryForm) {
                             case "Combox":
                                 if (property.structName && property.designInfo.referType == "") {
@@ -390,7 +412,6 @@
                                         queryItem.queryType = "Refer";
                                     }
                                 }
-                                queryItem.inputType = "Combox";
                                 break;
                             case "Tree":
                                 if (property.structName && property.designInfo.referType == "") {
@@ -403,7 +424,6 @@
                                     }
                                 }
                                 break;
-                                queryItem.inputType = "TextBox";
                             case "Fuzzy":
                                 if (property.structName && property.designInfo.referType == "") {
                                     queryItem.queryType = "Struct";
@@ -414,18 +434,15 @@
                                         queryItem.queryType = "Refer";
                                     }
                                 }
-                                queryItem.inputType = "TextBox";
                                 break;
                             case "Quick":
                                 if (property.structName) {
                                     queryItem.queryType = "Struct";
                                     queryItem.structName = property.structName;
                                 }
-                                queryItem.inputType = "TextBox";
                                 break;
                             default:
                                 queryItem.queryType = "None";
-                                queryItem.inputType = "TextBox";
                                 break;
 
                         }
@@ -439,13 +456,13 @@
                         queryItem.queryType = "Struct";
                     }
                     if (property.designInfo) {
-                        //如果是模糊查询用TextBox
-                        if (property.designInfo.queryForm == "Combox") {
-                            queryItem.inputType = "Combox";
-                        }
-                        else {
-                            queryItem.inputType = "TextBox";
-                        }
+                        ////如果是模糊查询用TextBox
+                        //if (property.designInfo.queryForm == "Combox") {
+                        //    queryItem.inputType = "Combox";
+                        //}
+                        //else {
+                        //    queryItem.inputType = "TextBox";
+                        //}
                         queryItem.isRequired = property.designInfo.isRequired;
                         queryItem.queryForm = property.designInfo.queryForm;
                         queryItem.referType = property.designInfo.referType;
@@ -489,6 +506,9 @@
                         }
                         if (property.dynType == 18) {
                             gridColumn.dataType = "Date";
+                        }
+                        else if (property.dynType == 2) {
+                            gridColumn.dataType = "Bool";
                         }
                         else {
                             gridColumn.dataType = "NotDate";
@@ -547,6 +567,9 @@
                         if (property.dynType == 18) {
                             gridColumn.dataType = "Date";
                         }
+                        else if (property.dynType == 2) {
+                            gridColumn.dataType = "Bool";
+                        }
                         else {
                             gridColumn.dataType = "NotDate";
                         }
@@ -603,6 +626,9 @@
                         }
                         if (property.dynType == 18) {
                             gridColumn.dataType = "Date";
+                        }
+                        else if (property.dynType == 2) {
+                            gridColumn.dataType = "Bool";
                         }
                         else {
                             gridColumn.dataType = "NotDate";

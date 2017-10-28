@@ -19,6 +19,26 @@
         //初始化当前表单页面
         if (dictForm) {
             (function (e) {
+                //填充属性表格
+                modelProperties = eval(dictForm.modelType + "Class").getProperties().values();
+                //构建务对象属性数据列表(propertyListOriginal)  
+                (function (e) {
+                    var propertyData = null;
+                    for (var i = 0; i < modelProperties.length; i++) {
+                        if (modelProperties[i].designInfo.gridHeader) {
+                            propertyData = new rock.JsonData(modelProperties[i].name);
+
+                            propertyData.data.push(0);
+                            propertyData.data.push(modelProperties[i].id);
+                            propertyData.data.push(modelProperties[i].name);
+                            propertyData.data.push(modelProperties[i].displayName);
+                            propertyDataList.rows.push(propertyData);
+                        }
+                    }
+                    modelPropertyGrid.clearAll();
+                    modelPropertyGrid.parse(propertyDataList, "json");
+                }());
+
                 //初始化当前页面元素到页面结构树   
                 formLayoutList.add("DictForm_" + dictForm.dictFormID, dictForm);
                 formLayoutTree.insertNewChild(0, "DictForm_" + dictForm.dictFormID, dictForm.dictFormName);
@@ -42,8 +62,13 @@
                     if (dictForm.queryItems.length > 0) {
                         for (var i = 0; i < queryItems.length; i++) {
                             var queryItem = queryItems.item(i);
-                            formLayoutList.add("QueryItem_" + queryItem.queryItemID, queryItem);
-                            formLayoutTree.insertNewChild("QueryItems", "QueryItem_" + queryItem.queryItemID, queryItem.displayName);
+                            //判断查询项是否在属性表格中存在
+                            for (var j = 0; j < propertyDataList.rows.length; j++) {
+                                if (queryItem.queryItemID == propertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("QueryItem_" + queryItem.queryItemID, queryItem);
+                                    formLayoutTree.insertNewChild("QueryItems", "QueryItem_" + queryItem.queryItemID, queryItem.displayName);
+                                }
+                            }
                         }
                     }
                 }
@@ -54,8 +79,13 @@
                     if (dictForm.formItems.length > 0) {
                         for (var i = 0; i < formItems.length; i++) {
                             var formItem = formItems.item(i);
-                            formLayoutList.add("FormItem_" + formItem.formItemID, formItem);
-                            formLayoutTree.insertNewChild("FormItems", "FormItem_" + formItem.formItemID, formItem.displayName);
+                            //判断编辑项是否在属性表格中存在
+                            for (var j = 0; j < propertyDataList.rows.length; j++) {
+                                if (formItem.formItemID == propertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("FormItem_" + formItem.formItemID, formItem);
+                                    formLayoutTree.insertNewChild("FormItems", "FormItem_" + formItem.formItemID, formItem.displayName);
+                                }
+                            }
                         }
                     }
                 }
@@ -68,34 +98,19 @@
                     if (formDataGrid.gridColumns.length > 0) {
                         for (var i = 0; i < formDataGrid.gridColumns.length; i++) {
                             var gridColumn = formDataGrid.gridColumns.item(i);
-                            formLayoutList.add("GridColumn_" + gridColumn.gridColumnID, gridColumn);
-                            formLayoutTree.insertNewChild("DataGrid_" + formDataGrid.dataGridID, "GridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                            //判断数据表格列是否在属性表格中存在
+                            for (var j = 0; j < propertyDataList.rows.length; j++) {
+                                if (gridColumn.gridColumnID == propertyDataList.rows[j].data[1]) {
+                                    formLayoutList.add("GridColumn_" + gridColumn.gridColumnID, gridColumn);
+                                    formLayoutTree.insertNewChild("DataGrid_" + formDataGrid.dataGridID, "GridColumn_" + gridColumn.gridColumnID, gridColumn.gridHeader);
+                                }
+                            }
                         }
                     }
                 }
-
                 // RefreshPreview();
             }());
 
-            modelProperties = eval(dictForm.modelType + "Class").getProperties().values();
-
-            //构建务对象属性数据列表(propertyListOriginal)  
-            (function (e) {
-                var propertyData = null;
-                for (var i = 0; i < modelProperties.length; i++) {
-                    if (modelProperties[i].designInfo.gridHeader) {
-                        propertyData = new rock.JsonData(modelProperties[i].name);
-
-                        propertyData.data.push(0);
-                        propertyData.data.push(modelProperties[i].id);
-                        propertyData.data.push(modelProperties[i].name);
-                        propertyData.data.push(modelProperties[i].displayName);
-                        propertyDataList.rows.push(propertyData);
-                    }
-                }
-                modelPropertyGrid.clearAll();
-                modelPropertyGrid.parse(propertyDataList, "json");
-            }());
             formLayoutTree.selectItem("QueryItems", true, false);
             isChanged = false;
             RefreshBtnState();
@@ -307,6 +322,7 @@
                         queryItem.referType = property.designInfo.referType;
                         queryItem.queryForm = property.designInfo.queryForm;
                         queryItem.isRequired = property.designInfo.isRequired;
+                        queryItem.inputType = property.designInfo.inputType;
                         queryItem.structName = property.structName;
                         switch (property.designInfo.queryForm) {
                             case "Combox":
@@ -318,7 +334,7 @@
                                         queryItem.queryType = "Refer";
                                     }                                    
                                 }
-                                queryItem.inputType = "Combox";
+                                //queryItem.inputType = "Combox";
                                 break;
                             case "Tree":
                                 if (property.structName && property.designInfo.referType == "") {
@@ -330,27 +346,30 @@
                                     }
                                 }
                                 break;
-                                queryItem.inputType = "TextBox";
-                            case "Fuzzy":
-                                if (property.structName && property.designInfo.referType == "") {
+                                //queryItem.inputType = "TextBox";
+                            //case "Fuzzy":
+                            //    if (property.structName && property.designInfo.referType == "") {
+                            //        queryItem.queryType = "Struct";
+                            //    }
+                            //    else {
+                            //        if (property.structName == "" && property.designInfo.referType) {
+                            //            queryItem.queryType = "Refer";
+                            //        }
+                            //    }
+                            //    //queryItem.inputType = "TextBox";
+                            //    break;
+                            case "Quick":
+                                if (property.structName) {
                                     queryItem.queryType = "Struct";
                                 }
                                 else {
-                                    if (property.structName == "" && property.designInfo.referType) {
-                                        queryItem.queryType = "Refer";
-                                    }
+                                    queryItem.queryType = "None";
                                 }
-                                queryItem.inputType = "TextBox";
-                                break;
-                            case "Quick":
-                                if (property.structName) {
-                                    queryItem.queryType = "Quick";
-                                }
-                                queryItem.inputType = "TextBox";
+                                //queryItem.inputType = "TextBox";
                                 break;
                             default:
                                 queryItem.queryType = "None";
-                                queryItem.inputType = "TextBox";
+                                //queryItem.inputType = "TextBox";
                                 break;
 
                         }
@@ -385,6 +404,7 @@
                         formItem.isRequired = property.designInfo.isRequired;
                         formItem.validateType = property.designInfo.validateType;
                         formItem.referType = property.designInfo.referType;
+                        formItem.queryForm = property.designInfo.queryForm;
                         switch (property.designInfo.queryForm) {
                             case "Combox":
                                 if (property.structName && property.designInfo.referType == "") {
@@ -411,7 +431,10 @@
                                 break;
                             case "Quick":
                                 if (property.structName) {
-                                    formItem.queryType = "Quick";
+                                    formItem.queryType = "Struct";
+                                }
+                                else {
+                                    formItem.queryType = "None";
                                 }
                                 break;
                             default:
@@ -443,22 +466,22 @@
                         gridColumn = GridColumnClass.createInstance();
                         gridColumn.gridColumnID = property.id;
                         gridColumn.gridColumnName = property.name;
+                        gridColumn.structName = property.structName;
                         gridColumn.gridHeader = property.designInfo.gridHeader;
                         gridColumn.gridWidth = property.designInfo.gridWidth;
                         gridColumn.gridColAlign = property.designInfo.gridColAlign;
                         gridColumn.gridColSorting = property.designInfo.gridColSorting;
                         gridColumn.gridColType = property.designInfo.gridColType;
                         gridColumn.referType = property.designInfo.referType;
-                        gridColumn.structName = property.structName;
+                        gridColumn.queryForm = property.designInfo.queryForm;
                         if (property.dynType == 18) {
                             gridColumn.dataType = "Date";
                         }
+                        else if (property.dynType == 2) {
+                            gridColumn.dataType = "Bool";
+                        }
                         else {
                             gridColumn.dataType = "NotDate";
-                        }
-                        if (property.designInfo) {                            
-                            gridColumn.queryForm = property.designInfo.queryForm;
-                            gridColumn.referType = property.designInfo.referType;
                         }
                         formLayoutList.add("GridColumn_" + gridColumn.gridColumnID, gridColumn);
                         dictForm.dataGrid.gridColumns.add(gridColumn);
